@@ -20,5 +20,11 @@ int main(int argc, char *argv[])
     settings.clear();
     fpgui::settings::write_default_settigs(settings);
 
+    {
+        QSettings temp_settings;
+        std::vector<fpgui::settings::Tab_Configuration> tabs = fpgui::settings::read_tab_config(temp_settings);
+        tabs = tabs;
+    }
+
     //return a.exec();
 }
