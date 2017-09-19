@@ -10,6 +10,15 @@ extern const char* test_application_name;
 extern const char* author;
 extern const char* domain;
 
+extern const char* application_section_name;
+
+extern const char* db_section_name;
+extern const char* data_polling_interval_setting;
+extern const char* db_host;
+extern const char* db_port;
+extern const char* db_user;
+extern const char* db_password;
+
 extern const char* tabs_section_name;
 extern const char* tabs_array_name;
 extern const char* tabs_sorting_setting;

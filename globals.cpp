@@ -9,6 +9,15 @@ const char* test_application_name = "fpgui_test";
 const char* author = "kr0st";
 const char* domain = "bioreactor.me";
 
+const char* application_section_name = "application_settings";
+
+const char* db_section_name = "mongodb_settings";
+const char* data_polling_interval_setting = "db_polling_interval_ms";
+const char* db_host = "db_host_address";
+const char* db_port = "db_port";
+const char* db_user = "db_user";
+const char* db_password = "db_user_password";
+
 const char* tabs_section_name = "visible_tabs";
 const char* tabs_array_name = "tabs";
 const char* tabs_sorting_setting = "sort_by";
