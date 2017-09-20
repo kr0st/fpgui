@@ -6,8 +6,30 @@
 
 #include <globals.h>
 #include <settings.h>
-
 #include <mac_util.h>
+#include <utils.h>
+
+#include <gtest/gtest.h>
+
+TEST(Util_Tests, Short_Size_Test)
+{
+    EXPECT_EQ(2, sizeof(unsigned short));
+}
+
+TEST(Util_Tests, Mac_Address_Test)
+{
+    unsigned char wrong_mac[6] = {6,6,6,9,9,9};
+    unsigned char mac[6] = {6,6,6,9,9,9};
+
+    EXPECT_GT(MACAddressUtility::GetMACAddress(mac), -1);
+    EXPECT_NE(memcmp(wrong_mac, mac, 6), 0);
+}
+
+TEST(Util_Tests, Generate_Encryption_Key_Test)
+{
+    unsigned char key[8] = {0};
+    EXPECT_EQ(generic_utils::crypto::generate_encryption_key(key), true);
+}
 
 int main(int argc, char *argv[])
 {
@@ -31,14 +53,6 @@ int main(int argc, char *argv[])
         tabs = tabs;
     }
 
-    unsigned char mac[6] = {6,6,6,9,9,9};
-
-    if (MACAddressUtility::GetMACAddress(mac) > -1)
-    {
-        std::cout << std::hex << (unsigned int)mac[0] << "-" << std::hex << (unsigned int)mac[1] << "-" << std::hex << (unsigned int)mac[2]
-                  << "-" << std::hex << (unsigned int)mac[3] << "-" << std::hex << (unsigned int)mac[4] << "-" << std::hex << (unsigned int)mac[5]
-                  << std::endl;
-    }
-
-    //return a.exec();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

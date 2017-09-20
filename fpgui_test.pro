@@ -19,7 +19,9 @@ SOURCES += \
     fpgui_test.cpp \
     globals.cpp \
     settings.cpp \
-    mac_util.cpp
+    mac_util.cpp \
+    simplecrypt.cpp \
+    utils.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -35,4 +37,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     globals.h \
     settings.h \
-    mac_util.h
+    mac_util.h \
+    simplecrypt.h \
+    utils.h
