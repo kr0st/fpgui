@@ -5,6 +5,10 @@
 
 #include <utils.h>
 #include <mac_util.h>
+#include <simplecrypt.h>
+
+#include <QString>
+#include <QByteArray>
 
 namespace generic_utils {
 
@@ -25,6 +29,37 @@ std::string get_username()
 }
 
 namespace crypto {
+
+static QByteArray get_salt(unsigned char* key_64bit)
+{
+    unsigned char seed = 0;
+    for (int i = 0; i < 8; ++i)
+        seed = (seed ^ key_64bit[i]);
+    qsrand(seed);
+
+    QByteArray salt;
+    for (int i = 0; i < 50; ++i)
+        salt.append(qrand());
+
+    return salt;
+}
+
+bool is_password_encrypted(std::string& password, unsigned char* key_64bit);
+
+std::string encrypt_password(std::string& cleartext_password, unsigned char* key_64bit)
+{
+    QString encrypted;
+    if (!key_64bit)
+        return "";
+
+    QByteArray salty_pass = get_salt(key_64bit);
+
+    SimpleCrypt crypto(*((quint64*)key_64bit));
+
+    encrypted = crypto.encryptToString(salty_pass.toBase64());
+}
+
+std::string decrypt_password(std::string& encrypted_password, unsigned char* key_64bit);
 
 bool generate_encryption_key(unsigned char* generated_key_64bit)
 {
