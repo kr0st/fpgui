@@ -8,6 +8,7 @@
 #include <settings.h>
 #include <mac_util.h>
 #include <utils.h>
+#include <simplecrypt.h>
 
 #include <gtest/gtest.h>
 
@@ -25,10 +26,22 @@ TEST(Util_Tests, Mac_Address_Test)
     EXPECT_NE(memcmp(wrong_mac, mac, 6), 0);
 }
 
-TEST(Util_Tests, Generate_Encryption_Key_Test)
+TEST(Util_Tests, Encryption_Test)
 {
     unsigned char key[8] = {0};
     EXPECT_EQ(generic_utils::crypto::generate_encryption_key(key), true);
+    SimpleCrypt crypto(*((quint64*)key));
+
+    QString cypher = crypto.encryptToString(QString("plaintext"));
+    EXPECT_NE(cypher.compare("plaintext"), 0);
+
+    QString plaintext = crypto.decryptToString(cypher);
+    EXPECT_EQ(plaintext.compare("plaintext"), 0);
+
+    key[3] = 0;
+    crypto.setKey(*((quint64*)key));
+    plaintext = crypto.decryptToString(cypher);
+    EXPECT_NE(plaintext.compare("plaintext"), 0);
 }
 
 int main(int argc, char *argv[])

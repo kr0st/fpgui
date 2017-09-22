@@ -60,6 +60,37 @@ void write_tab_config(const std::vector<Tab_Configuration>& tab_config, QSetting
     settings.endArray();
 }
 
+Db_Configuration read_db_config(QSettings& settings)
+{
+    Db_Configuration db_config;
+    std::string section(fpgui::settings::db_section_name);
+    section += '/';
+
+    db_config.hostname = settings.value(QString((section + fpgui::settings::db_host_setting).c_str())).toString().toStdString();
+    db_config.username = settings.value(QString((section + fpgui::settings::db_user_setting).c_str())).toString().toStdString();
+    db_config.collection = settings.value(QString((section + fpgui::settings::db_collection_setting).c_str())).toString().toStdString();
+    db_config.password = settings.value(QString((section + fpgui::settings::db_password_setting).c_str())).toString().toStdString();
+
+    db_config.polling_interval = settings.value(QString((section + fpgui::settings::db_polling_interval_setting).c_str())).toInt();
+    db_config.port = settings.value(QString((section + fpgui::settings::db_port_setting).c_str())).toInt();
+
+    return db_config;
+}
+
+void write_db_config(Db_Configuration& db_config, QSettings& settings)
+{
+    std::string section(fpgui::settings::db_section_name);
+    section += '/';
+
+    settings.setValue(QString((section + fpgui::settings::db_host_setting).c_str()), db_config.hostname.c_str());
+    settings.setValue(QString((section + fpgui::settings::db_user_setting).c_str()), db_config.username.c_str());
+    settings.setValue(QString((section + fpgui::settings::db_collection_setting).c_str()), db_config.collection.c_str());
+    settings.setValue(QString((section + fpgui::settings::db_password_setting).c_str()), db_config.password.c_str());
+
+    settings.setValue(QString((section + fpgui::settings::db_polling_interval_setting).c_str()), db_config.polling_interval);
+    settings.setValue(QString((section + fpgui::settings::db_port_setting).c_str()), db_config.port);
+}
+
 void write_default_settigs(QSettings& settings)
 {
     std::vector<Tab_Configuration> tabs;
@@ -107,6 +138,13 @@ void write_default_settigs(QSettings& settings)
     tab_config.size = 0;
     tabs.push_back(tab_config);
 
+    Db_Configuration db_config;
+    db_config.collection = "fplog.logs";
+    db_config.hostname = "127.0.0.1";
+    db_config.port = 27017;
+    db_config.polling_interval = 1000;
+
+    write_db_config(db_config, settings);
     write_tab_config(tabs, settings);
 }
 

@@ -13,11 +13,12 @@ extern const char* domain;
 extern const char* application_section_name;
 
 extern const char* db_section_name;
-extern const char* data_polling_interval_setting;
-extern const char* db_host;
-extern const char* db_port;
-extern const char* db_user;
-extern const char* db_password;
+extern const char* db_polling_interval_setting;
+extern const char* db_host_setting;
+extern const char* db_collection_setting;
+extern const char* db_port_setting;
+extern const char* db_user_setting;
+extern const char* db_password_setting;
 
 extern const char* tabs_section_name;
 extern const char* tabs_array_name;
