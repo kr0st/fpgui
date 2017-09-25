@@ -30,7 +30,7 @@ std::string get_username()
 
 namespace crypto {
 
-static QByteArray get_salt(unsigned char* key_64bit)
+static QByteArray get_salt(unsigned char* key_64bit, int salt_size_bytes = 50)
 {
     unsigned char seed = 0;
     for (int i = 0; i < 8; ++i)
@@ -38,28 +38,90 @@ static QByteArray get_salt(unsigned char* key_64bit)
     qsrand(seed);
 
     QByteArray salt;
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < salt_size_bytes; ++i)
         salt.append(qrand());
 
     return salt;
 }
 
-bool is_password_encrypted(std::string& password, unsigned char* key_64bit);
+bool is_string_encrypted(std::string& str, unsigned char* key_64bit, int salt_size_bytes);
 
-std::string encrypt_password(std::string& cleartext_password, unsigned char* key_64bit)
+std::string encrypt_string(std::string& cleartext, unsigned char* key_64bit, int salt_size_bytes)
 {
-    QString encrypted;
-    if (!key_64bit)
+    if (!key_64bit || (salt_size_bytes < 2))
         return "";
 
-    QByteArray salty_pass = get_salt(key_64bit);
+    QByteArray salty_pass = get_salt(key_64bit, salt_size_bytes);
+    short clear_size = (short)cleartext.length();
+    int salt_size = salty_pass.length();
+    if ((salt_size != salt_size_bytes) || (clear_size <= 0))
+        return "";
+
+    salty_pass[0] = (salty_pass[0] ^ ((unsigned char*)&clear_size)[0]);
+    salty_pass[1] = (salty_pass[1] ^ ((unsigned char*)&clear_size)[1]);
+
+    if ((salt_size - 2) > clear_size)
+    {
+        for (int i = 0; i < clear_size; ++i)
+            salty_pass[i + 2] = (salty_pass[i + 2] ^ cleartext[i]);
+    }
+    else
+    {
+        for (int i = 2; i < salt_size; ++i)
+            salty_pass[i] = (salty_pass[i] ^ cleartext[i - 2]);
+
+        for (int i = (salt_size - 2); i < clear_size; ++i)
+            salty_pass.append(cleartext[i]);
+    }
 
     SimpleCrypt crypto(*((quint64*)key_64bit));
+    QString encrypted(crypto.encryptToString(salty_pass.toBase64()));
 
-    encrypted = crypto.encryptToString(salty_pass.toBase64());
+    return encrypted.toStdString();
 }
 
-std::string decrypt_password(std::string& encrypted_password, unsigned char* key_64bit);
+std::string decrypt_string(std::string& encrypted, unsigned char* key_64bit, int salt_size_bytes, bool *error_condition)
+{
+    bool failed = true;
+    if (error_condition)
+        *error_condition = failed;
+
+    if (!key_64bit || (salt_size_bytes < 2) || (encrypted.length() == 0))
+        return "";
+
+    QByteArray salt(get_salt(key_64bit, salt_size_bytes));
+    if (salt.length() != salt_size_bytes)
+        return "";
+
+    SimpleCrypt crypto(*((quint64*)key_64bit));
+    QString decrypted(crypto.decryptToString(QString(encrypted.c_str())));
+
+    QByteArray cleartext(QByteArray::fromBase64(decrypted.toStdString().c_str()));
+    if (cleartext.length() < salt_size_bytes)
+        return "";
+
+    short clear_size = 0;
+    ((unsigned char*)clear_size)[0] = (cleartext[0] ^ salt[0]);
+    ((unsigned char*)clear_size)[1] = (cleartext[1] ^ salt[1]);
+
+    if (clear_size < 0)
+        return "";
+
+    std::string result;
+    result.resize((size_t)clear_size);
+
+    for (int i = 0; i < clear_size; ++i)
+    {
+        if ((i + 2) < salt_size_bytes)
+            result[i] = (cleartext[i + 2] ^ salt[i + 2]);
+        else
+            result[i] = cleartext[i + 2];
+    }
+
+    failed = false;
+    if (error_condition)
+        *error_condition = failed;
+}
 
 bool generate_encryption_key(unsigned char* generated_key_64bit)
 {
