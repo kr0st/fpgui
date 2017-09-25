@@ -101,8 +101,8 @@ std::string decrypt_string(std::string& encrypted, unsigned char* key_64bit, int
         return "";
 
     short clear_size = 0;
-    ((unsigned char*)clear_size)[0] = (cleartext[0] ^ salt[0]);
-    ((unsigned char*)clear_size)[1] = (cleartext[1] ^ salt[1]);
+    ((unsigned char*)&clear_size)[0] = (cleartext[0] ^ salt[0]);
+    ((unsigned char*)&clear_size)[1] = (cleartext[1] ^ salt[1]);
 
     if (clear_size < 0)
         return "";
@@ -121,6 +121,8 @@ std::string decrypt_string(std::string& encrypted, unsigned char* key_64bit, int
     failed = false;
     if (error_condition)
         *error_condition = failed;
+
+    return result;
 }
 
 bool generate_encryption_key(unsigned char* generated_key_64bit)

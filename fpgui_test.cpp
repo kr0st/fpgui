@@ -44,6 +44,18 @@ TEST(Util_Tests, Encryption_Test)
     EXPECT_NE(plaintext.compare("plaintext"), 0);
 }
 
+TEST(Util_Tests, Encryption_With_Salt_Test)
+{
+    unsigned char key[8] = {0};
+    EXPECT_EQ(generic_utils::crypto::generate_encryption_key(key), true);
+
+    std::string cleartext("a Test password 123!@?");
+    std::string cypher = generic_utils::crypto::encrypt_string(cleartext, key);
+
+    std::string plaintext = generic_utils::crypto::decrypt_string(cypher, key);
+    EXPECT_EQ(plaintext.compare(cleartext), 0);
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
