@@ -30,7 +30,9 @@ SOURCES += \
 DEFINES += QT_DEPRECATED_WARNINGS \
            QT_NO_DEBUG_OUTPUT \
            QT_NO_INFO_OUTPUT \
-           QT_NO_WARNING_OUTPUT
+           QT_NO_WARNING_OUTPUT \
+           QT_MESSAGELOGCONTEXT
+
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.

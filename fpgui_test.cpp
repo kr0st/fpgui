@@ -19,7 +19,7 @@
 
 TEST(Util_Tests, Short_Size)
 {
-    EXPECT_EQ(2, sizeof(unsigned short));
+    EXPECT_EQ((size_t)2, sizeof(unsigned short));
 }
 
 TEST(Util_Tests, Mac_Address)
@@ -68,10 +68,10 @@ TEST(Encryption_Tests, With_No_Salt)
 
     std::string cleartext("a Test password 123!@?");
     std::string cypher = generic_utils::crypto::encrypt_string(cleartext, key, 0);
-    EXPECT_EQ(cypher.length(), 0);
+    EXPECT_EQ(cypher.length(), (size_t)0);
 
     std::string plaintext = generic_utils::crypto::decrypt_string(cypher, key, 0);
-    EXPECT_EQ(cypher.length(), 0);
+    EXPECT_EQ(cypher.length(), (size_t)0);
 }
 
 TEST(Encryption_Tests, With_Min_Salt)
@@ -143,15 +143,17 @@ TEST(Encryption_Tests, Is_String_Encrypted)
     }
 }
 
-void MessageHandler(QtMsgType type, const QMessageLogContext & context, const QString & msg)
+void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
 {
     static QMutex mutex;
     mutex.lock();
 
     QDateTime dateTime(QDateTime::currentDateTime());
-
     QString timeStr(dateTime.toString("dd-MM-yyyy HH:mm:ss:zzz"));
-    QString contextString(QString("(%1, %2)").arg(context.file).arg(context.line));
+
+    QString contextString;
+    if (context.file && (strlen(context.file) > 0) && (context.line > 0))
+        contextString = QString("(%1, %2)").arg(context.file).arg(context.line);
 
     static QFile outFile("fpgui.log");
     if (!outFile.isOpen())

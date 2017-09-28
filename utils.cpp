@@ -46,7 +46,7 @@ static QByteArray get_salt(unsigned char* key_64bit, int salt_size_bytes = 50)
 
 bool is_string_encrypted(std::string& str, unsigned char* key_64bit, int salt_size_bytes)
 {
-    if (str.length() < salt_size_bytes)
+    if (str.length() < (size_t)salt_size_bytes)
         return false;
 
     bool failed = true;
