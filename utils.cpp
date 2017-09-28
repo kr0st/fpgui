@@ -62,7 +62,7 @@ std::string encrypt_string(std::string& cleartext, unsigned char* key_64bit, int
     QByteArray salty_pass = get_salt(key_64bit, salt_size_bytes);
     short clear_size = (short)cleartext.length();
     int salt_size = salty_pass.length();
-    if ((salt_size != salt_size_bytes) || (clear_size <= 0))
+    if (salt_size != salt_size_bytes)
         return "";
 
     salty_pass[0] = (salty_pass[0] ^ ((unsigned char*)&clear_size)[0]);

@@ -1,5 +1,6 @@
 #include <settings.h>
 #include <globals.h>
+#include <utils.h>
 
 namespace fpgui {
 namespace settings {
@@ -85,6 +86,13 @@ void write_db_config(Db_Configuration& db_config, QSettings& settings)
     settings.setValue(QString((section + fpgui::settings::db_host_setting).c_str()), db_config.hostname.c_str());
     settings.setValue(QString((section + fpgui::settings::db_user_setting).c_str()), db_config.username.c_str());
     settings.setValue(QString((section + fpgui::settings::db_collection_setting).c_str()), db_config.collection.c_str());
+
+    unsigned char key[8] = {0};
+    generic_utils::crypto::generate_encryption_key(key);
+
+    if (!generic_utils::crypto::is_string_encrypted(db_config.password, key))
+        db_config.password = generic_utils::crypto::encrypt_string(db_config.password, key);
+
     settings.setValue(QString((section + fpgui::settings::db_password_setting).c_str()), db_config.password.c_str());
 
     settings.setValue(QString((section + fpgui::settings::db_polling_interval_setting).c_str()), db_config.polling_interval);

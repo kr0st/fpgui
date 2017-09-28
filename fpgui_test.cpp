@@ -59,6 +59,30 @@ TEST(Encryption_Tests, With_Salt)
 
     std::string plaintext = generic_utils::crypto::decrypt_string(cypher, key);
     EXPECT_EQ(plaintext.compare(cleartext), 0);
+
+    cleartext = "";
+    cypher = generic_utils::crypto::encrypt_string(cleartext, key);
+
+    plaintext = generic_utils::crypto::decrypt_string(cypher, key);
+    EXPECT_EQ(plaintext.compare(cleartext), 0);
+
+    cleartext = "U";
+    cypher = generic_utils::crypto::encrypt_string(cleartext, key);
+
+    plaintext = generic_utils::crypto::decrypt_string(cypher, key);
+    EXPECT_EQ(plaintext.compare(cleartext), 0);
+
+    cleartext = "ab";
+    cypher = generic_utils::crypto::encrypt_string(cleartext, key);
+
+    plaintext = generic_utils::crypto::decrypt_string(cypher, key);
+    EXPECT_EQ(plaintext.compare(cleartext), 0);
+
+    cleartext = "abc";
+    cypher = generic_utils::crypto::encrypt_string(cleartext, key);
+
+    plaintext = generic_utils::crypto::decrypt_string(cypher, key);
+    EXPECT_EQ(plaintext.compare(cleartext), 0);
 }
 
 TEST(Encryption_Tests, With_No_Salt)
