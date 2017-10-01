@@ -44,7 +44,15 @@ static QByteArray get_salt(unsigned char* key_64bit, int salt_size_bytes = 50)
     return salt;
 }
 
-bool is_string_encrypted(std::string& str, unsigned char* key_64bit, int salt_size_bytes);
+bool is_string_encrypted(std::string& str, unsigned char* key_64bit, int salt_size_bytes)
+{
+    if (str.length() < (size_t)salt_size_bytes)
+        return false;
+
+    bool failed = true;
+    decrypt_string(str, key_64bit, salt_size_bytes, &failed);
+    return !failed;
+}
 
 std::string encrypt_string(std::string& cleartext, unsigned char* key_64bit, int salt_size_bytes)
 {
@@ -54,7 +62,7 @@ std::string encrypt_string(std::string& cleartext, unsigned char* key_64bit, int
     QByteArray salty_pass = get_salt(key_64bit, salt_size_bytes);
     short clear_size = (short)cleartext.length();
     int salt_size = salty_pass.length();
-    if ((salt_size != salt_size_bytes) || (clear_size <= 0))
+    if (salt_size != salt_size_bytes)
         return "";
 
     salty_pass[0] = (salty_pass[0] ^ ((unsigned char*)&clear_size)[0]);
