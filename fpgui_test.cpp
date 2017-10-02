@@ -170,6 +170,18 @@ TEST(Encryption_Tests, Is_String_Encrypted)
     }
 }
 
+TEST(Util_Tests, Iso_Timestamp_Conversion)
+{
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.666+0200"), 1506943260666);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), 1506943260668);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-"), 0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+0300"), 0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms(""), 0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+02"), 0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+987459276349872364i23gkjdshfgkjsdhgfkjsahvbfsdyif867wiuytg4234"), 0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), 1506943260668);
+}
+
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
 {
     static QMutex mutex;
@@ -191,32 +203,6 @@ void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString
     std::cout << timeStr.toStdString() << " " << contextString.toStdString() << ": " << msg.toStdString() << std::endl;
 
     mutex.unlock();
-}
-
-// Returns number of days since civil 1970-01-01.  Negative values indicate
-//    days prior to 1970-01-01.
-// Preconditions:  y-m-d represents a date in the civil (Gregorian) calendar
-//                 m is in [1, 12]
-//                 d is in [1, last_day_of_month(y, m)]
-//                 y is "approximately" in
-//                   [numeric_limits<Int>::min()/366, numeric_limits<Int>::max()/366]
-//                 Exact range of validity is:
-//                 [civil_from_days(numeric_limits<Int>::min()),
-//                  civil_from_days(numeric_limits<Int>::max()-719468)]
-template <class Int>
-Int
-days_from_civil(Int y, unsigned m, unsigned d) noexcept
-{
-    static_assert(std::numeric_limits<unsigned>::digits >= 18,
-             "This algorithm has not been ported to a 16 bit unsigned integer");
-    static_assert(std::numeric_limits<Int>::digits >= 20,
-             "This algorithm has not been ported to a 16 bit signed integer");
-    y -= m <= 2;
-    Int era = (y >= 0 ? y : y-399) / 400;
-    unsigned yoe = static_cast<unsigned>(y - era * 400);      // [0, 399]
-    unsigned doy = (153*(m + (m > 2 ? -3 : 9)) + 2)/5 + d-1;  // [0, 365]
-    unsigned doe = yoe * 365 + yoe/4 - yoe/100 + doy;         // [0, 146096]
-    return era * 146097 + static_cast<Int>(doe) - 719468;
 }
 
 int main(int argc, char *argv[])
@@ -243,50 +229,6 @@ int main(int argc, char *argv[])
         tabs = tabs;
     }
 
-    auto tp(std::chrono::system_clock::now());
-    std::string res;
-
-    std::string datetime(date::format("%FT%T", tp));
-    std::string tz_only(date::format("%z", tp));
-
-    datetime += tz_only;
-    for (auto it(datetime.begin()); it != datetime.end(); it++)
-    {
-        if ((*it == '.') || (*it == ','))
-        {
-            it += 4;
-
-            res.append(datetime.begin(), it);
-            res += "+0300";
-
-            std::cout << res << std::endl;
-            break;
-        }
-    }
-
-    //days * 24 * 3600 + tp2.count() - offset.count() * 60
-    auto days = days_from_civil(2017, 10, 1);
-
-    std::chrono::minutes offset(0);
-    std::chrono::seconds tp2(0);
-
-    {
-        std::stringstream ss(res);
-        date::from_stream(ss, "%FT%T", tp2, (std::string*)(0), &offset);
-    }
-
-    std::string::iterator it(res.end());
-    it -= 5;
-    res.erase(res.begin(), it);
-
-    {
-        std::stringstream ss(res);
-        date::from_stream(ss, "%z", tp2, (std::string*)(0), &offset);
-    }
-
-    std::cout << "date from stream:" << tp2.count() << ':' << offset.count() * 60 << std::endl;
-
-    return 0;
-    //::testing::InitGoogleTest(&argc, argv);
-    //return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

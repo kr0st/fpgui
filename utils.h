@@ -6,6 +6,12 @@ namespace generic_utils {
 
 std::string get_username();
 
+namespace date_time {
+
+unsigned long long iso_timestamp_to_ms(const std::string& iso_8601_timestamp);
+
+}
+
 namespace crypto {
 
 bool is_string_encrypted(std::string& str, unsigned char* key_64bit, int salt_size_bytes = 50);
