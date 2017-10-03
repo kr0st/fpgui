@@ -172,14 +172,14 @@ TEST(Encryption_Tests, Is_String_Encrypted)
 
 TEST(Util_Tests, Iso_Timestamp_Conversion)
 {
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.666+0200"), 1506943260666);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), 1506943260668);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-"), 0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+0300"), 0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms(""), 0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+02"), 0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+987459276349872364i23gkjdshfgkjsdhgfkjsahvbfsdyif867wiuytg4234"), 0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), 1506950460668);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.666+0200"), (unsigned)1506943260666);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), (unsigned)1506943260668);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-"), (unsigned)0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+0300"), (unsigned)0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms(""), (unsigned)0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+02"), (unsigned)0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+987459276349872364i23gkjdshfgkjsdhgfkjsahvbfsdyif867wiuytg4234"), (unsigned)0);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned)1506950460668);
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)

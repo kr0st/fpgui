@@ -30,6 +30,22 @@ std::string get_username()
 #endif
 }
 
+void ReplaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace)
+{
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos)
+    {
+         subject.replace(pos, search.length(), replace);
+         pos += replace.length();
+    }
+}
+
+std::string& escape_quotes(std::string& str)
+{
+    ReplaceStringInPlace(str, "\"", "\\\"");
+    return str;
+}
+
 namespace date_time {
 
 // Returns number of days since civil 1970-01-01.  Negative values indicate

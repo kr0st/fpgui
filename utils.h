@@ -5,6 +5,7 @@
 namespace generic_utils {
 
 std::string get_username();
+std::string& escape_quotes(std::string& str);
 
 namespace date_time {
 
