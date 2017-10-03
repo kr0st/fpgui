@@ -179,7 +179,7 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms(""), 0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+02"), 0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+987459276349872364i23gkjdshfgkjsdhgfkjsahvbfsdyif867wiuytg4234"), 0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), 1506943260668);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), 1506950460668);
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
@@ -228,6 +228,8 @@ int main(int argc, char *argv[])
         std::vector<fpgui::settings::Tab_Configuration> tabs = fpgui::settings::read_tab_config(temp_settings);
         tabs = tabs;
     }
+
+    fpgui::settings::make_config_path();
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

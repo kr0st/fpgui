@@ -1,3 +1,7 @@
+#include <QCoreApplication>
+#include <QString>
+#include <QDir>
+
 #include <settings.h>
 #include <globals.h>
 #include <utils.h>
@@ -5,6 +9,31 @@
 namespace fpgui {
 namespace settings {
 
+std::string get_config_path()
+{
+    char *home = getenv("HOME");
+    QString path = home;
+
+    path += "/.config/";
+    path += QCoreApplication::organizationDomain();
+
+    return path.toStdString();
+}
+
+void make_config_path()
+{
+    char *home = getenv("HOME");
+    QString path = home;
+
+    path +="/.config/";
+    if (!QDir(path).exists())
+        QDir().mkdir(path);
+
+    path += QCoreApplication::organizationDomain();
+
+    if (!QDir(path).exists())
+        QDir().mkdir(path);
+}
 
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings)
 {

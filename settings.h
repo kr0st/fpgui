@@ -30,6 +30,9 @@ struct Db_Configuration
     int polling_interval;
 };
 
+std::string get_config_path();
+void make_config_path();
+
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings);
 void write_tab_config(const std::vector<Tab_Configuration>& tab_config, QSettings& settings);
 
