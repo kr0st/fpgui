@@ -21,7 +21,8 @@ SOURCES += \
     settings.cpp \
     mac_util.cpp \
     simplecrypt.cpp \
-    utils.cpp
+    utils.cpp \
+    teapot.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -44,4 +45,5 @@ HEADERS += \
     settings.h \
     mac_util.h \
     simplecrypt.h \
-    utils.h
+    utils.h \
+    teapot.h
