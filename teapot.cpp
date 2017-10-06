@@ -6,6 +6,7 @@
 #include <utils.h>
 #include <teapot.h>
 #include <chaiscript/chaiscript.hpp>
+#include <chaiscript/chaiscript_stdlib.hpp>
 
 namespace fpgui {
 namespace chai {
