@@ -173,19 +173,19 @@ TEST(Encryption_Tests, Is_String_Encrypted)
 
 TEST(Util_Tests, Iso_Timestamp_Conversion)
 {
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.666+0200"), (unsigned)1506943260666);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), (unsigned)1506943260668);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.666+0200"), (unsigned long long)1506943260666);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0200"), (unsigned long long)1506943260668);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-"), (unsigned)0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+0300"), (unsigned)0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms(""), (unsigned)0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+02"), (unsigned)0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+987459276349872364i23gkjdshfgkjsdhgfkjsahvbfsdyif867wiuytg4234"), (unsigned)0);
-    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned)1506950460668);
+    EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned long long)1506950460668);
 }
 
 TEST(Chai_Tests, Basic_Sorting)
 {
-    QFile script_file((fpgui::settings::get_config_path() + fpgui::settings::chaiscript_file_name).c_str());
+    QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name).c_str());
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
@@ -223,7 +223,7 @@ TEST(Chai_Tests, Basic_Sorting)
 
     script_file.close();
 
-    fpgui::chai::load_from_file(fpgui::settings::get_config_path() + fpgui::settings::chaiscript_file_name);
+    fpgui::chai::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name);
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
