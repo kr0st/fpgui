@@ -34,8 +34,8 @@ class Chai_Impl
             std::string log_msg1_escaped(msg1);
             std::string log_msg2_escaped(msg2);
 
-            fpgui::generic_util::escape_quotes(log_msg1_escaped);
-            fpgui::generic_util::escape_quotes(log_msg2_escaped);
+            generic_utils::escape_quotes(log_msg1_escaped);
+            generic_utils::escape_quotes(log_msg2_escaped);
 
             std::string std_format("log_msg1=\"%s\";\nfplog_message1 = from_json(log_msg1);\nlog_msg2=\"%s\";\nfplog_message2 = from_json(log_msg2);\n");
 
@@ -82,7 +82,7 @@ class Chai_Impl
         {
             std::lock_guard<std::recursive_mutex> lock(mutex_);
 
-            chai_ = new chaiscript::ChaiScript(chaiscript::Std_Lib::library());
+            chai_ = new chaiscript::ChaiScript();
             chai_->add(chaiscript::var(std::ref(compare_result_)), "compare_result");
             chai_->add(chaiscript::fun(&generic_utils::date_time::iso_timestamp_to_ms), "iso_timestamp_to_ms");
         }

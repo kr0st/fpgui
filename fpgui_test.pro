@@ -1,7 +1,7 @@
 QT += core
 QT -= gui
 
-CONFIG += c++11
+CONFIG += c++14
 
 TARGET = fpgui_test
 CONFIG += console
@@ -32,7 +32,8 @@ DEFINES += QT_DEPRECATED_WARNINGS \
            QT_NO_DEBUG_OUTPUT \
            QT_NO_INFO_OUTPUT \
            QT_NO_WARNING_OUTPUT \
-           QT_MESSAGELOGCONTEXT
+           QT_MESSAGELOGCONTEXT \
+           _LINUX
 
 
 # You can also make your code fail to compile if you use deprecated APIs.
