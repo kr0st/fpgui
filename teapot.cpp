@@ -1,3 +1,8 @@
+#include <memory>
+#include <mutex>
+#include <sstream>
+#include <fstream>
+
 #include <utils.h>
 #include <teapot.h>
 #include <chaiscript/chaiscript.hpp>
@@ -78,6 +83,7 @@ class Chai_Impl
 
             chai_ = new chaiscript::ChaiScript(chaiscript::Std_Lib::library());
             chai_->add(chaiscript::var(std::ref(compare_result_)), "compare_result");
+            chai_->add(chaiscript::fun(&generic_utils::date_time::iso_timestamp_to_ms), "iso_timestamp_to_ms");
         }
 
         void deinit()
@@ -89,6 +95,30 @@ class Chai_Impl
 
         std::string chai_script_;
 };
+
+static std::recursive_mutex g_chai_mutex;
+static std::auto_ptr<Chai_Impl> g_chai;
+
+void load_from_file(const std::string& filename)
+{
+    std::lock_guard<std::recursive_mutex> lock(g_chai_mutex);
+
+    std::ifstream infile(filename);
+    std::string line, script;
+
+    while (std::getline(infile, line))
+        script += (line + "\n");
+
+    g_chai.reset(new Chai_Impl(script.c_str()));
+}
+
+int compare_json_strings(const std::string& json_str1, const std::string& json_str2)
+{
+    if (!g_chai.get())
+        return 0;
+
+    return g_chai->compare(json_str1, json_str2);
+}
 
 }
 }

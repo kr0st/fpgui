@@ -14,6 +14,7 @@
 #include <mac_util.h>
 #include <utils.h>
 #include <simplecrypt.h>
+#include <teapot.h>
 
 #include <gtest/gtest.h>
 
@@ -180,6 +181,49 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+02"), (unsigned)0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("+987459276349872364i23gkjdshfgkjsdhgfkjsahvbfsdyif867wiuytg4234"), (unsigned)0);
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned)1506950460668);
+}
+
+TEST(Chai_Tests, Basic_Sorting)
+{
+    QFile script_file((fpgui::settings::get_config_path() + fpgui::settings::chaiscript_file_name).c_str());
+    script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
+    QTextStream toscriptfile(&script_file);
+
+    toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1.timestamp)" << "\n";
+    toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2.timestamp)" << "\n";
+    toscriptfile << "if (ts1 > ts2)" << "\n";
+    toscriptfile << "{" << "\n";
+    toscriptfile << " compare_result = 1" << "\n";
+    toscriptfile << "}" << "\n";
+    toscriptfile << "else" << "\n";
+    toscriptfile << "{" << "\n";
+    toscriptfile << " if (ts1 < ts2)" << "\n";
+    toscriptfile << " {" << "\n";
+    toscriptfile << "  compare_result = -1" << "\n";
+    toscriptfile << " }" << "\n";
+    toscriptfile << " else" << "\n";
+    toscriptfile << " {" << "\n";
+    toscriptfile << "  if (fplog_message1.sequence > fplog_message2.sequence)" << "\n";
+    toscriptfile << "  {" << "\n";
+    toscriptfile << "   compare_result = 1" << "\n";
+    toscriptfile << "  }" << "\n";
+    toscriptfile << "  else" << "\n";
+    toscriptfile << "  {" << "\n";
+    toscriptfile << "   if (fplog_message1.sequence < fplog_message2.sequence)" << "\n";
+    toscriptfile << "   {" << "\n";
+    toscriptfile << "    compare_result = -1" << "\n";
+    toscriptfile << "   }" << "\n";
+    toscriptfile << "   else" << "\n";
+    toscriptfile << "   {" << "\n";
+    toscriptfile << "    compare_result = 0" << "\n";
+    toscriptfile << "   }" << "\n";
+    toscriptfile << "  }" << "\n";
+    toscriptfile << " }" << "\n";
+    toscriptfile << "}" << "\n";
+
+    script_file.close();
+
+    fpgui::chai::load_from_file(fpgui::settings::get_config_path() + fpgui::settings::chaiscript_file_name);
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)

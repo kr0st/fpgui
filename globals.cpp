@@ -9,6 +9,8 @@ const char* test_application_name = "fpgui_test";
 const char* author = "kr0st";
 const char* domain = "bioreactor.me";
 
+const char* chaiscript_file_name = "sorting.chai";
+
 const char* application_section_name = "application_settings";
 
 const char* db_section_name = "mongodb_settings";
