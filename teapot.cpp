@@ -3,6 +3,8 @@
 #include <sstream>
 #include <fstream>
 
+#include <QtDebug>
+
 #include <utils.h>
 #include <teapot.h>
 #include <chaiscript/chaiscript.hpp>
@@ -38,6 +40,7 @@ class Chai_Impl
             generic_utils::escape_quotes(log_msg2_escaped);
 
             std::string std_format("log_msg1=\"%s\";\nfplog_message1 = from_json(log_msg1);\nlog_msg2=\"%s\";\nfplog_message2 = from_json(log_msg2);\n");
+            int retries = 0;
 
         retry_parsing:
 
@@ -57,10 +60,15 @@ class Chai_Impl
             {
                 chai_->eval(full_script);
             }
-            catch (chaiscript::exception::eval_error&)
+            catch (chaiscript::exception::eval_error& err)
             {
                 std_format = "var log_msg1=\"%s\";\nvar fplog_message1 = from_json(log_msg1);\nvar log_msg2=\"%s\";\nvar fplog_message2 = from_json(log_msg2);\n";
-                goto retry_parsing;
+                retries++;
+
+                if (retries == 1)
+                    goto retry_parsing;
+                else
+                    qCritical() << err.reason.c_str();
             }
             catch (std::exception& e)
             {

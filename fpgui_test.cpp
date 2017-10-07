@@ -156,7 +156,7 @@ TEST(Encryption_Tests, Is_String_Encrypted)
     qsrand(current_time.msecsSinceStartOfDay());
 
     int len_min = 5, len_max = 10000;
-    for (int i = 0; i < 100000; ++i)
+    for (int i = 0; i < 10000; ++i)
     {
         int str_len = len_min + qrand() % (len_max - len_min);
         int salt_len = qrand() % len_max;
@@ -189,8 +189,8 @@ TEST(Chai_Tests, Basic_Sorting)
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
-    toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1.timestamp)" << "\n";
-    toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2.timestamp)" << "\n";
+    toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1[\"timestamp\"])" << "\n";
+    toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2[\"timestamp\"])" << "\n";
     toscriptfile << "if (ts1 > ts2)" << "\n";
     toscriptfile << "{" << "\n";
     toscriptfile << " compare_result = 1" << "\n";
@@ -203,13 +203,13 @@ TEST(Chai_Tests, Basic_Sorting)
     toscriptfile << " }" << "\n";
     toscriptfile << " else" << "\n";
     toscriptfile << " {" << "\n";
-    toscriptfile << "  if (fplog_message1.sequence > fplog_message2.sequence)" << "\n";
+    toscriptfile << "  if (fplog_message1[\"sequence\"] > fplog_message2[\"sequence\"])" << "\n";
     toscriptfile << "  {" << "\n";
     toscriptfile << "   compare_result = 1" << "\n";
     toscriptfile << "  }" << "\n";
     toscriptfile << "  else" << "\n";
     toscriptfile << "  {" << "\n";
-    toscriptfile << "   if (fplog_message1.sequence < fplog_message2.sequence)" << "\n";
+    toscriptfile << "   if (fplog_message1[\"sequence\"] < fplog_message2[\"sequence\"])" << "\n";
     toscriptfile << "   {" << "\n";
     toscriptfile << "    compare_result = -1" << "\n";
     toscriptfile << "   }" << "\n";
@@ -224,6 +224,12 @@ TEST(Chai_Tests, Basic_Sorting)
     script_file.close();
 
     fpgui::chai::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name);
+
+    std::string cmp1, cmp2;
+    cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1}";
+    cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.668+0200\", \"sequence\": 2}";
+
+    EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), -1);
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
