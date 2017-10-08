@@ -191,35 +191,14 @@ TEST(Chai_Tests, Basic_Sorting)
 
     toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1[\"timestamp\"])" << "\n";
     toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2[\"timestamp\"])" << "\n";
-    toscriptfile << "if (ts1 > ts2)" << "\n";
+    toscriptfile << "if (ts1 > ts2) { compare_result = 1; return compare_result; }" << "\n";
+    toscriptfile << "if (ts1 < ts2) { compare_result = -1; return compare_result; }" << "\n";
+    toscriptfile << "if (fplog_message1[\"hostname\"] == fplog_message2[\"hostname\"])" << "\n";
     toscriptfile << "{" << "\n";
-    toscriptfile << " compare_result = 1" << "\n";
+    toscriptfile << " if (fplog_message1[\"sequence\"] > fplog_message2[\"sequence\"]) { compare_result = 1; return compare_result; }" << "\n";
+    toscriptfile << " if (fplog_message1[\"sequence\"] < fplog_message2[\"sequence\"]) { compare_result = -1; return compare_result; }" << "\n";
     toscriptfile << "}" << "\n";
-    toscriptfile << "else" << "\n";
-    toscriptfile << "{" << "\n";
-    toscriptfile << " if (ts1 < ts2)" << "\n";
-    toscriptfile << " {" << "\n";
-    toscriptfile << "  compare_result = -1" << "\n";
-    toscriptfile << " }" << "\n";
-    toscriptfile << " else" << "\n";
-    toscriptfile << " {" << "\n";
-    toscriptfile << "  if (fplog_message1[\"sequence\"] > fplog_message2[\"sequence\"])" << "\n";
-    toscriptfile << "  {" << "\n";
-    toscriptfile << "   compare_result = 1" << "\n";
-    toscriptfile << "  }" << "\n";
-    toscriptfile << "  else" << "\n";
-    toscriptfile << "  {" << "\n";
-    toscriptfile << "   if (fplog_message1[\"sequence\"] < fplog_message2[\"sequence\"])" << "\n";
-    toscriptfile << "   {" << "\n";
-    toscriptfile << "    compare_result = -1" << "\n";
-    toscriptfile << "   }" << "\n";
-    toscriptfile << "   else" << "\n";
-    toscriptfile << "   {" << "\n";
-    toscriptfile << "    compare_result = 0" << "\n";
-    toscriptfile << "   }" << "\n";
-    toscriptfile << "  }" << "\n";
-    toscriptfile << " }" << "\n";
-    toscriptfile << "}" << "\n";
+    toscriptfile << "compare_result = 0" << "\n";
 
     script_file.close();
 
@@ -230,6 +209,16 @@ TEST(Chai_Tests, Basic_Sorting)
     cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.668+0200\", \"sequence\": 2}";
 
     EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), -1);
+
+    cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\" }";
+    cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }";
+
+    EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), 1);
+
+    cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }";
+    cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }";
+
+    EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), 0);
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)

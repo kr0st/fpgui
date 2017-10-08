@@ -39,10 +39,7 @@ class Chai_Impl
             generic_utils::escape_quotes(log_msg1_escaped);
             generic_utils::escape_quotes(log_msg2_escaped);
 
-            std::string std_format("log_msg1=\"%s\";\nfplog_message1 = from_json(log_msg1);\nlog_msg2=\"%s\";\nfplog_message2 = from_json(log_msg2);\n");
-            int retries = 0;
-
-        retry_parsing:
+            std::string std_format("var log_msg1=\"%s\";\nvar fplog_message1 = from_json(log_msg1);\nvar log_msg2=\"%s\";\nvar fplog_message2 = from_json(log_msg2);\n");
 
             int chai_len = static_cast<int>(log_msg1_escaped.length() + log_msg2_escaped.length() + 256);
 
@@ -56,19 +53,19 @@ class Chai_Impl
 #endif
             std::string full_script(chai_script + chai_script_);
 
+            static const auto base_state(chai_->get_state());
+            static const auto base_locals(chai_->get_locals());
+
             try
             {
+                chai_->set_state(base_state);
+                chai_->set_locals(base_locals);
+
                 chai_->eval(full_script);
             }
             catch (chaiscript::exception::eval_error& err)
             {
-                std_format = "var log_msg1=\"%s\";\nvar fplog_message1 = from_json(log_msg1);\nvar log_msg2=\"%s\";\nvar fplog_message2 = from_json(log_msg2);\n";
-                retries++;
-
-                if (retries == 1)
-                    goto retry_parsing;
-                else
-                    qCritical() << err.reason.c_str();
+                qCritical() << err.reason.c_str();
             }
             catch (std::exception& e)
             {
