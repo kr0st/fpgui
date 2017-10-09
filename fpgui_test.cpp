@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <algorithm>
 #include <date/date.h>
 
 TEST(Util_Tests, Short_Size)
@@ -183,30 +184,34 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned long long)1506950460668);
 }
 
-TEST(Chai_Tests, Basic_Sorting)
+void prepare_chaiscript_file()
 {
     QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name).c_str());
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
-    toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1[\"timestamp\"])" << "\n";
-    toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2[\"timestamp\"])" << "\n";
-    toscriptfile << "if (ts1 > ts2) { compare_result = 1; return compare_result; }" << "\n";
-    toscriptfile << "if (ts1 < ts2) { compare_result = -1; return compare_result; }" << "\n";
     toscriptfile << "if (fplog_message1[\"hostname\"] == fplog_message2[\"hostname\"])" << "\n";
     toscriptfile << "{" << "\n";
     toscriptfile << " if (fplog_message1[\"sequence\"] > fplog_message2[\"sequence\"]) { compare_result = 1; return compare_result; }" << "\n";
     toscriptfile << " if (fplog_message1[\"sequence\"] < fplog_message2[\"sequence\"]) { compare_result = -1; return compare_result; }" << "\n";
     toscriptfile << "}" << "\n";
+    toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1[\"timestamp\"])" << "\n";
+    toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2[\"timestamp\"])" << "\n";
+    toscriptfile << "if (ts1 > ts2) { compare_result = 1; return compare_result; }" << "\n";
+    toscriptfile << "if (ts1 < ts2) { compare_result = -1; return compare_result; }" << "\n";
     toscriptfile << "compare_result = 0" << "\n";
 
     script_file.close();
+}
 
+TEST(Chai_Tests, Basic_Sorting)
+{
+    prepare_chaiscript_file();
     fpgui::chai::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name);
 
     std::string cmp1, cmp2;
-    cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1}";
-    cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.668+0200\", \"sequence\": 2}";
+    cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\"}";
+    cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.668+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.13\"}";
 
     EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), -1);
 
@@ -219,6 +224,93 @@ TEST(Chai_Tests, Basic_Sorting)
     cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }";
 
     EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), 0);
+
+    std::vector<std::string> correctly_sorted, contender;
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.876+0200\", \"sequence\": 5, \"hostname\":\"192.168.1.12\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\", \"sequence\": 3, \"hostname\":\"192.168.1.11\" }");
+
+    contender.push_back(correctly_sorted[4]);
+    contender.push_back(correctly_sorted[3]);
+    contender.push_back(correctly_sorted[1]);
+    contender.push_back(correctly_sorted[0]);
+    contender.push_back(correctly_sorted[2]);
+
+    std::sort(contender.begin(), contender.end(), [](const std::string& s1, const std::string& s2) {
+        int res = fpgui::chai::compare_json_strings(s1, s2);
+        if ((res < -1) || (res == 0))
+            return false;
+        if (res == -1)
+            return true;
+        return false;
+    });
+
+    for (int i = 0; i < 5; ++i)
+    {
+        EXPECT_EQ(correctly_sorted[i], contender[i]);
+    }
+}
+
+std::string random_timestamp()
+{
+    int y = 2000 + qrand() % 21;
+    int m = 1 + qrand() % 11;
+    int d = 1 + qrand() % 30;
+    int h = qrand() % 23;
+    int min = qrand() % 59;
+    int s = qrand() % 59;
+    int ms = qrand() % 999;
+    int tz = qrand() % 6;
+
+    char timestamp[256];
+    snprintf(timestamp, sizeof(timestamp) - 1, "%04d-%02d-%02dT%02d:%02d:%02d.%03d+%02d00", y, m, d, h, min, s, ms, tz);
+    return timestamp;
+}
+
+TEST(Chai_Tests, Sorting_Performance)
+{
+    prepare_chaiscript_file();
+    fpgui::chai::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name);
+
+    std::vector<std::string> hosts;
+
+    hosts.push_back("192.168.3.8");
+    hosts.push_back("192.168.4.6");
+    hosts.push_back("192.168.1.12");
+    hosts.push_back("192.168.1.10");
+    hosts.push_back("192.168.1.3");
+    hosts.push_back("192.168.5.10");
+    hosts.push_back("192.168.4.41");
+    hosts.push_back("192.168.1.114");
+    hosts.push_back("192.168.2.11");
+    hosts.push_back("192.168.1.12");
+
+    std::vector<std::string> strings;
+    int i = 0;
+
+    for (; i < 100000; ++i)
+    {
+        std::string rnd_msg = "{\"timestamp\":\"" + random_timestamp() + "\", \"sequence\": " + std::to_string(qrand() % 666) + ", \"hostname\":\"" + hosts[qrand() % hosts.size()] + "\" }";
+        strings.push_back(rnd_msg);
+    }
+
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
+    std::sort(strings.begin(), strings.end(), [](const std::string& s1, const std::string& s2) {
+        int res = fpgui::chai::compare_json_strings(s1, s2);
+        if ((res < -1) || (res == 0))
+            return false;
+        if (res == -1)
+            return true;
+        return false;
+    });
+
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+    std::cout << "Sorted " << i << " strings using ChaiScript in " << duration << " ms." << std::endl;
+    std::cout << "Performance test ended." << std::endl;
 }
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
