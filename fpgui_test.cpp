@@ -14,7 +14,7 @@
 #include <mac_util.h>
 #include <utils.h>
 #include <simplecrypt.h>
-#include <teapot.h>
+#include <scripting.h>
 
 #include <gtest/gtest.h>
 
