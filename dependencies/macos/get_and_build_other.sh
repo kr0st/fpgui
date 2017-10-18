@@ -36,11 +36,13 @@ mkdir ../build
 curl -L --cacert ./cacert.crt -o ../build/date.zip https://github.com/HowardHinnant/date/archive/v2.2.zip
 curl -L --cacert ./cacert.crt -o ../build/gtest.zip https://codeload.github.com/google/googletest/zip/release-1.8.0
 curl -L --cacert ./cacert.crt -o ../build/chai.zip https://github.com/ChaiScript/ChaiScript/archive/v6.0.0.zip
+curl -L --cacert ./cacert.crt -o ../build/jsonlua.zip https://gist.github.com/tylerneylon/59f4bcf316be525b30ab/archive/7f69cc2cea38bf68298ed3dbfc39d197d53c80de.zip
 curl -R -o ../build/lua-5.3.4.tar.gz http://www.lua.org/ftp/lua-5.3.4.tar.gz
 
 7za x -y -o"../build/" ../build/date.zip
 7za x -y -o"../build/" ../build/gtest.zip
 7za x -y -o"../build/" ../build/chai.zip
+7za x -y -o"../build/" ../build/jsonlua.zip
 
 export LDFLAGS="-L/usr/local/opt/openssl/lib"
 export CPPFLAGS="-I/usr/local/opt/openssl/include"
@@ -73,6 +75,8 @@ cp -rf ./src/liblua5.3.4.dylib ../../lib/x64
 cp -rf ./install/include/* ../../include/lua
 
 cd ..	
+
+cp -rf ./59f4bcf316be525b30ab-7f69cc2cea38bf68298ed3dbfc39d197d53c80de/json.lua ../include/lua
 
 cd googletest-release-1.8.0
 cd googletest
