@@ -186,7 +186,7 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
 
 void prepare_chaiscript_file()
 {
-    QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name).c_str());
+    QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name).c_str());
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
@@ -207,23 +207,23 @@ void prepare_chaiscript_file()
 TEST(Chai_Tests, Basic_Sorting)
 {
     prepare_chaiscript_file();
-    fpgui::chai::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name);
+    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     std::string cmp1, cmp2;
     cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\"}";
     cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.668+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.13\"}";
 
-    EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), -1);
+    EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), -1);
 
     cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\" }";
     cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }";
 
-    EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), 1);
+    EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), 1);
 
     cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }";
     cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }";
 
-    EXPECT_EQ(fpgui::chai::compare_json_strings(cmp1, cmp2), 0);
+    EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), 0);
 
     std::vector<std::string> correctly_sorted, contender;
     correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }");
@@ -239,7 +239,7 @@ TEST(Chai_Tests, Basic_Sorting)
     contender.push_back(correctly_sorted[2]);
 
     std::sort(contender.begin(), contender.end(), [](const std::string& s1, const std::string& s2) {
-        int res = fpgui::chai::compare_json_strings(s1, s2);
+        int res = fpgui::lua::compare_json_strings(s1, s2);
         if ((res < -1) || (res == 0))
             return false;
         if (res == -1)
@@ -272,7 +272,7 @@ std::string random_timestamp()
 TEST(Chai_Tests, Sorting_Performance)
 {
     prepare_chaiscript_file();
-    fpgui::chai::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::chaiscript_file_name);
+    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     std::vector<std::string> hosts;
 
@@ -299,7 +299,7 @@ TEST(Chai_Tests, Sorting_Performance)
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     std::sort(strings.begin(), strings.end(), [](const std::string& s1, const std::string& s2) {
-        int res = fpgui::chai::compare_json_strings(s1, s2);
+        int res = fpgui::lua::compare_json_strings(s1, s2);
         if ((res < -1) || (res == 0))
             return false;
         if (res == -1)

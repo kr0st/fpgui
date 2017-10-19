@@ -7,6 +7,7 @@
 
 #include <utils.h>
 #include <scripting.h>
+#include <lua/lua.hpp>
 
 namespace fpgui {
 namespace lua {
@@ -42,17 +43,50 @@ class Lua_Impl
 
     private:
 
+        bool inited_;
+        lua_State *lua_state_;
+
         int compare_result_;
         std::recursive_mutex mutex_;
+
+        std::string get_lua_error()
+        {
+            std::lock_guard<std::recursive_mutex> lock(mutex_);
+            if (lua_type(lua_state_, 1) == LUA_TSTRING)
+            {
+                const char* status = lua_tostring(lua_state_, -1);
+                std::string err(status ? status : "");
+                lua_pop(lua_state_, 1);
+                return err;
+            }
+
+            return "";
+        }
 
         void init()
         {
             std::lock_guard<std::recursive_mutex> lock(mutex_);
+
+            lua_state_ = luaL_newstate();
+            luaL_openlibs(lua_state_);
+            //luaL_dostring(lua_state_, "package.path = package.path .. ';/Library/Frameworks/fplog.framework/Versions/Current/?.lua'");
+            luaL_dostring(lua_state_, "json = require(\"json\")\n");
+
+            std::string lua_error(get_lua_error());
+            if (!lua_error.empty())
+            {
+                printf("lua_err on init = %s\n", lua_error.c_str());
+            }
+
+            inited_ = (lua_state_ != 0);
         }
 
         void deinit()
         {
             std::lock_guard<std::recursive_mutex> lock(mutex_);
+
+            if(lua_state_) lua_close(lua_state_);
+            lua_state_ = 0;
         }
 
         std::string lua_script_;

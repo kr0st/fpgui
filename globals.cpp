@@ -9,7 +9,7 @@ const char* test_application_name = "fpgui_test";
 const char* author = "kr0st";
 const char* domain = "bioreactor.me";
 
-const char* chaiscript_file_name = "sorting.chai";
+const char* lua_file_name = "compare.lua";
 
 const char* application_section_name = "application_settings";
 

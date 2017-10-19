@@ -10,7 +10,7 @@ extern const char* test_application_name;
 extern const char* author;
 extern const char* domain;
 
-extern const char* chaiscript_file_name;
+extern const char* lua_file_name;
 
 extern const char* application_section_name;
 

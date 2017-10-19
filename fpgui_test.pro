@@ -13,7 +13,7 @@ INCLUDEPATH += "$$_PRO_FILE_PWD_/dependencies/include/"
 
 LIBS += -L"$$_PRO_FILE_PWD_/dependencies/lib/x64/"
 LIBS += -L/usr/local/lib/
-LIBS += -lmongocxx -lgtest
+LIBS += -lmongocxx -lgtest -llua
 
 SOURCES += \
     fpgui_test.cpp \
