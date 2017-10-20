@@ -9,14 +9,26 @@
 #include <scripting.h>
 #include <lua/lua.hpp>
 
+#define lua_isnumber(L,n)	(lua_type(L, (n)) == LUA_TNUMBER)
+
 namespace fpgui {
 namespace lua {
+
+static int convert_timestamp(lua_State *L)
+{
+    unsigned long long timestamp = 0;
+    std::string ts(lua_tostring(L, 1));
+    timestamp = generic_utils::date_time::iso_timestamp_to_ms(ts);
+    lua_pushinteger(L, timestamp);
+    return 1;
+}
 
 class Lua_Impl
 {
     public:
 
-        Lua_Impl(const char* lua_script)
+        Lua_Impl(const char* lua_script):
+        lua_script_(lua_script)
         {
             init();
         }
@@ -36,6 +48,33 @@ class Lua_Impl
 
             generic_utils::escape_quotes(log_msg1_escaped);
             generic_utils::escape_quotes(log_msg2_escaped);
+
+            const char* format = "log_msg1=\"%s\"\nfplog_message1 = json.parse(log_msg1)\nlog_msg2=\"%s\"\nfplog_message2 = json.parse(log_msg2)\n";
+            int lua_len = static_cast<int>(log_msg1_escaped.length() + log_msg2_escaped.length() + 256);
+
+            char* lua_script = new char[lua_len];
+            memset(lua_script, 0, lua_len);
+            std::auto_ptr<char> lua_script_ptr(lua_script);
+
+#ifndef _LINUX
+            _snprintf(lua_script, lua_len - 1, format, log_msg1_escaped.c_str(), log_msg2_escaped.c_str());
+#else
+            sprintf(lua_script, format, log_msg1_escaped.c_str(), log_msg2_escaped.c_str());
+#endif
+            std::string full_script(lua_script + lua_script_);
+            luaL_dostring(lua_state_, full_script.c_str());
+
+            std::string lua_error(get_lua_error());
+            if (!lua_error.empty())
+            {
+                printf("lua_err = %s\n", lua_error.c_str());
+                deinit();
+                init();
+            }
+
+            lua_getglobal(lua_state_, "compare_result");
+            if (lua_isnumber(lua_state_, -1))
+                compare_result_ = lua_tonumber(lua_state_, -1);
 
             return compare_result_;
         }
@@ -71,6 +110,7 @@ class Lua_Impl
             luaL_openlibs(lua_state_);
             //luaL_dostring(lua_state_, "package.path = package.path .. ';/Library/Frameworks/fplog.framework/Versions/Current/?.lua'");
             luaL_dostring(lua_state_, "json = require(\"json\")\n");
+            lua_register(lua_state_, "convert_timestamp", convert_timestamp);
 
             std::string lua_error(get_lua_error());
             if (!lua_error.empty())

@@ -190,21 +190,33 @@ void prepare_chaiscript_file()
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
-    toscriptfile << "if (fplog_message1[\"hostname\"] == fplog_message2[\"hostname\"])" << "\n";
-    toscriptfile << "{" << "\n";
-    toscriptfile << " if (fplog_message1[\"sequence\"] > fplog_message2[\"sequence\"]) { compare_result = 1; return compare_result; }" << "\n";
-    toscriptfile << " if (fplog_message1[\"sequence\"] < fplog_message2[\"sequence\"]) { compare_result = -1; return compare_result; }" << "\n";
-    toscriptfile << "}" << "\n";
-    toscriptfile << "var ts1 = iso_timestamp_to_ms(fplog_message1[\"timestamp\"])" << "\n";
-    toscriptfile << "var ts2 = iso_timestamp_to_ms(fplog_message2[\"timestamp\"])" << "\n";
-    toscriptfile << "if (ts1 > ts2) { compare_result = 1; return compare_result; }" << "\n";
-    toscriptfile << "if (ts1 < ts2) { compare_result = -1; return compare_result; }" << "\n";
+    toscriptfile << "if fplog_message1.hostname == fplog_message2.hostname then" << "\n";
+    toscriptfile << " if fplog_message1.sequence > fplog_message2.sequence then" << "\n";
+    toscriptfile << "  compare_result = 1" << "\n";
+    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if fplog_message1.sequence < fplog_message2.sequence then" << "\n";
+    toscriptfile << "  compare_result = -1" << "\n";
+    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+    toscriptfile << "local ts1 = convert_timestamp(fplog_message1.timestamp)" << "\n";
+    toscriptfile << "local ts2 = convert_timestamp(fplog_message2.timestamp)" << "\n";
+    toscriptfile << "if ts1 > ts2 then" << "\n";
+    toscriptfile << " compare_result = 1" << "\n";
+    toscriptfile << " return compare_result" << "\n";
+    toscriptfile << "end" << "\n";
+    toscriptfile << "if ts1 < ts2 then" << "\n";
+    toscriptfile << " compare_result = -1" << "\n";
+    toscriptfile << " return compare_result" << "\n";
+    toscriptfile << "end" << "\n";
     toscriptfile << "compare_result = 0" << "\n";
+    toscriptfile << "return 0" << "\n";
 
     script_file.close();
 }
 
-TEST(Chai_Tests, Basic_Sorting)
+TEST(Lua_Tests, Basic_Sorting)
 {
     prepare_chaiscript_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
@@ -269,7 +281,7 @@ std::string random_timestamp()
     return timestamp;
 }
 
-TEST(Chai_Tests, Sorting_Performance)
+TEST(Lua_Tests, Sorting_Performance)
 {
     prepare_chaiscript_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
@@ -290,7 +302,7 @@ TEST(Chai_Tests, Sorting_Performance)
     std::vector<std::string> strings;
     int i = 0;
 
-    for (; i < 100000; ++i)
+    for (; i < 10000; ++i)
     {
         std::string rnd_msg = "{\"timestamp\":\"" + random_timestamp() + "\", \"sequence\": " + std::to_string(qrand() % 666) + ", \"hostname\":\"" + hosts[qrand() % hosts.size()] + "\" }";
         strings.push_back(rnd_msg);
