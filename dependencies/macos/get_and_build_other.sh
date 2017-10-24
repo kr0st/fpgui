@@ -38,11 +38,13 @@ curl -L --cacert ./cacert.crt -o ../build/gtest.zip https://codeload.github.com/
 curl -L --cacert ./cacert.crt -o ../build/chai.zip https://github.com/ChaiScript/ChaiScript/archive/v6.0.0.zip
 curl -L --cacert ./cacert.crt -o ../build/jsonlua.zip https://gist.github.com/tylerneylon/59f4bcf316be525b30ab/archive/7f69cc2cea38bf68298ed3dbfc39d197d53c80de.zip
 curl -R -o ../build/lua-5.3.4.tar.gz http://www.lua.org/ftp/lua-5.3.4.tar.gz
+curl -R -o ../build/LuaJIT-2.0.5.zip http://luajit.org/download/LuaJIT-2.0.5.zip
 
 7za x -y -o"../build/" ../build/date.zip
 7za x -y -o"../build/" ../build/gtest.zip
 7za x -y -o"../build/" ../build/chai.zip
 7za x -y -o"../build/" ../build/jsonlua.zip
+7za x -y -o"../build/" ../build/LuaJIT-2.0.5.zip
 
 export LDFLAGS="-L/usr/local/opt/openssl/lib"
 export CPPFLAGS="-I/usr/local/opt/openssl/include"
@@ -66,17 +68,30 @@ mkdir ../../lib
 mkdir ../../lib/x64
 
 rm -rf ../../include/lua
+rm -rf ../../include/luajit-2.0
 rm -rf ../../lib/x64/*lua*
 
 mkdir ../../include/lua
+mkdir ../../include/luajit-2.0
 
 cp -rf ./install/lib/liblua.a ../../lib/x64
-cp -rf ./src/liblua5.3.4.dylib ../../lib/x64
+#cp -rf ./src/liblua5.3.4.dylib ../../lib/x64
 cp -rf ./install/include/* ../../include/lua
 
 cd ..	
 
 cp -rf ./59f4bcf316be525b30ab-7f69cc2cea38bf68298ed3dbfc39d197d53c80de/json.lua ../include/lua
+
+cd LuaJIT-2.0.5
+make all
+cp -rf ./src/libluajit.a ../../lib/x64
+cp -rf ./src/lua.h ../../include/luajit-2.0
+cp -rf ./src/lua.hpp ../../include/luajit-2.0
+cp -rf ./src/luaconf.h ../../include/luajit-2.0
+cp -rf ./src/luajit.h ../../include/luajit-2.0
+cp -rf ./src/lualib.h ../../include/luajit-2.0
+cp -rf ./src/lauxlib.h ../../include/luajit-2.0
+cd ..
 
 cd googletest-release-1.8.0
 cd googletest

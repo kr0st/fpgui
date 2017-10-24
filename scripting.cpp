@@ -7,7 +7,7 @@
 
 #include <utils.h>
 #include <scripting.h>
-#include <lua/lua.hpp>
+#include <luajit-2.0/lua.hpp>
 
 #define lua_isnumber(L,n)	(lua_type(L, (n)) == LUA_TNUMBER)
 
@@ -123,6 +123,9 @@ class Lua_Impl
 
         void deinit()
         {
+            if (lua_state_ == 0)
+                return;
+
             std::lock_guard<std::recursive_mutex> lock(mutex_);
 
             if(lua_state_) lua_close(lua_state_);

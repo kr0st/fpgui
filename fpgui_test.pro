@@ -13,7 +13,7 @@ INCLUDEPATH += "$$_PRO_FILE_PWD_/dependencies/include/"
 
 LIBS += -L"$$_PRO_FILE_PWD_/dependencies/lib/x64/"
 LIBS += -L/usr/local/lib/
-LIBS += -lmongocxx -lgtest -llua
+LIBS += -lmongocxx -lgtest -lluajit
 
 SOURCES += \
     fpgui_test.cpp \
@@ -48,3 +48,5 @@ HEADERS += \
     simplecrypt.h \
     utils.h \
     scripting.h
+
+QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,100000000
