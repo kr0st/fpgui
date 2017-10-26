@@ -18,6 +18,7 @@ static int convert_timestamp(lua_State *L)
 {
     unsigned long long timestamp = 0;
     std::string ts(lua_tostring(L, 1));
+    lua_pop(L, 1);
     timestamp = generic_utils::date_time::iso_timestamp_to_ms(ts);
     lua_pushinteger(L, timestamp);
     return 1;
@@ -54,7 +55,7 @@ class Lua_Impl
 
             char* lua_script = new char[lua_len];
             memset(lua_script, 0, lua_len);
-            std::auto_ptr<char> lua_script_ptr(lua_script);
+            std::unique_ptr<char[]> lua_script_ptr(lua_script);
 
 #ifndef _LINUX
             _snprintf(lua_script, lua_len - 1, format, log_msg1_escaped.c_str(), log_msg2_escaped.c_str());
@@ -71,10 +72,13 @@ class Lua_Impl
                 deinit();
                 init();
             }
+            else
+                lua_pop(lua_state_, 1);
 
             lua_getglobal(lua_state_, "compare_result");
             if (lua_isnumber(lua_state_, -1))
                 compare_result_ = lua_tonumber(lua_state_, -1);
+            lua_pop(lua_state_, 1);
 
             return compare_result_;
         }

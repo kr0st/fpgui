@@ -184,7 +184,7 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned long long)1506950460668);
 }
 
-void prepare_chaiscript_file()
+void prepare_script_file()
 {
     QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name).c_str());
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
@@ -200,8 +200,8 @@ void prepare_chaiscript_file()
     toscriptfile << "  return compare_result" << "\n";
     toscriptfile << " end" << "\n";
     toscriptfile << "end" << "\n";
-    toscriptfile << "local ts1 = convert_timestamp(fplog_message1.timestamp)" << "\n";
-    toscriptfile << "local ts2 = convert_timestamp(fplog_message2.timestamp)" << "\n";
+    toscriptfile << "ts1 = convert_timestamp(fplog_message1.timestamp)" << "\n";
+    toscriptfile << "ts2 = convert_timestamp(fplog_message2.timestamp)" << "\n";
     toscriptfile << "if ts1 > ts2 then" << "\n";
     toscriptfile << " compare_result = 1" << "\n";
     toscriptfile << " return compare_result" << "\n";
@@ -218,7 +218,7 @@ void prepare_chaiscript_file()
 
 TEST(Lua_Tests, Basic_Sorting)
 {
-    prepare_chaiscript_file();
+    prepare_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     std::string cmp1, cmp2;
@@ -283,7 +283,7 @@ std::string random_timestamp()
 
 TEST(Lua_Tests, Sorting_Performance)
 {
-    prepare_chaiscript_file();
+    prepare_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     std::vector<std::string> hosts;
@@ -321,7 +321,7 @@ TEST(Lua_Tests, Sorting_Performance)
 
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    std::cout << "Sorted " << i << " strings using ChaiScript in " << duration << " ms." << std::endl;
+    std::cout << "Sorted " << i << " strings using LuaScript in " << duration << " ms." << std::endl;
     std::cout << "Performance test ended." << std::endl;
 }
 
@@ -376,4 +376,5 @@ int main(int argc, char *argv[])
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
+    return 0;
 }

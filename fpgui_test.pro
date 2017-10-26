@@ -49,4 +49,4 @@ HEADERS += \
     utils.h \
     scripting.h
 
-QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,100000000
+QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
