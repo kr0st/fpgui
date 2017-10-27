@@ -281,10 +281,14 @@ std::string random_timestamp()
     return timestamp;
 }
 
-TEST(Lua_Tests, Sorting_Performance)
+void generate_json_strings(std::vector<std::string>& generated, size_t how_many, size_t text_size_bytes_min, size_t text_size_bytes_max)
 {
-    prepare_script_file();
-    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
+    if (text_size_bytes_max < text_size_bytes_min)
+    {
+        size_t temp = text_size_bytes_max;
+        text_size_bytes_max = text_size_bytes_min;
+        text_size_bytes_min = temp;
+    }
 
     std::vector<std::string> hosts;
 
@@ -299,18 +303,42 @@ TEST(Lua_Tests, Sorting_Performance)
     hosts.push_back("192.168.2.11");
     hosts.push_back("192.168.1.12");
 
-    std::vector<std::string> strings;
-    int i = 0;
+    std::string random_bytes;
+    random_bytes.resize(text_size_bytes_max);
 
-    for (; i < 10000; ++i)
+    for (size_t i = 0; i < text_size_bytes_max; ++i)
+        random_bytes[i] = (65 + qrand() % 25);
+
+    for (size_t i = 0; i < how_many; ++i)
     {
-        std::string rnd_msg = "{\"timestamp\":\"" + random_timestamp() + "\", \"sequence\": " + std::to_string(qrand() % 666) + ", \"hostname\":\"" + hosts[qrand() % hosts.size()] + "\" }";
-        strings.push_back(rnd_msg);
+        int text_size = text_size_bytes_min + qrand() % (text_size_bytes_max - text_size_bytes_min);
+        std::string text;
+        text.resize(text_size);
+        for (int j = 0; j < text_size; ++j)
+            text[j] = random_bytes[j];
+        std::string rnd_msg = "{\"timestamp\":\"" + random_timestamp() + "\", \"sequence\":" + std::to_string(qrand() % 666) +
+                              ", \"hostname\":\"" + hosts[qrand() % hosts.size()] + "\", \"text\":\"" + text +  "\" }";
+        generated.push_back(rnd_msg);
     }
+}
+
+TEST(Lua_Tests, Sorting_Performance)
+{
+    prepare_script_file();
+    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
+
+    std::vector<std::string>* strings = new std::vector<std::string>();
+    size_t sz = 0;
+    generate_json_strings(*strings, 1000, 0, 255);
+    for (auto s: *strings)
+        sz += s.size();
+    sz /= strings->size();
+
+    std::cout << "Average byte size of the test string: " << sz << std::endl;
 
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
-    std::sort(strings.begin(), strings.end(), [](const std::string& s1, const std::string& s2) {
+    std::sort(strings->begin(), strings->end(), [](const std::string& s1, const std::string& s2) {
         int res = fpgui::lua::compare_json_strings(s1, s2);
         if ((res < -1) || (res == 0))
             return false;
@@ -321,9 +349,13 @@ TEST(Lua_Tests, Sorting_Performance)
 
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    std::cout << "Sorted " << i << " strings using LuaScript in " << duration << " ms." << std::endl;
+    std::cout << "Sorted " << strings->size() << " strings using LuaScript in " << duration << " ms." << std::endl;
     std::cout << "Performance test ended." << std::endl;
+
+    delete strings;
 }
+
+
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
 {
