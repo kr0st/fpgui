@@ -9,6 +9,9 @@
 
 #include <QString>
 #include <QByteArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QtDebug>
 
 #include <date/date.h>
 
@@ -44,6 +47,46 @@ std::string& escape_quotes(std::string& str)
 {
     ReplaceStringInPlace(str, "\"", "\\\"");
     return str;
+}
+
+std::vector<std::string> strip_json(const std::string& fields_to_leave, const std::vector<std::string>& json_strings)
+{
+    std::vector<std::string> out_strings;
+    std::vector<std::string> fields;
+
+    std::istringstream is(fields_to_leave);
+    std::string part;
+    while (std::getline(is, part, ','))
+      fields.push_back(part);
+
+    for (const auto& js: json_strings)
+    {
+        QJsonObject js_to;
+        QJsonDocument js_from(QJsonDocument::fromJson(js.c_str()));
+
+        if (js_from.isNull())
+        {
+            qCritical() << "JSON document is invalid!";
+            return out_strings;
+        }
+
+        if (js_from.isObject())
+        {
+            QJsonObject jsobj(js_from.object());
+            for (QJsonObject::const_iterator it = jsobj.begin(); it != jsobj.end(); ++it)
+            {
+                QString key(it.key());
+                for (const auto& field: fields)
+                    if (key.compare(QString(field.c_str())) == 0)
+                        js_to[key] = it.value();
+            }
+        }
+
+        QJsonDocument temp_doc(js_to);
+        out_strings.push_back(QString::fromUtf8(temp_doc.toJson(QJsonDocument::Compact)).toStdString());
+    }
+
+    return out_strings;
 }
 
 namespace date_time {

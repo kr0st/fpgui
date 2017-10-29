@@ -327,16 +327,22 @@ TEST(Lua_Tests, Sorting_Performance)
     prepare_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
+    std::cout << "Generating strings.." << std::endl;
+
     std::vector<std::string>* strings = new std::vector<std::string>();
     size_t sz = 0;
-    generate_json_strings(*strings, 1000, 0, 255);
+    generate_json_strings(*strings, 1000, 100000, 10000000);
     for (auto s: *strings)
         sz += s.size();
     sz /= strings->size();
 
     std::cout << "Average byte size of the test string: " << sz << std::endl;
+    std::cout << "Stripping unnnecessary json.." << std::endl;
 
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+    *strings = generic_utils::strip_json("timestamp,hostname,sequence", *strings);
+
+    std::cout << "Sort started.." << std::endl;
 
     std::sort(strings->begin(), strings->end(), [](const std::string& s1, const std::string& s2) {
         int res = fpgui::lua::compare_json_strings(s1, s2);
@@ -355,7 +361,28 @@ TEST(Lua_Tests, Sorting_Performance)
     delete strings;
 }
 
+TEST(Util_Tests, Json_Stripper)
+{
+    std::vector<std::string> test, correct, contender;
 
+    test.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }");
+    test.push_back("{\"timestamp\":\"2017-03-21T15:35:17.876+0200\", \"sequence\": 5, \"hostname\":\"192.168.1.12\" }");
+    test.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }");
+    test.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\" }");
+    test.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\", \"sequence\": 3, \"hostname\":\"192.168.1.11\" }");
+
+    correct.push_back("{\"hostname\":\"192.168.1.11\",\"timestamp\":\"2017-03-21T15:35:17.666+0200\"}");
+    correct.push_back("{\"hostname\":\"192.168.1.12\",\"timestamp\":\"2017-03-21T15:35:17.876+0200\"}");
+    correct.push_back("{\"hostname\":\"192.168.1.10\",\"timestamp\":\"2017-03-21T15:35:18.000+0200\"}");
+    correct.push_back("{\"hostname\":\"192.168.1.10\",\"timestamp\":\"2017-03-21T15:35:18.000+0200\"}");
+    correct.push_back("{\"hostname\":\"192.168.1.11\",\"timestamp\":\"2017-03-21T15:35:18.001+0200\"}");
+
+    contender = generic_utils::strip_json("timestamp,hostname", test);
+
+    ASSERT_EQ(contender.size(), correct.size());
+    for (size_t i = 0; i < correct.size(); ++i)
+        EXPECT_EQ(contender[i], correct[i]);
+}
 
 void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString & msg)
 {
