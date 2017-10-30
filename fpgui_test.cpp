@@ -331,7 +331,7 @@ TEST(Lua_Tests, Sorting_Performance)
 
     std::vector<std::string>* strings = new std::vector<std::string>();
     size_t sz = 0;
-    generate_json_strings(*strings, 1000, 100000, 10000000);
+    generate_json_strings(*strings, 1000, 100, 10000000);
     for (auto s: *strings)
         sz += s.size();
     sz /= strings->size();
@@ -371,11 +371,11 @@ TEST(Util_Tests, Json_Stripper)
     test.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\" }");
     test.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\", \"sequence\": 3, \"hostname\":\"192.168.1.11\" }");
 
-    correct.push_back("{\"hostname\":\"192.168.1.11\",\"timestamp\":\"2017-03-21T15:35:17.666+0200\"}");
-    correct.push_back("{\"hostname\":\"192.168.1.12\",\"timestamp\":\"2017-03-21T15:35:17.876+0200\"}");
-    correct.push_back("{\"hostname\":\"192.168.1.10\",\"timestamp\":\"2017-03-21T15:35:18.000+0200\"}");
-    correct.push_back("{\"hostname\":\"192.168.1.10\",\"timestamp\":\"2017-03-21T15:35:18.000+0200\"}");
-    correct.push_back("{\"hostname\":\"192.168.1.11\",\"timestamp\":\"2017-03-21T15:35:18.001+0200\"}");
+    correct.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\",\"hostname\":\"192.168.1.11\"}");
+    correct.push_back("{\"timestamp\":\"2017-03-21T15:35:17.876+0200\",\"hostname\":\"192.168.1.12\"}");
+    correct.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\",\"hostname\":\"192.168.1.10\"}");
+    correct.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\",\"hostname\":\"192.168.1.10\"}");
+    correct.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\",\"hostname\":\"192.168.1.11\"}");
 
     contender = generic_utils::strip_json("timestamp,hostname", test);
 

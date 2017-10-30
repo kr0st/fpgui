@@ -13,6 +13,11 @@
 #include <QJsonObject>
 #include <QtDebug>
 
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+
 #include <date/date.h>
 
 namespace generic_utils {
@@ -61,29 +66,44 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
 
     for (const auto& js: json_strings)
     {
-        QJsonObject js_to;
-        QJsonDocument js_from(QJsonDocument::fromJson(js.c_str()));
+        rapidjson::Document js_from;
 
-        if (js_from.isNull())
+        js_from.Parse(js.c_str(), js.length());
+
+        if (js_from.IsNull())
         {
             qCritical() << "JSON document is invalid!";
             return out_strings;
         }
 
-        if (js_from.isObject())
+        if (js_from.IsObject())
         {
-            QJsonObject jsobj(js_from.object());
-            for (QJsonObject::const_iterator it = jsobj.begin(); it != jsobj.end(); ++it)
+            rapidjson::Value::Object jsobj(js_from.GetObject());
+
+            for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
             {
-                QString key(it.key());
+                std::string key(it->name.GetString());
+                bool key_found = false;
                 for (const auto& field: fields)
-                    if (key.compare(QString(field.c_str())) == 0)
-                        js_to[key] = it.value();
+                    if (key.compare(field) == 0)
+                    {
+                        key_found = true;
+                        break;
+                    }
+                if (!key_found)
+                {
+                    jsobj.RemoveMember(it);
+                    it = jsobj.MemberBegin();
+                }
             }
+            //auto& js_to(js_from.SetObject());
+            //js_to = jsobj;
         }
 
-        QJsonDocument temp_doc(js_to);
-        out_strings.push_back(QString::fromUtf8(temp_doc.toJson(QJsonDocument::Compact)).toStdString());
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        js_from.Accept(writer);
+        out_strings.push_back(buffer.GetString());
     }
 
     return out_strings;
