@@ -33,7 +33,8 @@ DEFINES += QT_DEPRECATED_WARNINGS \
            QT_NO_INFO_OUTPUT \
            QT_NO_WARNING_OUTPUT \
            QT_MESSAGELOGCONTEXT \
-           _LINUX
+           _LINUX \
+           RAPIDJSON_HAS_STDSTRING
 
 
 # You can also make your code fail to compile if you use deprecated APIs.

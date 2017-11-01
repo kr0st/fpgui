@@ -66,9 +66,14 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
 
     for (const auto& js: json_strings)
     {
-        rapidjson::Document js_from;
+        rapidjson::GenericDocument<rapidjson::UTF8<>> js_from, js_to;
+        std::unique_ptr<char[]> to_parse(new char[js.size() + 1]);
 
-        js_from.Parse(js.c_str(), js.length());
+        memcpy(to_parse.get(), js.c_str(), js.size());
+        to_parse.get()[js.size()] = 0;
+
+        js_to.SetObject();
+        js_from.ParseInsitu(to_parse.get());
 
         if (js_from.IsNull())
         {
@@ -83,26 +88,18 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
             for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
             {
                 std::string key(it->name.GetString());
-                bool key_found = false;
                 for (const auto& field: fields)
                     if (key.compare(field) == 0)
                     {
-                        key_found = true;
+                        js_to.AddMember(it->name, it->value, js_to.GetAllocator());
                         break;
                     }
-                if (!key_found)
-                {
-                    jsobj.RemoveMember(it);
-                    it = jsobj.MemberBegin();
-                }
             }
-            //auto& js_to(js_from.SetObject());
-            //js_to = jsobj;
         }
 
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        js_from.Accept(writer);
+        js_to.Accept(writer);
         out_strings.push_back(buffer.GetString());
     }
 
