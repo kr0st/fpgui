@@ -331,7 +331,7 @@ TEST(Lua_Tests, Sorting_Performance)
 
     std::vector<std::string>* strings = new std::vector<std::string>();
     size_t sz = 0;
-    generate_json_strings(*strings, 1000, 100, 10000000);
+    generate_json_strings(*strings, 10000, 0, 500);
     for (auto s: *strings)
         sz += s.size();
     sz /= strings->size();
