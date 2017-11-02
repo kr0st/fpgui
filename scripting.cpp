@@ -83,6 +83,38 @@ class Lua_Impl
             return compare_result_;
         }
 
+        void inject_variable(const char* name, double value)
+        {
+            if (!name)
+                return;
+
+            std::lock_guard<std::recursive_mutex> lock(mutex_);
+
+            const char* format = "%s=%f\n";
+            int lua_len = static_cast<int>(strlen(name) + 256);
+
+            char* lua_script = new char[lua_len];
+            memset(lua_script, 0, lua_len);
+            std::unique_ptr<char[]> lua_script_ptr(lua_script);
+
+#ifndef _LINUX
+            _snprintf(lua_script, lua_len - 1, format, name, value;
+#else
+            sprintf(lua_script, format, name, value);
+#endif
+            luaL_dostring(lua_state_, lua_script);
+
+            std::string lua_error(get_lua_error());
+            if (!lua_error.empty())
+            {
+                printf("lua_err = %s\n", lua_error.c_str());
+                deinit();
+                init();
+            }
+            else
+                lua_pop(lua_state_, 1);
+        }
+
 
     private:
 
@@ -161,6 +193,12 @@ int compare_json_strings(const std::string& json_str1, const std::string& json_s
         return 0;
 
     return g_lua->compare(json_str1, json_str2);
+}
+
+void inject_variable(const char* name, double value)
+{
+    if (g_lua.get())
+        g_lua.get()->inject_variable(name, value);
 }
 
 }
