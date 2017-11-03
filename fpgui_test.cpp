@@ -15,6 +15,7 @@
 #include <utils.h>
 #include <simplecrypt.h>
 #include <scripting.h>
+#include <var_injector.h>
 
 #include <gtest/gtest.h>
 
@@ -190,6 +191,19 @@ void prepare_script_file()
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
+    toscriptfile << "if sort_by_text == 1 then" << "\n";
+    toscriptfile << " if fplog_message1.text > fplog_message2.text then" << "\n";
+    toscriptfile << "  compare_result = 1" << "\n";
+    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if fplog_message1.text < fplog_message2.text then" << "\n";
+    toscriptfile << "  compare_result = -1" << "\n";
+    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " compare_result = 0" << "\n";
+    toscriptfile << " return compare_result" << "\n";
+    toscriptfile << "end" << "\n";
+
     toscriptfile << "if fplog_message1.hostname == fplog_message2.hostname then" << "\n";
     toscriptfile << " if fplog_message1.sequence > fplog_message2.sequence then" << "\n";
     toscriptfile << "  compare_result = 1" << "\n";
@@ -238,17 +252,19 @@ TEST(Lua_Tests, Basic_Sorting)
     EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), 0);
 
     std::vector<std::string> correctly_sorted, contender;
-    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }");
-    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.876+0200\", \"sequence\": 5, \"hostname\":\"192.168.1.12\" }");
-    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }");
-    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\" }");
-    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\", \"sequence\": 3, \"hostname\":\"192.168.1.11\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\", \"text\":\"xyz\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.876+0200\", \"sequence\": 5, \"hostname\":\"192.168.1.12\", \"text\":\"bbkhh\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\", \"text\":\"bchyg\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.10\", \"text\":\"bchzg\" }");
+    correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\", \"sequence\": 3, \"hostname\":\"192.168.1.11\", \"text\":\"abcj\" }");
 
     contender.push_back(correctly_sorted[4]);
     contender.push_back(correctly_sorted[3]);
     contender.push_back(correctly_sorted[1]);
     contender.push_back(correctly_sorted[0]);
     contender.push_back(correctly_sorted[2]);
+
+    auto contender2(contender);
 
     std::sort(contender.begin(), contender.end(), [](const std::string& s1, const std::string& s2) {
         int res = fpgui::lua::compare_json_strings(s1, s2);
@@ -261,7 +277,27 @@ TEST(Lua_Tests, Basic_Sorting)
 
     for (int i = 0; i < 5; ++i)
     {
-        EXPECT_EQ(correctly_sorted[i], contender[i]);
+        EXPECT_EQ(contender[i], correctly_sorted[i]);
+    }
+
+    fpgui::lua::inject_tab_sorting_config();
+
+    std::sort(contender2.begin(), contender2.end(), [](const std::string& s1, const std::string& s2) {
+        int res = fpgui::lua::compare_json_strings(s1, s2);
+        if ((res < -1) || (res == 0))
+            return false;
+        if (res == -1)
+            return true;
+        return false;
+    });
+
+    const auto& temp = correctly_sorted[0];
+    correctly_sorted[0] = correctly_sorted[correctly_sorted.size() - 1];
+    correctly_sorted[0] = temp;
+
+    for (int i = 0; i < 5; ++i)
+    {
+        EXPECT_EQ(contender2[i], correctly_sorted[i]);
     }
 }
 
@@ -417,21 +453,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain(fpgui::settings::domain);
     QCoreApplication::setApplicationName(fpgui::settings::test_application_name);
 
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-
-    QSettings settings;
-    settings.setFallbacksEnabled(false);
-
-    settings.clear();
-    fpgui::settings::write_default_settigs(settings);
-
-    {
-        QSettings temp_settings;
-        std::vector<fpgui::settings::Tab_Configuration> tabs = fpgui::settings::read_tab_config(temp_settings);
-        tabs = tabs;
-    }
-
     fpgui::settings::make_config_path();
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings settings;
+
+    settings.setFallbacksEnabled(false);
+    settings.clear();
+
+    fpgui::settings::write_default_settigs(settings);
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

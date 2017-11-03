@@ -22,7 +22,8 @@ SOURCES += \
     mac_util.cpp \
     simplecrypt.cpp \
     utils.cpp \
-    scripting.cpp
+    scripting.cpp \
+    var_injector.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -34,7 +35,8 @@ DEFINES += QT_DEPRECATED_WARNINGS \
            QT_NO_WARNING_OUTPUT \
            QT_MESSAGELOGCONTEXT \
            _LINUX \
-           RAPIDJSON_HAS_STDSTRING
+           RAPIDJSON_HAS_STDSTRING \
+           _UNIT_TEST
 
 
 # You can also make your code fail to compile if you use deprecated APIs.
@@ -48,6 +50,7 @@ HEADERS += \
     mac_util.h \
     simplecrypt.h \
     utils.h \
-    scripting.h
+    scripting.h \
+    var_injector.h
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
