@@ -251,7 +251,7 @@ TEST(Lua_Tests, Basic_Sorting)
 
     EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), 0);
 
-    std::vector<std::string> correctly_sorted, contender;
+    std::vector<std::string> correctly_sorted, contender, contender2;
     correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\", \"text\":\"xyz\" }");
     correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.876+0200\", \"sequence\": 5, \"hostname\":\"192.168.1.12\", \"text\":\"bbkhh\" }");
     correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\", \"text\":\"bchyg\" }");
@@ -264,7 +264,7 @@ TEST(Lua_Tests, Basic_Sorting)
     contender.push_back(correctly_sorted[0]);
     contender.push_back(correctly_sorted[2]);
 
-    auto contender2(contender);
+    contender2 = contender;
 
     std::sort(contender.begin(), contender.end(), [](const std::string& s1, const std::string& s2) {
         int res = fpgui::lua::compare_json_strings(s1, s2);
@@ -291,9 +291,9 @@ TEST(Lua_Tests, Basic_Sorting)
         return false;
     });
 
-    const auto& temp = correctly_sorted[0];
+    auto temp = correctly_sorted[0];
     correctly_sorted[0] = correctly_sorted[correctly_sorted.size() - 1];
-    correctly_sorted[0] = temp;
+    correctly_sorted[correctly_sorted.size() - 1] = temp;
 
     for (int i = 0; i < 5; ++i)
     {
@@ -464,5 +464,8 @@ int main(int argc, char *argv[])
     fpgui::settings::write_default_settigs(settings);
 
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    int res = RUN_ALL_TESTS();
+
+    fpgui::lua::free_resources();
+    return res;
 }

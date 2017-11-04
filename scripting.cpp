@@ -111,8 +111,6 @@ class Lua_Impl
                 deinit();
                 init();
             }
-            else
-                lua_pop(lua_state_, 1);
         }
 
 
@@ -172,7 +170,7 @@ class Lua_Impl
 };
 
 static std::recursive_mutex g_lua_mutex;
-static std::auto_ptr<Lua_Impl> g_lua;
+static Lua_Impl* g_lua = 0;
 
 void load_from_file(const std::string& filename)
 {
@@ -184,12 +182,14 @@ void load_from_file(const std::string& filename)
     while (std::getline(infile, line))
         script += (line + "\n");
 
-    g_lua.reset(new Lua_Impl(script.c_str()));
+    delete g_lua;
+    g_lua = new Lua_Impl(script.c_str());
 }
 
 int compare_json_strings(const std::string& json_str1, const std::string& json_str2)
 {
-    if (!g_lua.get())
+    std::lock_guard<std::recursive_mutex> lock(g_lua_mutex);
+    if (g_lua == 0)
         return 0;
 
     return g_lua->compare(json_str1, json_str2);
@@ -197,8 +197,16 @@ int compare_json_strings(const std::string& json_str1, const std::string& json_s
 
 void inject_variable(const char* name, double value)
 {
-    if (g_lua.get())
-        g_lua.get()->inject_variable(name, value);
+    std::lock_guard<std::recursive_mutex> lock(g_lua_mutex);
+    if (g_lua)
+        g_lua->inject_variable(name, value);
+}
+
+void free_resources()
+{
+    std::lock_guard<std::recursive_mutex> lock(g_lua_mutex);
+    delete g_lua;
+    g_lua = 0;
 }
 
 }
