@@ -40,6 +40,7 @@ Db_Configuration read_db_config(QSettings& settings);
 void write_db_config(Db_Configuration& db_config, QSettings& settings);
 
 void write_default_settigs(QSettings& settings);
+void create_default_script_file(bool overwrite = false);
 
 }
 }

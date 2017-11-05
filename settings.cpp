@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QString>
 #include <QDir>
+#include <QTextStream>
 
 #include <settings.h>
 #include <globals.h>
@@ -183,6 +184,43 @@ void write_default_settigs(QSettings& settings)
 
     write_db_config(db_config, settings);
     write_tab_config(tabs, settings);
+}
+
+void create_default_script_file(bool overwrite)
+{
+    QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name).c_str());
+
+    if (script_file.exists())
+        if (!overwrite)
+            return;
+
+    script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
+    QTextStream toscriptfile(&script_file);
+
+    toscriptfile << "if fplog_message1.hostname == fplog_message2.hostname then" << "\n";
+    toscriptfile << " if fplog_message1.sequence > fplog_message2.sequence then" << "\n";
+    toscriptfile << "  compare_result = 1" << "\n";
+    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if fplog_message1.sequence < fplog_message2.sequence then" << "\n";
+    toscriptfile << "  compare_result = -1" << "\n";
+    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+    toscriptfile << "ts1 = convert_timestamp(fplog_message1.timestamp)" << "\n";
+    toscriptfile << "ts2 = convert_timestamp(fplog_message2.timestamp)" << "\n";
+    toscriptfile << "if ts1 > ts2 then" << "\n";
+    toscriptfile << " compare_result = 1" << "\n";
+    toscriptfile << " return compare_result" << "\n";
+    toscriptfile << "end" << "\n";
+    toscriptfile << "if ts1 < ts2 then" << "\n";
+    toscriptfile << " compare_result = -1" << "\n";
+    toscriptfile << " return compare_result" << "\n";
+    toscriptfile << "end" << "\n";
+    toscriptfile << "compare_result = 0" << "\n";
+    toscriptfile << "return 0" << "\n";
+
+    script_file.close();
 }
 
 }

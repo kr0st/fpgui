@@ -185,24 +185,27 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned long long)1506950460668);
 }
 
-void prepare_script_file()
+void prepare_test_script_file(bool injected = false)
 {
     QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name).c_str());
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
-    toscriptfile << "if sort_by_text == 1 then" << "\n";
-    toscriptfile << " if fplog_message1.text > fplog_message2.text then" << "\n";
-    toscriptfile << "  compare_result = 1" << "\n";
-    toscriptfile << "  return compare_result" << "\n";
-    toscriptfile << " end" << "\n";
-    toscriptfile << " if fplog_message1.text < fplog_message2.text then" << "\n";
-    toscriptfile << "  compare_result = -1" << "\n";
-    toscriptfile << "  return compare_result" << "\n";
-    toscriptfile << " end" << "\n";
-    toscriptfile << " compare_result = 0" << "\n";
-    toscriptfile << " return compare_result" << "\n";
-    toscriptfile << "end" << "\n";
+    if (injected)
+    {
+        toscriptfile << "if sort_by_text > 0.1 then" << "\n";
+        toscriptfile << " if fplog_message1.text > fplog_message2.text then" << "\n";
+        toscriptfile << "  compare_result = 1" << "\n";
+        toscriptfile << "  return compare_result" << "\n";
+        toscriptfile << " end" << "\n";
+        toscriptfile << " if fplog_message1.text < fplog_message2.text then" << "\n";
+        toscriptfile << "  compare_result = -1" << "\n";
+        toscriptfile << "  return compare_result" << "\n";
+        toscriptfile << " end" << "\n";
+        toscriptfile << " compare_result = 0" << "\n";
+        toscriptfile << " return compare_result" << "\n";
+        toscriptfile << "end" << "\n";
+    }
 
     toscriptfile << "if fplog_message1.hostname == fplog_message2.hostname then" << "\n";
     toscriptfile << " if fplog_message1.sequence > fplog_message2.sequence then" << "\n";
@@ -232,7 +235,7 @@ void prepare_script_file()
 
 TEST(Lua_Tests, Basic_Sorting)
 {
-    prepare_script_file();
+    prepare_test_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     std::string cmp1, cmp2;
@@ -280,6 +283,8 @@ TEST(Lua_Tests, Basic_Sorting)
         EXPECT_EQ(contender[i], correctly_sorted[i]);
     }
 
+    prepare_test_script_file(true);
+    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
     fpgui::lua::inject_tab_sorting_config();
 
     std::sort(contender2.begin(), contender2.end(), [](const std::string& s1, const std::string& s2) {
@@ -360,7 +365,7 @@ void generate_json_strings(std::vector<std::string>& generated, size_t how_many,
 
 TEST(Lua_Tests, Sorting_Performance)
 {
-    prepare_script_file();
+    prepare_test_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     std::cout << "Generating strings.." << std::endl;

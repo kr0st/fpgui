@@ -7,6 +7,7 @@ namespace lua {
 
 void inject_tab_sorting_config()
 {
+    int order = 1;
     QSettings settings;
     std::vector<fpgui::settings::Tab_Configuration> tabs = fpgui::settings::read_tab_config(settings);
     for (auto& tab: tabs)
@@ -16,7 +17,7 @@ void inject_tab_sorting_config()
                 tab.sort_by = true;
         #endif
 
-        inject_variable(("sort_by_" + tab.name).c_str(), tab.sort_by ? 1 : 0);
+        inject_variable(("sort_by_" + tab.name).c_str(), tab.sort_by ? order++ : 0);
     }
 }
 
