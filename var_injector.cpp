@@ -14,7 +14,12 @@ void inject_tab_sorting_config()
     {
         #ifdef _UNIT_TEST
             if (tab.name == "text")
+            {
                 tab.sort_by = true;
+                inject_variable(("sort_by_" + tab.name).c_str(), tab.sort_by ? 1 : 0);
+                order++;
+                continue;
+            }
         #endif
 
         inject_variable(("sort_by_" + tab.name).c_str(), tab.sort_by ? order++ : 0);

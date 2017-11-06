@@ -185,50 +185,101 @@ TEST(Util_Tests, Iso_Timestamp_Conversion)
     EXPECT_EQ(generic_utils::date_time::iso_timestamp_to_ms("2017-10-02T13:21:00.668+0000"), (unsigned long long)1506950460668);
 }
 
-void prepare_test_script_file(bool injected = false)
+void prepare_test_script_file(bool text_test = false)
 {
     QFile script_file((fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name).c_str());
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
-    if (injected)
+    toscriptfile << "compare_result = 0" << "\n";
+    toscriptfile << "local total1 = 0" << "\n";
+    toscriptfile << "local total2 = 0" << "\n";
+
+    if (text_test)
     {
         toscriptfile << "if sort_by_text > 0.1 then" << "\n";
         toscriptfile << " if fplog_message1.text > fplog_message2.text then" << "\n";
         toscriptfile << "  compare_result = 1" << "\n";
-        toscriptfile << "  return compare_result" << "\n";
         toscriptfile << " end" << "\n";
         toscriptfile << " if fplog_message1.text < fplog_message2.text then" << "\n";
         toscriptfile << "  compare_result = -1" << "\n";
-        toscriptfile << "  return compare_result" << "\n";
         toscriptfile << " end" << "\n";
-        toscriptfile << " compare_result = 0" << "\n";
         toscriptfile << " return compare_result" << "\n";
         toscriptfile << "end" << "\n";
     }
 
-    toscriptfile << "if fplog_message1.hostname == fplog_message2.hostname then" << "\n";
+    toscriptfile << "if sort_by_hostname > 0.1 then" << "\n";
+    toscriptfile << " if fplog_message1.hostname > fplog_message2.hostname then" << "\n";
+    toscriptfile << "  total1 = total1 + 10^(7-sort_by_hostname)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if fplog_message1.hostname < fplog_message2.hostname then" << "\n";
+    toscriptfile << "  total2 = total2 + 10^(7-sort_by_hostname)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+
+    toscriptfile << "if sort_by_sequence > 0.1 then" << "\n";
     toscriptfile << " if fplog_message1.sequence > fplog_message2.sequence then" << "\n";
-    toscriptfile << "  compare_result = 1" << "\n";
-    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << "  total1 = total1 + 10^(7-sort_by_sequence)" << "\n";
     toscriptfile << " end" << "\n";
     toscriptfile << " if fplog_message1.sequence < fplog_message2.sequence then" << "\n";
-    toscriptfile << "  compare_result = -1" << "\n";
-    toscriptfile << "  return compare_result" << "\n";
+    toscriptfile << "  total2 = total2 + 10^(7-sort_by_sequence)" << "\n";
     toscriptfile << " end" << "\n";
     toscriptfile << "end" << "\n";
-    toscriptfile << "ts1 = convert_timestamp(fplog_message1.timestamp)" << "\n";
-    toscriptfile << "ts2 = convert_timestamp(fplog_message2.timestamp)" << "\n";
-    toscriptfile << "if ts1 > ts2 then" << "\n";
+
+    toscriptfile << "if sort_by_module > 0.1 then" << "\n";
+    toscriptfile << " if fplog_message1.module > fplog_message2.module then" << "\n";
+    toscriptfile << "  total1 = total1 + 10^(7-sort_by_module)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if fplog_message1.module < fplog_message2.module then" << "\n";
+    toscriptfile << "  total2 = total2 + 10^(7-sort_by_module)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+
+    toscriptfile << "if sort_by_method > 0.1 then" << "\n";
+    toscriptfile << " if fplog_message1.method > fplog_message2.method then" << "\n";
+    toscriptfile << "  total1 = total1 + 10^(7-sort_by_method)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if fplog_message1.method < fplog_message2.method then" << "\n";
+    toscriptfile << "  total2 = total2 + 10^(7-sort_by_method)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+
+    toscriptfile << "if sort_by_priority > 0.1 then" << "\n";
+    toscriptfile << " local prio = {}" << "\n";
+    toscriptfile << " prio[\"debug\"]=0" << "\n";
+    toscriptfile << " prio[\"info\"]=1" << "\n";
+    toscriptfile << " prio[\"notice\"]=2" << "\n";
+    toscriptfile << " prio[\"warning\"]=3" << "\n";
+    toscriptfile << " prio[\"error\"]=4" << "\n";
+    toscriptfile << " prio[\"critical\"]=5" << "\n";
+    toscriptfile << " prio[\"alert\"]=6" << "\n";
+    toscriptfile << " prio[\"emergency\"]=7" << "\n";
+    toscriptfile << " if prio[fplog_message1.priority] > prio[fplog_message2.priority] then" << "\n";
+    toscriptfile << "  total1 = total1 + 10^(7-sort_by_priority)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if prio[fplog_message1.priority] < prio[fplog_message2.priority] then" << "\n";
+    toscriptfile << "  total2 = total2 + 10^(7-sort_by_priority)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+
+    toscriptfile << "if sort_by_timestamp > 0.1 then" << "\n";
+    toscriptfile << " local ts1 = convert_timestamp(fplog_message1.timestamp)" << "\n";
+    toscriptfile << " local ts2 = convert_timestamp(fplog_message2.timestamp)" << "\n";
+    toscriptfile << " if ts1 > ts2 then" << "\n";
+    toscriptfile << "  total1 = total1 + 10^(7-sort_by_text)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << " if ts1 < ts2 then" << "\n";
+    toscriptfile << "  total2 = total2 + 10^(7-sort_by_text)" << "\n";
+    toscriptfile << " end" << "\n";
+    toscriptfile << "end" << "\n";
+
+    toscriptfile << "if total1 > total2 then" << "\n";
     toscriptfile << " compare_result = 1" << "\n";
-    toscriptfile << " return compare_result" << "\n";
     toscriptfile << "end" << "\n";
-    toscriptfile << "if ts1 < ts2 then" << "\n";
+    toscriptfile << "if total1 < total2 then" << "\n";
     toscriptfile << " compare_result = -1" << "\n";
-    toscriptfile << " return compare_result" << "\n";
     toscriptfile << "end" << "\n";
-    toscriptfile << "compare_result = 0" << "\n";
-    toscriptfile << "return 0" << "\n";
+    toscriptfile << "return compare_result" << "\n";
 
     script_file.close();
 }
@@ -237,6 +288,7 @@ TEST(Lua_Tests, Basic_Sorting)
 {
     prepare_test_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
+    fpgui::lua::inject_tab_sorting_config();
 
     std::string cmp1, cmp2;
     cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\"}";
@@ -252,7 +304,7 @@ TEST(Lua_Tests, Basic_Sorting)
     cmp1 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\" }";
     cmp2 = "{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 1, \"hostname\":\"192.168.1.10\" }";
 
-    EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), 0);
+    EXPECT_EQ(fpgui::lua::compare_json_strings(cmp1, cmp2), 1);
 
     std::vector<std::string> correctly_sorted, contender, contender2;
     correctly_sorted.push_back("{\"timestamp\":\"2017-03-21T15:35:17.666+0200\", \"sequence\": 2, \"hostname\":\"192.168.1.11\", \"text\":\"xyz\" }");
@@ -367,12 +419,13 @@ TEST(Lua_Tests, Sorting_Performance)
 {
     prepare_test_script_file();
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
+    fpgui::lua::inject_tab_sorting_config();
 
     std::cout << "Generating strings.." << std::endl;
 
     std::vector<std::string>* strings = new std::vector<std::string>();
     size_t sz = 0;
-    generate_json_strings(*strings, 10000, 0, 500);
+    generate_json_strings(*strings, 1000, 0, 500);
     for (auto s: *strings)
         sz += s.size();
     sz /= strings->size();
