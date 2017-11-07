@@ -197,6 +197,10 @@ void create_default_script_file(bool overwrite)
     script_file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QTextStream toscriptfile(&script_file);
 
+    toscriptfile << "compare_result = 0" << "\n";
+    toscriptfile << "local total1 = 0" << "\n";
+    toscriptfile << "local total2 = 0" << "\n";
+
     toscriptfile << "if sort_by_text > 0.1 then" << "\n";
     toscriptfile << " if fplog_message1.text > fplog_message2.text then" << "\n";
     toscriptfile << "  total1 = total1 + 10^(7-sort_by_text)" << "\n";
