@@ -6,6 +6,8 @@
 
 QT       += core gui
 
+CONFIG += c++14
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = fpgui
@@ -15,13 +17,19 @@ INCLUDEPATH += "$$_PRO_FILE_PWD_/dependencies/include/"
 
 LIBS += -L"$$_PRO_FILE_PWD_/dependencies/lib/x64/"
 LIBS += -L/usr/local/lib/
-LIBS += -lmongocxx
+LIBS += -lmongocxx -lgtest -lluajit
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DEPRECATED_WARNINGS \
+           QT_NO_DEBUG_OUTPUT \
+           QT_NO_INFO_OUTPUT \
+           QT_NO_WARNING_OUTPUT \
+           QT_MESSAGELOGCONTEXT \
+           _LINUX \
+           RAPIDJSON_HAS_STDSTRING
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -30,11 +38,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp
+    main.cpp \
+    mainwindow.cpp \
+    settings.cpp \
+    var_injector.cpp \
+    scripting.cpp \
+    utils.cpp \
+    globals.cpp \
+    simplecrypt.cpp \
+    mac_util.cpp
 
 HEADERS += \
-        mainwindow.h
+    mainwindow.h \
+    scripting.h \
+    settings.h \
+    var_injector.h \
+    utils.h \
+    globals.h \
+    simplecrypt.h \
+    mac_util.h
 
 FORMS += \
         mainwindow.ui
+
+QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
