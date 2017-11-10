@@ -1,9 +1,11 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QTableWidget>
 
 #include <globals.h>
 #include <settings.h>
+#include <table_view.h>
 
 
 int main(int argc, char *argv[])
@@ -30,7 +32,15 @@ int main(int argc, char *argv[])
         fpgui::settings::write_default_settigs(settings);
     }
 
+    fpgui::settings::create_default_script_file();
+
     MainWindow w;
+    fpgui::ui::Table_View table;
+
+    QWidget* central(w.centralWidget());
+
+
+    //table.setup_view(fpgui::settings::read_tab_config(settings), *central);
     w.show();
 
     return a.exec();
