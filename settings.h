@@ -12,7 +12,7 @@ struct Tab_Configuration
     Tab_Configuration(): size(0), sort_by(false), show(false){}
 
     std::string name;
-    size_t size;
+    double size;
     bool sort_by;
     bool show;
 };

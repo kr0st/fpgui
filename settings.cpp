@@ -52,7 +52,7 @@ std::vector<Tab_Configuration> read_tab_config(QSettings& settings)
             tab_config.name = std::string(settings.value(QString(fpgui::settings::tab_names.name)).toString().toStdString());
             tab_config.show = settings.value(QString(fpgui::settings::tabs_display_setting)).toBool();
             tab_config.sort_by = settings.value(QString(fpgui::settings::tabs_sorting_setting)).toBool();
-            tab_config.size = settings.value(QString(fpgui::settings::tabs_size_setting)).toInt();
+            tab_config.size = settings.value(QString(fpgui::settings::tabs_size_setting)).toDouble();
 
             tabs.push_back(tab_config);
         }
@@ -79,7 +79,7 @@ void write_tab_config(const std::vector<Tab_Configuration>& tab_config, QSetting
             settings.setValue(QString(fpgui::settings::tab_names.name), QString(tab_config[i].name.c_str()));
             settings.setValue(QString(fpgui::settings::tabs_display_setting), tab_config[i].show);
             settings.setValue(QString(fpgui::settings::tabs_sorting_setting), tab_config[i].sort_by);
-            settings.setValue(QString(fpgui::settings::tabs_size_setting), qint64(tab_config[i].size));
+            settings.setValue(QString(fpgui::settings::tabs_size_setting), tab_config[i].size);
         }
     }
     catch(...)

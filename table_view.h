@@ -16,6 +16,7 @@ class Table_View: public QObject
 
         Table_View(){}
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget);
+        std::vector<settings::Tab_Configuration> get_view_configuration();
 
         void close_view();
 
