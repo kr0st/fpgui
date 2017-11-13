@@ -47,7 +47,8 @@ SOURCES += \
     globals.cpp \
     simplecrypt.cpp \
     mac_util.cpp \
-    table_view.cpp
+    table_view.cpp \
+    table_controller.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -58,7 +59,8 @@ HEADERS += \
     globals.h \
     simplecrypt.h \
     mac_util.h \
-    table_view.h
+    table_view.h \
+    table_controller.h
 
 FORMS += \
         mainwindow.ui

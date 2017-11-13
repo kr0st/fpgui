@@ -8,13 +8,21 @@
 namespace fpgui {
 namespace ui {
 
-class Table_View
+class Table_View: public QObject
 {
+    Q_OBJECT
 
     public:
 
         Table_View(){}
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget);
+
+        void close_view();
+
+
+    signals:
+
+        void closing();
 };
 
 }}

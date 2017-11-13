@@ -23,4 +23,11 @@ std::string decrypt_string(std::string& encrypted, unsigned char* key_64bit, int
 bool generate_encryption_key(unsigned char* generated_key_64bit);
 
 }
+
+namespace ui {
+
+int message_box(const char* msg);
+
+}
+
 }

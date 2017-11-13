@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QtDebug>
+#include <QMessageBox>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
@@ -21,6 +22,17 @@
 #include <date/date.h>
 
 namespace generic_utils {
+
+namespace ui {
+
+int message_box(const char* msg)
+{
+    QMessageBox box;
+    box.setText(msg);
+    return box.exec();
+}
+
+}
 
 std::string get_username()
 {

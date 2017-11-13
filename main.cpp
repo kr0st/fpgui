@@ -6,6 +6,7 @@
 #include <globals.h>
 #include <settings.h>
 #include <table_view.h>
+#include <utils.h>
 
 
 int main(int argc, char *argv[])
@@ -37,10 +38,16 @@ int main(int argc, char *argv[])
     MainWindow w;
     fpgui::ui::Table_View table;
 
-    QWidget* central(w.centralWidget());
+    QTableWidget* widget(w.centralWidget()->findChild<QTableWidget*>("tableWidget"));
 
+    if (!widget)
+    {
+        generic_utils::ui::message_box("Fatal error: user interface is broken, exiting..");
+        return -1;
+    }
 
-    //table.setup_view(fpgui::settings::read_tab_config(settings), *central);
+    table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
+
     w.show();
 
     return a.exec();
