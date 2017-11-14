@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 
     w.show();
     table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
+    w.inject_table_view(&table);
 
     return a.exec();
 }

@@ -8,6 +8,17 @@
 namespace fpgui {
 namespace ui {
 
+static void remove_invisible_tabs(std::vector<settings::Tab_Configuration>& config)
+{
+    std::vector<settings::Tab_Configuration> tabs;
+
+    for (auto& tab : config)
+        if (tab.show)
+            tabs.push_back(tab);
+
+    config = tabs;
+}
+
 static void balance_size_percentages(std::vector<settings::Tab_Configuration>& config, double total = 0)
 {
     double min_tab_size = 100 / config.size();
@@ -78,23 +89,40 @@ static void percentage_to_absolute_width(std::vector<settings::Tab_Configuration
         tab.size *= (widget_width / 100);
 }
 
-void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget)
+void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only)
 {
     double widget_width(widget.geometry().width());
     std::vector<settings::Tab_Configuration> config_copy(config);
 
-    balance_size_percentages(config_copy);
-    percentage_to_absolute_width(config_copy, widget_width);
+    if (!resize_only)
+    {
+        remove_invisible_tabs(config_copy);
+        balance_size_percentages(config_copy);
 
-    widget.setColumnCount(config_copy.size());
-    widget.setRowCount(1);
+        config_ = config_copy;
+        widget_ = &widget;
+
+        widget.setColumnCount(config_copy.size());
+        widget.setRowCount(1);
+    }
+
+    percentage_to_absolute_width(config_copy, widget_width);
 
     int col = 0;
     for (auto& tab : config_copy)
     {
-        widget.setHorizontalHeaderItem(col++, new QTableWidgetItem(tab.name.c_str()));
+        if (!resize_only)
+            widget.setHorizontalHeaderItem(col++, new QTableWidgetItem(tab.name.c_str()));
+        else
+            col++;
+
         widget.setColumnWidth(col - 1, tab.size);
     }
+}
+
+void Table_View::do_delayed_resize()
+{
+    setup_view(config_, *widget_, true);
 }
 
 void Table_View::close_view()
