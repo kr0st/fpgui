@@ -89,8 +89,22 @@ static void percentage_to_absolute_width(std::vector<settings::Tab_Configuration
         tab.size *= (widget_width / 100);
 }
 
+static void absolute_width_to_percentage(std::vector<settings::Tab_Configuration> &config, QTableWidget &widget)
+{
+    int cols = config.size();
+    double widget_width(widget.geometry().width());
+
+    for (int i = 0; i < cols; ++i)
+    {
+        double width = widget.columnWidth(i);
+        config[i].size = width / widget_width * 100;
+    }
+}
+
 void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only)
 {
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+
     double widget_width(widget.geometry().width());
     std::vector<settings::Tab_Configuration> config_copy(config);
 
@@ -104,6 +118,12 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
 
         widget.setColumnCount(config_copy.size());
         widget.setRowCount(1);
+    }
+    else
+    {
+        absolute_width_to_percentage(config_copy, widget);
+        balance_size_percentages(config_copy);
+        config_ = config_copy;
     }
 
     percentage_to_absolute_width(config_copy, widget_width);
@@ -120,18 +140,20 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
     }
 }
 
-void Table_View::do_delayed_resize()
+void Table_View::do_resize()
 {
     setup_view(config_, *widget_, true);
 }
 
 void Table_View::close_view()
 {
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
     emit closing();
 }
 
-std::vector<settings::Tab_Configuration> get_view_configuration()
+std::vector<settings::Tab_Configuration> Table_View::get_view_configuration()
 {
+    return config_;
 }
 
 }}

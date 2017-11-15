@@ -4,6 +4,7 @@
 #include <settings.h>
 
 #include <QTableWidget>
+#include <mutex>
 
 namespace fpgui {
 namespace ui {
@@ -19,7 +20,7 @@ class Table_View: public QObject
         std::vector<settings::Tab_Configuration> get_view_configuration();
 
         void close_view();
-        void do_delayed_resize();
+        void do_resize();
 
 
     signals:
@@ -31,6 +32,7 @@ class Table_View: public QObject
 
         std::vector<settings::Tab_Configuration> config_;
         QTableWidget* widget_;
+        std::recursive_mutex mutex_;
 };
 
 }}

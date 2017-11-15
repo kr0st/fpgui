@@ -19,5 +19,5 @@ void MainWindow::resizeEvent(QResizeEvent* event)
    QMainWindow::resizeEvent(event);
 
    if (table_view_)
-       table_view_->do_delayed_resize();
+       table_view_->do_resize();
 }
