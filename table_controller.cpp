@@ -6,7 +6,8 @@ namespace ui {
 
 void Table_Controller::on_view_closing()
 {
-    generic_utils::ui::message_box("closing app!");
+    QSettings settings;
+    fpgui::settings::write_tab_config(view_.get_view_configuration(), settings);
 }
 
 }

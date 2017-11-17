@@ -20,7 +20,7 @@ class Table_Controller: public QObject
 
     public:
 
-        Table_Controller(Table_View& view): view_(view) {}
+        Table_Controller(Table_View& view): view_(view) { connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection); }
 
 
     private:

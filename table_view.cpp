@@ -8,20 +8,15 @@
 namespace fpgui {
 namespace ui {
 
-static void remove_invisible_tabs(std::vector<settings::Tab_Configuration>& config)
-{
-    std::vector<settings::Tab_Configuration> tabs;
-
-    for (auto& tab : config)
-        if (tab.show)
-            tabs.push_back(tab);
-
-    config = tabs;
-}
-
 static void balance_size_percentages(std::vector<settings::Tab_Configuration>& config, double total = 0)
 {
-    double min_tab_size = 100 / config.size();
+    int invisible = 0;
+
+    for (auto& tab : config)
+        if (!tab.show)
+            invisible++;
+
+    double min_tab_size = 100 / (config.size() - invisible);
 
     if (min_tab_size > 5)
         min_tab_size = 5;
@@ -33,24 +28,30 @@ static void balance_size_percentages(std::vector<settings::Tab_Configuration>& c
     {
         for (auto& tab : config)
         {
+            if (!tab.show)
+                continue;
+
             if (tab.size < min_tab_size)
                 tab.size = min_tab_size;
             total += tab.size;
         }
 
-        if ((total < 100.5) && (total > 99))
+        if ((total < 101) && (total > 99))
             return;
 
         balance_size_percentages(config, total);
         return;
     }
 
-    while (total > 100.5)
+    while (total > 101)
     {
         double temp = 0;
 
         for (auto& tab : config)
         {
+            if (!tab.show)
+                continue;
+
             tab.size -= 0.1;
 
             if (tab.size < min_tab_size)
@@ -62,12 +63,15 @@ static void balance_size_percentages(std::vector<settings::Tab_Configuration>& c
         total = temp;
     }
 
-    while (total < 100.5)
+    while (total < 99)
     {
         double temp = 0;
 
         for (auto& tab : config)
         {
+            if (!tab.show)
+                continue;
+
             tab.size += 0.1;
 
             if (tab.size < min_tab_size)
@@ -86,18 +90,27 @@ static void percentage_to_absolute_width(std::vector<settings::Tab_Configuration
         return;
 
     for (auto& tab : config)
+    {
+        if (!tab.show)
+            continue;
+
         tab.size *= (widget_width / 100);
+    }
 }
 
 static void absolute_width_to_percentage(std::vector<settings::Tab_Configuration> &config, QTableWidget &widget)
 {
-    int cols = config.size();
     double widget_width(widget.geometry().width());
 
-    for (int i = 0; i < cols; ++i)
+    int col = 0;
+
+    for (auto& tab : config)
     {
-        double width = widget.columnWidth(i);
-        config[i].size = width / widget_width * 100;
+        if (!tab.show)
+            continue;
+
+        double width = widget.columnWidth(col++);
+        tab.size = width / widget_width * 100;
     }
 }
 
@@ -110,14 +123,25 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
 
     if (!resize_only)
     {
-        remove_invisible_tabs(config_copy);
         balance_size_percentages(config_copy);
 
         config_ = config_copy;
         widget_ = &widget;
 
-        widget.setColumnCount(config_copy.size());
+        int invisible = 0;
+
+        for (auto& tab : config)
+            if (!tab.show)
+                invisible++;
+
+        widget.setColumnCount(config_copy.size() - invisible);
         widget.setRowCount(1);
+
+        disconnect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
+                   SLOT(col_size_changed(int, int, int)));
+
+        connect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
+                SLOT(col_size_changed(int, int, int)), Qt::DirectConnection);
     }
     else
     {
@@ -131,6 +155,9 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
     int col = 0;
     for (auto& tab : config_copy)
     {
+        if (!tab.show)
+            continue;
+
         if (!resize_only)
             widget.setHorizontalHeaderItem(col++, new QTableWidgetItem(tab.name.c_str()));
         else
@@ -140,9 +167,13 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
     }
 }
 
+static bool suppress_resize_signals = false;
+
 void Table_View::do_resize()
 {
+    suppress_resize_signals = true;
     setup_view(config_, *widget_, true);
+    suppress_resize_signals = false;
 }
 
 void Table_View::close_view()
@@ -154,6 +185,12 @@ void Table_View::close_view()
 std::vector<settings::Tab_Configuration> Table_View::get_view_configuration()
 {
     return config_;
+}
+
+void Table_View::col_size_changed(int, int, int)
+{
+    if (!suppress_resize_signals)
+        do_resize();
 }
 
 }}

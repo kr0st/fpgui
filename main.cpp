@@ -6,7 +6,34 @@
 #include <globals.h>
 #include <settings.h>
 #include <table_view.h>
+#include <table_controller.h>
 #include <utils.h>
+
+
+class Closer: public QObject
+{
+    Q_OBJECT
+
+    public:
+
+        Closer();
+        Closer(QApplication* app, fpgui::ui::Table_View* view): view_(view), app_(app) { connect(app, SIGNAL(lastWindowClosed()), this, SLOT(going_down())); }
+
+
+    public slots:
+
+        void going_down()
+        {
+            disconnect(app_, SIGNAL(lastWindowClosed()), this, SLOT(going_down()));
+            view_->close_view();
+        }
+
+
+    private:
+
+        fpgui::ui::Table_View* view_;
+        QApplication* app_;
+};
 
 
 int main(int argc, char *argv[])
@@ -37,6 +64,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     fpgui::ui::Table_View table;
+    fpgui::ui::Table_Controller table_controller(table);
 
     QTableWidget* widget(w.centralWidget()->findChild<QTableWidget*>("tableWidget"));
 
@@ -50,5 +78,9 @@ int main(int argc, char *argv[])
     table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
     w.inject_table_view(&table);
 
+    Closer closer(&a, &table);
+
     return a.exec();
 }
+
+#include "main.moc"

@@ -23,6 +23,11 @@ class Table_View: public QObject
         void do_resize();
 
 
+    public slots:
+
+        void col_size_changed(int col, int old_sz, int new_sz);
+
+
     signals:
 
         void closing();
