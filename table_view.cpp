@@ -1,4 +1,5 @@
 #include "table_view.h"
+#include <utils.h>
 
 #include <QHeaderView>
 
@@ -114,9 +115,12 @@ static void absolute_width_to_percentage(std::vector<settings::Tab_Configuration
     }
 }
 
+static bool suppress_resize_signals = false;
+
 void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
+    generic_utils::Variable_Reset <bool> reset(suppress_resize_signals, true, false);
 
     double widget_width(widget.geometry().width());
     std::vector<settings::Tab_Configuration> config_copy(config);
@@ -142,6 +146,15 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
 
         connect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
                 SLOT(col_size_changed(int, int, int)), Qt::DirectConnection);
+
+        int col = 0;
+        for (auto& tab : config_copy)
+        {
+            if (!tab.show)
+                continue;
+
+            widget.setHorizontalHeaderItem(col++, new QTableWidgetItem(tab.name.c_str()));
+        }
     }
     else
     {
@@ -158,22 +171,13 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         if (!tab.show)
             continue;
 
-        if (!resize_only)
-            widget.setHorizontalHeaderItem(col++, new QTableWidgetItem(tab.name.c_str()));
-        else
-            col++;
-
-        widget.setColumnWidth(col - 1, tab.size);
+        widget.setColumnWidth(col++, tab.size);
     }
 }
 
-static bool suppress_resize_signals = false;
-
 void Table_View::do_resize()
 {
-    suppress_resize_signals = true;
     setup_view(config_, *widget_, true);
-    suppress_resize_signals = false;
 }
 
 void Table_View::close_view()

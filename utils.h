@@ -4,6 +4,24 @@
 
 namespace generic_utils {
 
+template <typename T> class Variable_Reset
+{
+    public:
+
+        Variable_Reset(T& variable, T value_to_set, T value_to_reset):
+        var_(variable),
+        val_(value_to_reset)
+        { var_ = value_to_set; }
+
+        ~Variable_Reset(){ var_ = val_; }
+
+
+    private:
+
+        T& var_;
+        T val_;
+};
+
 std::string get_username();
 std::string& escape_quotes(std::string& str);
 std::vector<std::string> strip_json(const std::string& fields_to_leave, const std::vector<std::string>& json_strings);
