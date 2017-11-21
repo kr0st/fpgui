@@ -1,5 +1,5 @@
-QT += core
-QT -= gui
+QT += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++14
 
@@ -23,7 +23,11 @@ SOURCES += \
     simplecrypt.cpp \
     utils.cpp \
     scripting.cpp \
-    var_injector.cpp
+    var_injector.cpp \
+    table_view.cpp \
+    table_controller.cpp \
+    mainwindow.cpp \
+    data_source.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -51,6 +55,12 @@ HEADERS += \
     simplecrypt.h \
     utils.h \
     scripting.h \
-    var_injector.h
+    var_injector.h \
+    table_controller.h \
+    mainwindow.h \
+    table_view.h \
+    data_source.h
+
+FORMS += mainwindow.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
