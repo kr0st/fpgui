@@ -38,7 +38,7 @@ void make_config_path()
 
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings)
 {
-    int array_sz = settings.beginReadArray(QString(fpgui::settings::tabs_section_name) + fpgui::settings::tabs_array_name);
+    int array_sz = settings.beginReadArray(QString(fpgui::settings::tabs_section_name) + "/" + fpgui::settings::tabs_array_name);
     std::vector<Tab_Configuration> tabs;
 
     try
@@ -69,7 +69,7 @@ std::vector<Tab_Configuration> read_tab_config(QSettings& settings)
 
 void write_tab_config(const std::vector<Tab_Configuration>& tab_config, QSettings& settings)
 {
-    settings.beginWriteArray(QString(fpgui::settings::tabs_section_name) + fpgui::settings::tabs_array_name);
+    settings.beginWriteArray(QString(fpgui::settings::tabs_section_name) + "/" + fpgui::settings::tabs_array_name);
 
     try
     {
