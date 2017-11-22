@@ -7,6 +7,15 @@
 namespace fpgui {
 namespace settings {
 
+struct App_Configuration
+{
+    App_Configuration(): view_batch_size(0), view_max_messages(0), view_refresh_time(0) {}
+
+    int view_batch_size;
+    int view_max_messages;
+    int view_refresh_time;
+};
+
 struct Tab_Configuration
 {
     Tab_Configuration(): size(0), sort_by(false), show(false){}
@@ -32,6 +41,9 @@ struct Db_Configuration
 
 std::string get_config_path();
 void make_config_path();
+
+App_Configuration read_app_config(QSettings& settings);
+void write_app_config(const App_Configuration& app_config, QSettings& settings);
 
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings);
 void write_tab_config(const std::vector<Tab_Configuration>& tab_config, QSettings& settings);

@@ -36,6 +36,29 @@ void make_config_path()
         QDir().mkdir(path);
 }
 
+App_Configuration read_app_config(QSettings& settings)
+{
+    App_Configuration app_config;
+    std::string section(fpgui::settings::application_section_name);
+    section += '/';
+
+    app_config.view_batch_size = settings.value(QString((section + fpgui::settings::view_batch_size_setting).c_str())).toInt();
+    app_config.view_max_messages = settings.value(QString((section + fpgui::settings::view_max_messages_setting).c_str())).toInt();
+    app_config.view_refresh_time = settings.value(QString((section + fpgui::settings::view_refresh_setting).c_str())).toInt();
+
+    return app_config;
+}
+
+void write_app_config(const App_Configuration& app_config, QSettings& settings)
+{
+    std::string section(fpgui::settings::application_section_name);
+    section += '/';
+
+    settings.setValue(QString((section + fpgui::settings::view_batch_size_setting).c_str()), app_config.view_batch_size);
+    settings.setValue(QString((section + fpgui::settings::view_max_messages_setting).c_str()), app_config.view_max_messages);
+    settings.setValue(QString((section + fpgui::settings::view_refresh_setting).c_str()), app_config.view_refresh_time);
+}
+
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings)
 {
     int array_sz = settings.beginReadArray(QString(fpgui::settings::tabs_section_name) + "/" + fpgui::settings::tabs_array_name);
@@ -182,6 +205,12 @@ void write_default_settigs(QSettings& settings)
     db_config.port = 27017;
     db_config.polling_interval = 1000;
 
+    App_Configuration app_config;
+    app_config.view_batch_size = 200;
+    app_config.view_max_messages = 10000;
+    app_config.view_refresh_time = 500;
+
+    write_app_config(app_config, settings);
     write_db_config(db_config, settings);
     write_tab_config(tabs, settings);
 }
