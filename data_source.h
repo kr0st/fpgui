@@ -6,7 +6,7 @@
 
 namespace fpgui { namespace data_source { namespace random {
 
-std::string random_timestamp()
+inline std::string random_timestamp()
 {
     int y = 2000 + qrand() % 21;
     int m = 1 + qrand() % 11;
@@ -78,6 +78,7 @@ class Data_Source
   public:
 
       virtual void request_data(T& data) = 0;
+      virtual ~Data_Source();
 };
 
 template <typename T=std::queue<std::string>>
