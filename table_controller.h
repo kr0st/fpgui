@@ -40,7 +40,11 @@ class Table_Controller: public QObject
         settings::App_Configuration app_config_;
         std::vector<settings::Tab_Configuration> tab_config_;
         std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source_;
-        std::vector<std::string> data_;
+
+
+    protected:
+
+        std::vector<std::string> data_, display_data_;
 };
 
 }}

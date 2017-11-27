@@ -32,6 +32,15 @@ void Table_Controller::on_view_closing()
     settings::write_tab_config(view_.get_view_configuration(), settings);
 }
 
+static void prepare_for_display(std::vector<std::string>& json_strings, std::vector<settings::Tab_Configuration>& tab_config)
+{
+    std::string to_show;
+    for (auto& tab : tab_config)
+        if (tab.show) to_show += (tab.name + ",");
+
+    json_strings = generic_utils::strip_json(to_show, json_strings);
+}
+
 static std::vector<std::pair<const std::string*, const std::string*>> sort_batch(const std::vector<std::string>& batch,
                                                                      std::vector<settings::Tab_Configuration>& tab_config)
 {
@@ -75,8 +84,19 @@ void Table_Controller::refresh_view()
             if (batch.size() % app_config_.view_batch_size == 0)
             {
                 auto sorted(sort_batch(batch, tab_config_));
+                std::vector<std::string> display_batch;
+
                 for (auto& str : sorted)
-                    data_.push_back(*str.first); //TODO: here push also into table view
+                {
+                    display_batch.push_back(*str.first);
+                    data_.push_back(*str.first);
+                }
+
+                prepare_for_display(display_batch, tab_config_);
+
+                display_data_.reserve(display_data_.size() + display_batch.size());
+                std::move(display_batch.begin(), display_batch.end(), std::inserter(display_data_, display_data_.end()));
+                //TODO: here push also into table view
 
                 batch.resize(0);
             }
@@ -85,8 +105,17 @@ void Table_Controller::refresh_view()
     if (batch.size())
     {
         auto sorted(sort_batch(batch, tab_config_));
+        std::vector<std::string> display_batch;
+
         for (auto& str : sorted)
-            data_.push_back(*str.first); //TODO: here push also into table view
+        {
+            display_batch.push_back(*str.first);
+            data_.push_back(*str.first);
+        }
+
+        display_data_.reserve(display_data_.size() + display_batch.size());
+        std::move(display_batch.begin(), display_batch.end(), std::inserter(display_data_, display_data_.end()));
+        //TODO: here push also into table view
     }
 
     QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view()));

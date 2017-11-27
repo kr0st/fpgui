@@ -415,7 +415,7 @@ TEST(Util_Tests, Json_Stripper)
     correct.push_back("{\"timestamp\":\"2017-03-21T15:35:18.000+0200\",\"hostname\":\"192.168.1.10\"}");
     correct.push_back("{\"timestamp\":\"2017-03-21T15:35:18.001+0200\",\"hostname\":\"192.168.1.11\"}");
 
-    contender = generic_utils::strip_json("timestamp,hostname", test);
+    contender = generic_utils::strip_json("timestamp,hostname,", test);
 
     ASSERT_EQ(contender.size(), correct.size());
     for (size_t i = 0; i < correct.size(); ++i)
