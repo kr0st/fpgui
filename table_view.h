@@ -15,12 +15,13 @@ class Table_View: public QObject
 
     public:
 
-        Table_View(){ widget_ = 0; }
+        Table_View(settings::App_Configuration& app_config): app_config_(app_config) { widget_ = 0; }
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget, bool resize_only = false);
         std::vector<settings::Tab_Configuration> get_view_configuration();
 
         void close_view();
         void do_resize();
+        void refresh_view(std::vector<std::string>& data_batch, bool full_refresh = false);
 
 
     public slots:
@@ -36,8 +37,15 @@ class Table_View: public QObject
     private:
 
         std::vector<settings::Tab_Configuration> config_;
+        settings::App_Configuration app_config_;
+
         QTableWidget* widget_;
         std::recursive_mutex mutex_;
+
+
+    protected:
+
+        std::vector<std::string> data_;
 };
 
 }}

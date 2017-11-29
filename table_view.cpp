@@ -197,4 +197,20 @@ void Table_View::col_size_changed(int, int, int)
         do_resize();
 }
 
+static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config)
+{
+    while (data.size() > (size_t)config.view_max_messages)
+        data.erase(data.begin());
+}
+
+void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+
+    data_.reserve(data_.size() + data_batch.size());
+    std::copy(data_batch.begin(), data_batch.end(), std::inserter(data_, data_.end()));
+
+    trim_data(data_, app_config_);
+}
+
 }}

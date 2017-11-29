@@ -66,6 +66,12 @@ static std::vector<std::pair<const std::string*, const std::string*>> sort_batch
     return to_sort;
 }
 
+static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config)
+{
+    while (data.size() > (size_t)config.view_max_messages)
+        data.erase(data.begin());
+}
+
 void Table_Controller::refresh_view()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
@@ -95,8 +101,8 @@ void Table_Controller::refresh_view()
                 prepare_for_display(display_batch, tab_config_);
 
                 display_data_.reserve(display_data_.size() + display_batch.size());
+                view_.refresh_view(display_batch);
                 std::move(display_batch.begin(), display_batch.end(), std::inserter(display_data_, display_data_.end()));
-                //TODO: here push also into table view
 
                 batch.resize(0);
             }
@@ -113,10 +119,15 @@ void Table_Controller::refresh_view()
             data_.push_back(*str.first);
         }
 
+        prepare_for_display(display_batch, tab_config_);
+
         display_data_.reserve(display_data_.size() + display_batch.size());
+        view_.refresh_view(display_batch);
         std::move(display_batch.begin(), display_batch.end(), std::inserter(display_data_, display_data_.end()));
-        //TODO: here push also into table view
     }
+
+    trim_data(data_, app_config_);
+    trim_data(display_data_, app_config_);
 
     QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view()));
 }
