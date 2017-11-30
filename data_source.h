@@ -22,6 +22,9 @@ inline std::string random_timestamp()
     return timestamp;
 }
 
+inline void push_string(std::vector<std::string>& where, const std::string& what){ where.push_back(what); }
+inline void push_string(std::queue<std::string>& where, const std::string& what){ where.push(what); }
+
 template <typename T=std::vector<std::string>> void generate_json_strings(T& generated, size_t how_many, size_t text_size_bytes_min, size_t text_size_bytes_max)
 {
     if (text_size_bytes_max < text_size_bytes_min)
@@ -65,8 +68,7 @@ template <typename T=std::vector<std::string>> void generate_json_strings(T& gen
 
         std::string rnd_msg = "{\"timestamp\":\"" + random_timestamp() + "\", \"sequence\":" + std::to_string(qrand() % 666) +
                               ", \"hostname\":\"" + hosts[qrand() % hosts.size()] + "\", \"text\":\"" + text +  "\" }";
-
-        generated.push_back(rnd_msg);
+        push_string(generated, rnd_msg);
     }
 }
 
@@ -78,7 +80,7 @@ class Data_Source
   public:
 
       virtual void request_data(T& data) = 0;
-      virtual ~Data_Source();
+      virtual ~Data_Source(){}
 };
 
 template <typename T=std::queue<std::string>>

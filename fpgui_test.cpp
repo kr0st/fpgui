@@ -1,5 +1,6 @@
 #include <ios>
 #include <iostream>
+#include <thread>
 
 #include <QCoreApplication>
 #include <QString>
@@ -17,12 +18,62 @@
 #include <scripting.h>
 #include <var_injector.h>
 #include <data_source.h>
+#include <table_controller.h>
+#include <table_view.h>
 
 #include <gtest/gtest.h>
 
 #include <chrono>
 #include <algorithm>
 #include <date/date.h>
+
+class Test_View: public fpgui::ui::Table_View
+{
+    public:
+
+        Test_View(fpgui::settings::App_Configuration& app_config): Table_View(app_config) {}
+        std::vector<std::string> dump_display_data() { return this->data_; }
+};
+
+class Test_Controller: public fpgui::ui::Table_Controller
+{
+    public:
+
+        Test_Controller(Test_View& view): Table_Controller(view) {}
+        std::vector<std::string> dump_raw_data() { return this->data_; }
+        std::vector<std::string> dump_display_data() { return this->display_data_; }
+};
+
+TEST(Business_Logic, Table_Controller)
+{
+    QSettings settings;
+
+    auto config(fpgui::settings::read_app_config(settings));
+    Test_View view(config);
+    Test_Controller controller(view);
+
+    qsrand(13);
+
+    auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
+
+    source->set_batch_size(config.view_batch_size / 2, config.view_batch_size * 2);
+    source->set_single_string_size(10, 50);
+
+    controller.set_data_source(source);
+
+    controller.refresh_view();
+    std::this_thread::sleep_for(std::chrono::milliseconds(2700));
+
+    {
+        std::vector<std::string> data(controller.dump_raw_data());
+        for (auto& s : data)
+            std::cout << s << std::endl;
+        std::cout << std::endl << std::endl;
+        std::vector<std::string> display_data(controller.dump_display_data());
+        for (auto& s : display_data)
+            std::cout << s << std::endl;
+    }
+}
 
 TEST(Util_Tests, Short_Size)
 {
@@ -445,10 +496,8 @@ void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString
     mutex.unlock();
 }
 
-int main(int argc, char *argv[])
+void init(int argc, char *argv[])
 {
-    qInstallMessageHandler(MessageHandler);
-
     QCoreApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName(fpgui::settings::author);
@@ -465,9 +514,20 @@ int main(int argc, char *argv[])
 
     fpgui::settings::write_default_settigs(settings);
 
+    a.exec();
+}
+
+int main(int argc, char *argv[])
+{
+    std::thread eventloop(init, argc, argv);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    qInstallMessageHandler(MessageHandler);
+
     ::testing::InitGoogleTest(&argc, argv);
+
     int res = RUN_ALL_TESTS();
 
     fpgui::lua::free_resources();
-    return res;
+    exit(res);
 }
