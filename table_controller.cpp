@@ -3,6 +3,7 @@
 #include "table_controller.h"
 #include <utils.h>
 #include <scripting.h>
+#include <var_injector.h>
 
 #include <QTimer>
 
@@ -18,6 +19,7 @@ data_source_(0)
 
     QSettings settings;
     app_config_ = settings::read_app_config(settings);
+    tab_config_ = settings::read_tab_config(settings);
 }
 
 void Table_Controller::stop_refreshing_view()
@@ -75,6 +77,7 @@ static void trim_data(std::vector<std::string>& data, settings::App_Configuratio
 void Table_Controller::refresh_view()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
+    fpgui::lua::inject_tab_sorting_config(tab_config_);
 
     std::queue<std::string> data;
     if (data_source_.get())

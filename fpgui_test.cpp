@@ -47,6 +47,7 @@ class Test_Controller: public fpgui::ui::Table_Controller
 TEST(Business_Logic, Table_Controller)
 {
     QSettings settings;
+    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
 
     auto config(fpgui::settings::read_app_config(settings));
     Test_View view(config);

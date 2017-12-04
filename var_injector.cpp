@@ -5,17 +5,23 @@
 namespace fpgui {
 namespace lua {
 
+
 void inject_tab_sorting_config()
 {
-    int order = 1;
     QSettings settings;
-    std::vector<fpgui::settings::Tab_Configuration> tabs = fpgui::settings::read_tab_config(settings);
-    for (auto& tab: tabs)
+    std::vector<fpgui::settings::Tab_Configuration> tabs(fpgui::settings::read_tab_config(settings));
+    inject_tab_sorting_config(tabs);
+}
+
+void inject_tab_sorting_config(const std::vector<fpgui::settings::Tab_Configuration>& tabs)
+{
+    int order = 1;    
+    for (const auto& tab: tabs)
     {
         #ifdef _UNIT_TEST
             if (tab.name == "text")
             {
-                tab.sort_by = true;
+                (const_cast<fpgui::settings::Tab_Configuration&>(tab)).sort_by = true;
                 inject_variable(("sort_by_" + tab.name).c_str(), tab.sort_by ? 1 : 0);
                 order++;
                 continue;
