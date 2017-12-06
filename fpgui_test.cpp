@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+#include <QThread>
 
 #include <globals.h>
 #include <settings.h>
@@ -44,6 +45,26 @@ class Test_Controller: public fpgui::ui::Table_Controller
         std::vector<std::string> dump_display_data() { return this->display_data_; }
 };
 
+class Timer_Thread: public QThread
+{
+    public:
+
+        Timer_Thread(Test_Controller& controller):
+        controller_(controller)
+        {
+        }
+
+
+    private:
+
+        Test_Controller& controller_;
+
+        void run()
+        {
+            controller_.refresh_view();
+        }
+};
+
 TEST(Business_Logic, Table_Controller)
 {
     QSettings settings;
@@ -62,8 +83,10 @@ TEST(Business_Logic, Table_Controller)
 
     controller.set_data_source(source);
 
-    controller.refresh_view();
-    std::this_thread::sleep_for(std::chrono::milliseconds(2700));
+    Timer_Thread timer_thread(controller);
+    timer_thread.start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(12700));
 
     {
         std::vector<std::string> data(controller.dump_raw_data());
@@ -497,8 +520,11 @@ void MessageHandler(QtMsgType, const QMessageLogContext & context, const QString
     mutex.unlock();
 }
 
+std::recursive_mutex g_mutex;
+
 void init(int argc, char *argv[])
 {
+    g_mutex.lock();
     QCoreApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName(fpgui::settings::author);
@@ -514,20 +540,48 @@ void init(int argc, char *argv[])
     settings.clear();
 
     fpgui::settings::write_default_settigs(settings);
+    g_mutex.unlock();
 
     a.exec();
 }
 
+class Test_Thread: public QThread
+{
+    public:
+
+        Test_Thread(int argc, char *argv[]):
+        argc_(argc),
+        argv_(argv)
+        {
+        }
+
+        int get_exit_status(){ return exit_status_; }
+
+
+    private:
+
+        int argc_, exit_status_;
+        char **argv_;
+
+        void run()
+        {
+            g_mutex.lock();
+            ::testing::InitGoogleTest(&argc_, argv_);
+            exit_status_ = RUN_ALL_TESTS();
+            g_mutex.unlock();
+        }
+};
+
 int main(int argc, char *argv[])
 {
     std::thread eventloop(init, argc, argv);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    Test_Thread test_thread(argc, argv);
 
     qInstallMessageHandler(MessageHandler);
 
-    ::testing::InitGoogleTest(&argc, argv);
-
-    int res = RUN_ALL_TESTS();
+    test_thread.start();
+    test_thread.wait();
+    int res = test_thread.get_exit_status();
 
     fpgui::lua::free_resources();
     exit(res);
