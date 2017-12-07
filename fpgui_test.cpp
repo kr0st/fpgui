@@ -62,6 +62,7 @@ class Timer_Thread: public QThread
         void run()
         {
             controller_.refresh_view();
+            exec();
         }
 };
 
@@ -85,8 +86,12 @@ TEST(Business_Logic, Table_Controller)
 
     Timer_Thread timer_thread(controller);
     timer_thread.start();
+    controller.moveToThread(&timer_thread);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(12700));
+    std::this_thread::sleep_for(std::chrono::milliseconds(3200));
+
+    timer_thread.quit();
+    timer_thread.wait();
 
     {
         std::vector<std::string> data(controller.dump_raw_data());
