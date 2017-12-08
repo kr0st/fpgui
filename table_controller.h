@@ -21,25 +21,35 @@ class Table_Controller: public QObject
     public slots:
 
         void on_view_closing();
-        void refresh_view();
+
+
+    private slots:
+
+        void refresh_view_internal();
 
 
     public:
 
         Table_Controller(Table_View& view);
+        ~Table_Controller();
+
+        void start_refreshing_view();
         void stop_refreshing_view();
+
         void set_data_source(std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source){ data_source_ = data_source; }
 
 
     private:
 
         Table_View& view_;
-        bool view_is_refreshing_;
         std::recursive_mutex mutex_;
 
         settings::App_Configuration app_config_;
         std::vector<settings::Tab_Configuration> tab_config_;
         std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source_;
+
+        class Timer_Thread;
+        std::unique_ptr<Timer_Thread> timer_thread_;
 
 
     protected:

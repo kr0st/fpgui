@@ -6,13 +6,44 @@
 #include <var_injector.h>
 
 #include <QTimer>
+#include <QThread>
 
 namespace fpgui {
 namespace ui {
 
+class Table_Controller::Timer_Thread: public QThread
+{
+    public:
+
+        Timer_Thread(Table_Controller& controller):
+        controller_(controller)
+        {
+        }
+
+
+    private:
+
+        Table_Controller& controller_;
+
+        void run()
+        {
+            controller_.refresh_view_internal();
+            exec();
+        }
+};
+
+Table_Controller::~Table_Controller()
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    if (timer_thread_->isRunning())
+    {
+        timer_thread_->quit();
+        timer_thread_->wait();
+    }
+}
+
 Table_Controller::Table_Controller(Table_View& view):
 view_(view),
-view_is_refreshing_(true),
 data_source_(0)
 {
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
@@ -20,12 +51,18 @@ data_source_(0)
     QSettings settings;
     app_config_ = settings::read_app_config(settings);
     tab_config_ = settings::read_tab_config(settings);
+
+    timer_thread_.reset(new Timer_Thread(*this));
 }
 
 void Table_Controller::stop_refreshing_view()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
-    view_is_refreshing_ = false;
+    if (timer_thread_->isRunning())
+    {
+        timer_thread_->quit();
+        timer_thread_->wait();
+    }
 }
 
 void Table_Controller::on_view_closing()
@@ -74,7 +111,18 @@ static void trim_data(std::vector<std::string>& data, settings::App_Configuratio
         data.erase(data.begin());
 }
 
-void Table_Controller::refresh_view()
+void Table_Controller::start_refreshing_view()
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    if (!timer_thread_->isRunning())
+    {
+        timer_thread_->start();
+        if (QThread::currentThread() != timer_thread_.get())
+            this->moveToThread(timer_thread_.get());
+    }
+}
+
+void Table_Controller::refresh_view_internal()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     fpgui::lua::inject_tab_sorting_config(tab_config_);
@@ -132,7 +180,7 @@ void Table_Controller::refresh_view()
     trim_data(data_, app_config_);
     trim_data(display_data_, app_config_);
 
-    QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view()));
+    QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view_internal()));
 }
 
 }

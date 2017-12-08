@@ -45,27 +45,6 @@ class Test_Controller: public fpgui::ui::Table_Controller
         std::vector<std::string> dump_display_data() { return this->display_data_; }
 };
 
-class Timer_Thread: public QThread
-{
-    public:
-
-        Timer_Thread(Test_Controller& controller):
-        controller_(controller)
-        {
-        }
-
-
-    private:
-
-        Test_Controller& controller_;
-
-        void run()
-        {
-            controller_.refresh_view();
-            exec();
-        }
-};
-
 TEST(Business_Logic, Table_Controller)
 {
     QSettings settings;
@@ -84,14 +63,9 @@ TEST(Business_Logic, Table_Controller)
 
     controller.set_data_source(source);
 
-    Timer_Thread timer_thread(controller);
-    timer_thread.start();
-    controller.moveToThread(&timer_thread);
-
+    controller.start_refreshing_view();
     std::this_thread::sleep_for(std::chrono::milliseconds(3200));
-
-    timer_thread.quit();
-    timer_thread.wait();
+    controller.stop_refreshing_view();
 
     {
         std::vector<std::string> data(controller.dump_raw_data());
