@@ -35,11 +35,7 @@ class Table_Controller::Timer_Thread: public QThread
 Table_Controller::~Table_Controller()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
-    if (timer_thread_->isRunning())
-    {
-        timer_thread_->quit();
-        timer_thread_->wait();
-    }
+    stop_refreshing_view();
 }
 
 Table_Controller::Table_Controller(Table_View& view):
