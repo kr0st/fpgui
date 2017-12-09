@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 
 #include "table_controller.h"
 #include <utils.h>
@@ -103,7 +104,13 @@ static std::vector<std::pair<const std::string*, const std::string*>> sort_batch
 
 static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config)
 {
-    while (data.size() > (size_t)config.view_max_messages)
+    size_t upper_limit = (size_t)config.view_max_messages;
+
+    #ifdef _UNIT_TEST
+        upper_limit = 650;
+    #endif
+
+    while (data.size() > upper_limit)
         data.erase(data.begin());
 }
 
@@ -175,6 +182,11 @@ void Table_Controller::refresh_view_internal()
 
     trim_data(data_, app_config_);
     trim_data(display_data_, app_config_);
+
+    #ifdef _UNIT_TEST
+        std::cout << "data_.size() == " << data_.size() << std::endl;
+        std::cout << "app_config_.view_max_messages == " << app_config_.view_max_messages << std::endl;
+    #endif
 
     QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view_internal()));
 }

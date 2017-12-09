@@ -21,6 +21,7 @@
 #include <data_source.h>
 #include <table_controller.h>
 #include <table_view.h>
+#include <business_logic_test_data.h>
 
 #include <gtest/gtest.h>
 
@@ -67,14 +68,20 @@ TEST(Business_Logic, Table_Controller)
     std::this_thread::sleep_for(std::chrono::milliseconds(3200));
     controller.stop_refreshing_view();
 
+    fpgui::testing::init_logic_test_correct_data();
+
     {
+        int counter = 0;
+
         std::vector<std::string> data(controller.dump_raw_data());
         for (auto& s : data)
-            std::cout << s << std::endl;
-        std::cout << std::endl << std::endl;
+            EXPECT_EQ(s, fpgui::testing::logic_test_correct_data[counter++]);
+            //std::cout << "logic_test_correct_data[" << counter++ << "] = \"" << generic_utils::escape_quotes(s) << "\";" << std::endl;
+        //std::cout << std::endl << std::endl;
         std::vector<std::string> display_data(controller.dump_display_data());
         for (auto& s : display_data)
-            std::cout << s << std::endl;
+            EXPECT_EQ(s, fpgui::testing::logic_test_correct_data[counter++]);
+            //std::cout << "logic_test_correct_data[" << counter++ << "] = \"" << generic_utils::escape_quotes(s) << "\";" << std::endl;
     }
 }
 

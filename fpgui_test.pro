@@ -27,7 +27,8 @@ SOURCES += \
     table_view.cpp \
     table_controller.cpp \
     mainwindow.cpp \
-    data_source.cpp
+    data_source.cpp \
+    business_logic_test_data.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -59,7 +60,8 @@ HEADERS += \
     table_controller.h \
     mainwindow.h \
     table_view.h \
-    data_source.h
+    data_source.h \
+    business_logic_test_data.h
 
 FORMS += mainwindow.ui
 
