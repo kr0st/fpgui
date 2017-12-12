@@ -8,6 +8,8 @@
 #include <table_view.h>
 #include <table_controller.h>
 #include <utils.h>
+#include <scripting.h>
+#include <var_injector.h>
 
 
 class Closer: public QObject
@@ -62,6 +64,9 @@ int main(int argc, char *argv[])
 
     fpgui::settings::create_default_script_file();
 
+    fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
+    fpgui::lua::inject_tab_sorting_config();
+
     auto app_config(fpgui::settings::read_app_config(settings));
 
     MainWindow w;
@@ -90,6 +95,8 @@ int main(int argc, char *argv[])
     Closer closer(&a, &table);
 
     return a.exec();
+
+    fpgui::lua::free_resources();
 }
 
 #include "main.moc"
