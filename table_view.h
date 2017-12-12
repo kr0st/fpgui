@@ -42,6 +42,8 @@ class Table_View: public QObject
         QTableWidget* widget_;
         std::recursive_mutex mutex_;
 
+        void display_strings(std::vector<std::string>& json_strings);
+
 
     protected:
 

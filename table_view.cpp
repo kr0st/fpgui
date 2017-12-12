@@ -1,7 +1,11 @@
 #include "table_view.h"
 #include <utils.h>
 
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+
 #include <QHeaderView>
+#include <QDebug>
 
 #include <vector>
 
@@ -210,7 +214,53 @@ void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)
     data_.reserve(data_.size() + data_batch.size());
     std::copy(data_batch.begin(), data_batch.end(), std::inserter(data_, data_.end()));
 
+    display_strings(data_batch);
     trim_data(data_, app_config_);
+}
+
+void Table_View::display_strings(std::vector<std::string> &json_strings)
+{
+    for (const auto& js: json_strings)
+    {
+        rapidjson::GenericDocument<rapidjson::UTF8<>> js_from;
+        std::unique_ptr<char[]> to_parse(new char[js.size() + 1]);
+
+        memcpy(to_parse.get(), js.c_str(), js.size());
+        to_parse.get()[js.size()] = 0;
+
+        js_from.ParseInsitu(to_parse.get());
+
+        if (js_from.IsNull())
+        {
+            qCritical() << "JSON document is invalid!";
+            return;
+        }
+
+        std::map<std::string, int> col_name_to_number;
+        for (int i = 0; i < widget_->horizontalHeader()->count(); ++i)
+        {
+            std::pair<std::string, int> pair(widget_->horizontalHeaderItem(i)->text().toStdString(), i);
+            col_name_to_number.insert(pair);
+        }
+
+        if (js_from.IsObject())
+        {
+            rapidjson::Value::Object jsobj(js_from.GetObject());
+
+            for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
+            {
+                auto item(col_name_to_number.find(it->name.GetString()));
+                if (item == col_name_to_number.end())
+                    continue;
+
+                widget_->setItem(widget_->rowCount() - 1, item->second, new QTableWidgetItem(it->value.GetString()));
+                //TODO: add to table widget here
+            }
+
+            widget_->insertRow(widget_->rowCount());
+        }
+    }
+
 }
 
 }}

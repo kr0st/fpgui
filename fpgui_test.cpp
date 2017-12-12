@@ -75,13 +75,10 @@ TEST(Business_Logic, Table_Controller)
 
         std::vector<std::string> data(controller.dump_raw_data());
         for (auto& s : data)
-            EXPECT_EQ(s, fpgui::testing::logic_test_correct_data[counter++]);
-            //std::cout << "logic_test_correct_data[" << counter++ << "] = \"" << generic_utils::escape_quotes(s) << "\";" << std::endl;
-        //std::cout << std::endl << std::endl;
+            ASSERT_EQ(s, fpgui::testing::logic_test_correct_data[counter++]);
         std::vector<std::string> display_data(controller.dump_display_data());
         for (auto& s : display_data)
-            EXPECT_EQ(s, fpgui::testing::logic_test_correct_data[counter++]);
-            //std::cout << "logic_test_correct_data[" << counter++ << "] = \"" << generic_utils::escape_quotes(s) << "\";" << std::endl;
+            ASSERT_EQ(s, fpgui::testing::logic_test_correct_data[counter++]);
     }
 }
 

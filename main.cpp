@@ -62,8 +62,10 @@ int main(int argc, char *argv[])
 
     fpgui::settings::create_default_script_file();
 
+    auto app_config(fpgui::settings::read_app_config(settings));
+
     MainWindow w;
-    fpgui::ui::Table_View table;
+    fpgui::ui::Table_View table(app_config);
     fpgui::ui::Table_Controller table_controller(table);
 
     QTableWidget* widget(w.centralWidget()->findChild<QTableWidget*>("tableWidget"));
@@ -77,6 +79,13 @@ int main(int argc, char *argv[])
     w.show();
     table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
     w.inject_table_view(&table);
+
+    auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
+
+    source->set_batch_size(app_config.view_batch_size / 4, app_config.view_batch_size);
+    source->set_single_string_size(10, 50);
+    table_controller.set_data_source(source);
+    table_controller.start_refreshing_view();
 
     Closer closer(&a, &table);
 

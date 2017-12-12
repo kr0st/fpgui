@@ -64,6 +64,7 @@ void Table_Controller::stop_refreshing_view()
 
 void Table_Controller::on_view_closing()
 {
+    stop_refreshing_view();
     QSettings settings;
     settings::write_tab_config(view_.get_view_configuration(), settings);
 }
@@ -182,11 +183,6 @@ void Table_Controller::refresh_view_internal()
 
     trim_data(data_, app_config_);
     trim_data(display_data_, app_config_);
-
-    #ifdef _UNIT_TEST
-        std::cout << "data_.size() == " << data_.size() << std::endl;
-        std::cout << "app_config_.view_max_messages == " << app_config_.view_max_messages << std::endl;
-    #endif
 
     QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view_internal()));
 }
