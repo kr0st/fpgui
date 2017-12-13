@@ -201,10 +201,14 @@ void Table_View::col_size_changed(int, int, int)
         do_resize();
 }
 
-static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config)
+static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget = 0)
 {
     while (data.size() > (size_t)config.view_max_messages)
+    {
         data.erase(data.begin());
+        if (widget)
+            widget->removeRow(0);
+    }
 }
 
 void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)
@@ -214,8 +218,12 @@ void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)
     data_.reserve(data_.size() + data_batch.size());
     std::copy(data_batch.begin(), data_batch.end(), std::inserter(data_, data_.end()));
 
-    display_strings(data_batch);
-    trim_data(data_, app_config_);
+    #ifndef _UNIT_TEST
+        display_strings(data_batch);
+        trim_data(data_, app_config_, widget_);
+    #else
+        trim_data(data_, app_config_, 0);
+    #endif
 }
 
 void Table_View::display_strings(std::vector<std::string> &json_strings)
@@ -254,7 +262,6 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
                     continue;
 
                 widget_->setItem(widget_->rowCount() - 1, item->second, new QTableWidgetItem(it->value.GetString()));
-                //TODO: add to table widget here
             }
 
             widget_->insertRow(widget_->rowCount());
