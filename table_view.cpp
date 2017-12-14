@@ -144,6 +144,8 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
 
         widget.setColumnCount(config_copy.size() - invisible);
         widget.setRowCount(1);
+        widget.setSelectionBehavior(QAbstractItemView::SelectRows);
+        widget.setSelectionMode(QAbstractItemView::SingleSelection);
 
         disconnect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
                    SLOT(col_size_changed(int, int, int)));
