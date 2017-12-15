@@ -45,6 +45,7 @@ App_Configuration read_app_config(QSettings& settings)
     app_config.view_batch_size = settings.value(QString((section + fpgui::settings::view_batch_size_setting).c_str())).toInt();
     app_config.view_max_messages = settings.value(QString((section + fpgui::settings::view_max_messages_setting).c_str())).toInt();
     app_config.view_refresh_time = settings.value(QString((section + fpgui::settings::view_refresh_setting).c_str())).toInt();
+    app_config.view_clearing_ratio = settings.value(QString((section + fpgui::settings::view_clearing_ratio_setting).c_str())).toInt();
 
     return app_config;
 }
@@ -57,6 +58,7 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
     settings.setValue(QString((section + fpgui::settings::view_batch_size_setting).c_str()), app_config.view_batch_size);
     settings.setValue(QString((section + fpgui::settings::view_max_messages_setting).c_str()), app_config.view_max_messages);
     settings.setValue(QString((section + fpgui::settings::view_refresh_setting).c_str()), app_config.view_refresh_time);
+    settings.setValue(QString((section + fpgui::settings::view_clearing_ratio_setting).c_str()), app_config.view_clearing_ratio);
 }
 
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings)

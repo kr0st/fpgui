@@ -205,12 +205,25 @@ void Table_View::col_size_changed(int, int, int)
 
 static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget = 0)
 {
-    while (data.size() > (size_t)config.view_max_messages)
-    {
-        data.erase(data.begin());
-        if (widget)
-            widget->removeRow(0);
-    }
+    size_t upper_limit = (size_t)config.view_max_messages;
+
+    #ifdef _UNIT_TEST
+        upper_limit = 650;
+        while (data.size() > upper_limit)
+            data.erase(data.begin());
+    #endif
+
+    #ifndef _UNIT_TEST
+        if (data.size() > upper_limit)
+        {
+            for (size_t i = 0; i < (upper_limit / (size_t)config.view_clearing_ratio); ++i)
+            {
+                if (widget)
+                    widget->removeRow(0);
+                data.erase(data.begin());
+            }
+        }
+    #endif
 }
 
 void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)

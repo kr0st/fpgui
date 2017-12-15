@@ -15,6 +15,7 @@ const char* application_section_name = "application_settings";
 const char* view_refresh_setting = "view_refresh_time";
 const char* view_max_messages_setting = "view_max_visible_messages";
 const char* view_batch_size_setting = "view_message_batch_size";
+const char* view_clearing_ratio_setting = "view_clearing_ratio";
 
 const char* db_section_name = "mongodb_settings";
 const char* db_polling_interval_setting = "db_polling_interval_ms";

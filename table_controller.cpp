@@ -109,10 +109,17 @@ static void trim_data(std::vector<std::string>& data, settings::App_Configuratio
 
     #ifdef _UNIT_TEST
         upper_limit = 650;
+        while (data.size() > upper_limit)
+            data.erase(data.begin());
     #endif
 
-    while (data.size() > upper_limit)
-        data.erase(data.begin());
+    #ifndef _UNIT_TEST
+        if (data.size() > upper_limit)
+        {
+            for (size_t i = 0; i < (upper_limit / (size_t)config.view_clearing_ratio); ++i)
+                data.erase(data.begin());
+        }
+    #endif
 }
 
 void Table_Controller::start_refreshing_view()

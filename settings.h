@@ -14,6 +14,7 @@ struct App_Configuration
     int view_batch_size;
     int view_max_messages;
     int view_refresh_time;
+    int view_clearing_ratio;
 };
 
 struct Tab_Configuration
