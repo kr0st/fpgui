@@ -149,9 +149,13 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
 
         disconnect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
                    SLOT(col_size_changed(int, int, int)));
+        disconnect(widget_->model(), SIGNAL(rowsInserted(const QModelIndex&, int, int)), this,
+                   SLOT(rows_inserted(const QModelIndex&, int, int)));
 
         connect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
                 SLOT(col_size_changed(int, int, int)), Qt::DirectConnection);
+        connect(widget_->model(), SIGNAL(rowsInserted(const QModelIndex&, int, int)), this,
+                   SLOT(rows_inserted(const QModelIndex&, int, int)));
 
         int col = 0;
         for (auto& tab : config_copy)
@@ -188,7 +192,6 @@ void Table_View::do_resize()
 
 void Table_View::close_view()
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
     emit closing();
 }
 
@@ -284,6 +287,12 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
         }
     }
 
+}
+
+void Table_View::rows_inserted(const QModelIndex&, int start, int)
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    widget_->scrollToBottom();
 }
 
 }}
