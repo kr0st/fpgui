@@ -9,7 +9,7 @@ namespace settings {
 
 struct App_Configuration
 {
-    App_Configuration(): view_batch_size(0), view_max_messages(0), view_refresh_time(0) {}
+    App_Configuration(): view_batch_size(0), view_max_messages(0), view_refresh_time(0), view_clearing_ratio(0) {}
 
     int view_batch_size;
     int view_max_messages;

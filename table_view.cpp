@@ -216,10 +216,11 @@ static void trim_data(std::vector<std::string>& data, settings::App_Configuratio
     #ifndef _UNIT_TEST
         if (data.size() > upper_limit)
         {
-            for (size_t i = 0; i < (upper_limit / (size_t)config.view_clearing_ratio); ++i)
+            size_t remove_count = (upper_limit / (size_t)config.view_clearing_ratio);
+            for (size_t i = 0; i < remove_count; ++i)
             {
                 if (widget)
-                    widget->removeRow(0);
+                    widget->removeRow(remove_count - i - 1);
                 data.erase(data.begin());
             }
         }
