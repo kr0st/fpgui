@@ -94,9 +94,10 @@ int main(int argc, char *argv[])
 
     Closer closer(&a, &table);
 
-    return a.exec();
-
+    int res = a.exec();
     fpgui::lua::free_resources();
+
+    return res;
 }
 
 #include "main.moc"

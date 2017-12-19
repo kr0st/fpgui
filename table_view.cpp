@@ -6,6 +6,7 @@
 
 #include <QHeaderView>
 #include <QDebug>
+#include <QMainWindow>
 
 #include <vector>
 
@@ -131,10 +132,10 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
 
     if (!resize_only)
     {
-        balance_size_percentages(config_copy);
-
-        config_ = config_copy;
-        widget_ = &widget;
+        disconnect(widget.horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
+                SLOT(col_size_changed(int, int, int)));
+        disconnect(widget.model(), SIGNAL(rowsInserted(const QModelIndex&, int, int)), this,
+                   SLOT(rows_inserted(const QModelIndex&, int, int)));
 
         int invisible = 0;
 
@@ -147,13 +148,21 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         widget.setSelectionBehavior(QAbstractItemView::SelectRows);
         widget.setSelectionMode(QAbstractItemView::SingleSelection);
 
-        disconnect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
-                   SLOT(col_size_changed(int, int, int)));
-        disconnect(widget_->model(), SIGNAL(rowsInserted(const QModelIndex&, int, int)), this,
-                   SLOT(rows_inserted(const QModelIndex&, int, int)));
+        if ((app_config_.window_height != 0) && (app_config_.window_width != 0))
+        {
+            QMainWindow* wnd = dynamic_cast<QMainWindow*>(widget.parent()->parent());
+            wnd->resize(app_config_.window_width, app_config_.window_height);
+        }
+
+        widget_width = widget.geometry().width();
+
+        balance_size_percentages(config_copy);
+
+        config_ = config_copy;
+        widget_ = &widget;
 
         connect(widget_->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
-                SLOT(col_size_changed(int, int, int)), Qt::DirectConnection);
+                SLOT(col_size_changed(int, int, int)));
         connect(widget_->model(), SIGNAL(rowsInserted(const QModelIndex&, int, int)), this,
                    SLOT(rows_inserted(const QModelIndex&, int, int)));
 
@@ -171,6 +180,10 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         absolute_width_to_percentage(config_copy, widget);
         balance_size_percentages(config_copy);
         config_ = config_copy;
+        QMainWindow* wnd = dynamic_cast<QMainWindow*>(widget_->parent()->parent());
+
+        app_config_.window_width = wnd->geometry().width();
+        app_config_.window_height = wnd->geometry().height();
     }
 
     percentage_to_absolute_width(config_copy, widget_width);
@@ -195,9 +208,14 @@ void Table_View::close_view()
     emit closing();
 }
 
-std::vector<settings::Tab_Configuration> Table_View::get_view_configuration()
+Table_View::View_Configuration Table_View::get_view_configuration()
 {
-    return config_;
+    View_Configuration config;
+
+    config.app_config = app_config_;
+    config.tab_config = config_;
+
+    return config;
 }
 
 void Table_View::col_size_changed(int, int, int)
@@ -289,7 +307,7 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
 
 }
 
-void Table_View::rows_inserted(const QModelIndex&, int start, int)
+void Table_View::rows_inserted(const QModelIndex&, int, int)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     widget_->scrollToBottom();

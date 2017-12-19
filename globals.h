@@ -17,6 +17,8 @@ extern const char* view_refresh_setting;
 extern const char* view_max_messages_setting;
 extern const char* view_batch_size_setting;
 extern const char* view_clearing_ratio_setting;
+extern const char* app_window_width_setting;
+extern const char* app_window_height_setting;
 
 extern const char* db_section_name;
 extern const char* db_polling_interval_setting;

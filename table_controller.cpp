@@ -66,7 +66,9 @@ void Table_Controller::on_view_closing()
 {
     stop_refreshing_view();
     QSettings settings;
-    settings::write_tab_config(view_.get_view_configuration(), settings);
+
+    settings::write_tab_config(view_.get_view_configuration().tab_config, settings);
+    settings::write_app_config(view_.get_view_configuration().app_config, settings);
 }
 
 static void prepare_for_display(std::vector<std::string>& json_strings, std::vector<settings::Tab_Configuration>& tab_config)

@@ -9,12 +9,20 @@ namespace settings {
 
 struct App_Configuration
 {
-    App_Configuration(): view_batch_size(0), view_max_messages(0), view_refresh_time(0), view_clearing_ratio(0) {}
+    App_Configuration():
+    view_batch_size(0),
+    view_max_messages(0),
+    view_refresh_time(0),
+    view_clearing_ratio(0),
+    window_height(0),
+    window_width(0){}
 
     int view_batch_size;
     int view_max_messages;
     int view_refresh_time;
     int view_clearing_ratio;
+    int window_height;
+    int window_width;
 };
 
 struct Tab_Configuration

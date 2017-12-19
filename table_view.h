@@ -15,12 +15,18 @@ class Table_View: public QObject
 
     public:
 
+        struct View_Configuration
+        {
+            std::vector<settings::Tab_Configuration> tab_config;
+            settings::App_Configuration app_config;
+        };
+
         Table_View(settings::App_Configuration& app_config): app_config_(app_config)
         {
             widget_ = 0;
         }
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget, bool resize_only = false);
-        std::vector<settings::Tab_Configuration> get_view_configuration();
+        View_Configuration get_view_configuration();
 
         void close_view();
         void do_resize();
@@ -30,7 +36,7 @@ class Table_View: public QObject
     public slots:
 
         void col_size_changed(int col, int old_sz, int new_sz);
-        void rows_inserted(const QModelIndex & parent, int start, int end);
+        void rows_inserted(const QModelIndex & parent, int, int);
 
 
     signals:
