@@ -14,13 +14,19 @@ struct App_Configuration
     view_max_messages(0),
     view_refresh_time(0),
     view_clearing_ratio(0),
+    view_autoscroll(false),
     window_height(0),
-    window_width(0){}
+    window_width(0)
+    {}
 
     int view_batch_size;
     int view_max_messages;
+
     int view_refresh_time;
     int view_clearing_ratio;
+
+    bool view_autoscroll;
+
     int window_height;
     int window_width;
 };

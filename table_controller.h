@@ -26,6 +26,7 @@ class Table_Controller: public QObject
     private slots:
 
         void refresh_view_internal();
+        void on_autoscroll_change(int state);
 
 
     public:
@@ -50,6 +51,8 @@ class Table_Controller: public QObject
 
         class Timer_Thread;
         std::unique_ptr<Timer_Thread> timer_thread_;
+
+        void merge_view_config(const Table_View::View_Configuration& config);
 
 
     protected:

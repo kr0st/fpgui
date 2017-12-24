@@ -8,6 +8,8 @@
 
 #include <QTimer>
 #include <QThread>
+#include <QCheckBox>
+#include <QtDebug>
 
 namespace fpgui {
 namespace ui {
@@ -44,6 +46,7 @@ view_(view),
 data_source_(0)
 {
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
+    connect(&view, SIGNAL(autoscroll_change(int)), this, SLOT(on_autoscroll_change(int)), Qt::DirectConnection);
 
     QSettings settings;
     app_config_ = settings::read_app_config(settings);
@@ -62,13 +65,34 @@ void Table_Controller::stop_refreshing_view()
     }
 }
 
+void Table_Controller::merge_view_config(const Table_View::View_Configuration& config)
+{
+    size_t len = config.tab_config.size(), this_len = tab_config_.size();
+
+    if (len != this_len)
+        qWarning() << "Trying to merge view config that has different size, some elemtns might be misconfigured.";
+
+    if (len > this_len)
+        len = this_len;
+
+    for (size_t i = 0; i < len; ++i)
+    {
+        tab_config_[i].size = config.tab_config[i].size;
+    }
+
+    app_config_.window_height = config.app_config.window_height;
+    app_config_.window_width = config.app_config.window_width;
+}
+
 void Table_Controller::on_view_closing()
 {
     stop_refreshing_view();
+    merge_view_config(view_.get_view_configuration());
+
     QSettings settings;
 
-    settings::write_tab_config(view_.get_view_configuration().tab_config, settings);
-    settings::write_app_config(view_.get_view_configuration().app_config, settings);
+    settings::write_tab_config(tab_config_, settings);
+    settings::write_app_config(app_config_, settings);
 }
 
 static void prepare_for_display(std::vector<std::string>& json_strings, std::vector<settings::Tab_Configuration>& tab_config)
@@ -194,6 +218,12 @@ void Table_Controller::refresh_view_internal()
     trim_data(display_data_, app_config_);
 
     QTimer::singleShot(app_config_.view_refresh_time, this, SLOT(refresh_view_internal()));
+}
+
+void Table_Controller::on_autoscroll_change(int state)
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    app_config_.view_autoscroll = (state == Qt::Checked ? true : false);
 }
 
 }

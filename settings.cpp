@@ -44,8 +44,11 @@ App_Configuration read_app_config(QSettings& settings)
 
     app_config.view_batch_size = settings.value(QString((section + fpgui::settings::view_batch_size_setting).c_str())).toInt();
     app_config.view_max_messages = settings.value(QString((section + fpgui::settings::view_max_messages_setting).c_str())).toInt();
+
     app_config.view_refresh_time = settings.value(QString((section + fpgui::settings::view_refresh_setting).c_str())).toInt();
     app_config.view_clearing_ratio = settings.value(QString((section + fpgui::settings::view_clearing_ratio_setting).c_str())).toInt();
+
+    app_config.view_autoscroll = settings.value(QString((section + fpgui::settings::view_autoscroll_setting).c_str())).toBool();
 
     app_config.window_height = settings.value(QString((section + fpgui::settings::app_window_height_setting).c_str())).toInt();
     app_config.window_width = settings.value(QString((section + fpgui::settings::app_window_width_setting).c_str())).toInt();
@@ -60,8 +63,11 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
 
     settings.setValue(QString((section + fpgui::settings::view_batch_size_setting).c_str()), app_config.view_batch_size);
     settings.setValue(QString((section + fpgui::settings::view_max_messages_setting).c_str()), app_config.view_max_messages);
+
     settings.setValue(QString((section + fpgui::settings::view_refresh_setting).c_str()), app_config.view_refresh_time);
     settings.setValue(QString((section + fpgui::settings::view_clearing_ratio_setting).c_str()), app_config.view_clearing_ratio);
+
+    settings.setValue(QString((section + fpgui::settings::view_autoscroll_setting).c_str()), app_config.view_autoscroll);
 
     settings.setValue(QString((section + fpgui::settings::app_window_height_setting).c_str()), app_config.window_height);
     settings.setValue(QString((section + fpgui::settings::app_window_width_setting).c_str()), app_config.window_width);

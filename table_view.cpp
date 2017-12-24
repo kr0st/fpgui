@@ -1,4 +1,5 @@
 #include "table_view.h"
+#include "mainwindow.h"
 #include <utils.h>
 
 #include <rapidjson/rapidjson.h>
@@ -7,6 +8,7 @@
 #include <QHeaderView>
 #include <QDebug>
 #include <QMainWindow>
+#include <QCheckBox>
 
 #include <vector>
 
@@ -148,11 +150,15 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         widget.setSelectionBehavior(QAbstractItemView::SelectRows);
         widget.setSelectionMode(QAbstractItemView::SingleSelection);
 
+        MainWindow* wnd = dynamic_cast<MainWindow*>(widget.parent()->parent());
+
+        QCheckBox* autoscroll_box = wnd->findChild<QCheckBox*>("autoscroll_box");
+        autoscroll_box->blockSignals(true);
+        autoscroll_box->setCheckState(app_config_.view_autoscroll ? Qt::Checked : Qt::Unchecked);
+        autoscroll_box->blockSignals(false);
+
         if ((app_config_.window_height != 0) && (app_config_.window_width != 0))
-        {
-            QMainWindow* wnd = dynamic_cast<QMainWindow*>(widget.parent()->parent());
             wnd->resize(app_config_.window_width, app_config_.window_height);
-        }
 
         widget_width = widget.geometry().width();
 
@@ -310,7 +316,14 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
 void Table_View::rows_inserted(const QModelIndex&, int, int)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
-    widget_->scrollToBottom();
+    if (app_config_.view_autoscroll)
+        widget_->scrollToBottom();
+}
+
+void Table_View::on_autoscroll_change(int state)
+{
+    app_config_.view_autoscroll = (state == Qt::Checked ? true : false);
+    emit autoscroll_change(state);
 }
 
 }}
