@@ -34,3 +34,9 @@ void MainWindow::on_sorting_box_stateChanged(int state)
     if (table_view_)
         table_view_->on_sorting_change(state);
 }
+
+void MainWindow::on_clear_button_clicked()
+{
+    if (table_view_)
+        table_view_->on_clear_screen();
+}

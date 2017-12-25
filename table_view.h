@@ -35,6 +35,9 @@ class Table_View: public QObject
         void on_autoscroll_change(int state);
         void on_sorting_change(int state);
 
+        void on_clear_screen();
+        void clear_screen();
+
 
     public slots:
 
@@ -47,6 +50,7 @@ class Table_View: public QObject
         void closing();
         void autoscroll_change(int state);
         void sorting_change(int state);
+        void clear_view();
 
 
     private:

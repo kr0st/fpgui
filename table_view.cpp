@@ -236,7 +236,7 @@ void Table_View::col_size_changed(int, int, int)
         do_resize();
 }
 
-static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget = 0)
+static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget = 0, bool clear_screen = false)
 {
     size_t upper_limit = (size_t)config.view_max_messages;
 
@@ -247,9 +247,13 @@ static void trim_data(std::vector<std::string>& data, settings::App_Configuratio
     #endif
 
     #ifndef _UNIT_TEST
-        if (data.size() > upper_limit)
+        if ((data.size() >= upper_limit) || clear_screen)
         {
             size_t remove_count = (upper_limit / (size_t)config.view_clearing_ratio);
+
+            if (clear_screen)
+                remove_count = data.size();
+
             for (size_t i = 0; i < remove_count; ++i)
             {
                 if (widget)
@@ -323,7 +327,6 @@ void Table_View::rows_inserted(const QModelIndex&, int, int)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (app_config_.view_autoscroll)
-        //widget_->scrollToBottom();
         widget_->verticalScrollBar()->setSliderPosition (widget_->verticalScrollBar()->maximum());
 }
 
@@ -337,6 +340,17 @@ void Table_View::on_sorting_change(int state)
 {
     app_config_.view_sorting = (state == Qt::Checked ? true : false);
     emit sorting_change(state);
+}
+
+void Table_View::clear_screen()
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    trim_data(data_, app_config_, widget_, true);
+}
+
+void Table_View::on_clear_screen()
+{
+    emit clear_view();
 }
 
 }}

@@ -24,6 +24,8 @@ private slots:
         void on_autoscroll_box_stateChanged(int state);
         void on_sorting_box_stateChanged(int state);
 
+        void on_clear_button_clicked();
+
 private:
 
         Ui::MainWindow* ui;

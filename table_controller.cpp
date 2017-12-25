@@ -48,6 +48,7 @@ data_source_(0)
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
     connect(&view, SIGNAL(autoscroll_change(int)), this, SLOT(on_autoscroll_change(int)), Qt::DirectConnection);
     connect(&view, SIGNAL(sorting_change(int)), this, SLOT(on_sorting_change(int)), Qt::DirectConnection);
+    connect(&view, SIGNAL(clear_view()), this, SLOT(on_clear_screen()), Qt::DirectConnection);
 
     QSettings settings;
     app_config_ = settings::read_app_config(settings);
@@ -235,6 +236,21 @@ void Table_Controller::on_sorting_change(int state)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     app_config_.view_sorting = (state == Qt::Checked ? true : false);
+}
+
+void Table_Controller::on_clear_screen()
+{
+    stop_refreshing_view();
+
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        data_.clear();
+        display_data_.clear();
+    }
+
+    view_.clear_screen();
+
+    start_refreshing_view();
 }
 
 }
