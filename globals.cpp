@@ -19,6 +19,7 @@ const char* view_clearing_ratio_setting = "view_clearing_ratio";
 const char* app_window_width_setting = "window_width";
 const char* app_window_height_setting = "window_height";
 const char* view_autoscroll_setting = "view_autoscroll";
+const char* view_sorting_setting = "view_sorting";
 
 const char* db_section_name = "mongodb_settings";
 const char* db_polling_interval_setting = "db_polling_interval_ms";

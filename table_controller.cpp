@@ -47,6 +47,7 @@ data_source_(0)
 {
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
     connect(&view, SIGNAL(autoscroll_change(int)), this, SLOT(on_autoscroll_change(int)), Qt::DirectConnection);
+    connect(&view, SIGNAL(sorting_change(int)), this, SLOT(on_sorting_change(int)), Qt::DirectConnection);
 
     QSettings settings;
     app_config_ = settings::read_app_config(settings);
@@ -105,7 +106,8 @@ static void prepare_for_display(std::vector<std::string>& json_strings, std::vec
 }
 
 static std::vector<std::pair<const std::string*, const std::string*>> sort_batch(const std::vector<std::string>& batch,
-                                                                     std::vector<settings::Tab_Configuration>& tab_config)
+                                                                      std::vector<settings::Tab_Configuration>& tab_config,
+                                                                      settings::App_Configuration& app_config)
 {
     std::string sort_by;
     for (auto& tab : tab_config)
@@ -117,14 +119,17 @@ static std::vector<std::pair<const std::string*, const std::string*>> sort_batch
     for (size_t i = 0; i < batch.size(); ++i)
         to_sort.push_back(std::pair<const std::string*, const std::string*>(&batch[i], &stripped[i]));
 
-    std::sort(to_sort.begin(), to_sort.end(), [](const std::pair<const std::string*, const std::string*>& s1, const std::pair<const std::string*, const std::string*>& s2) {
-        int res = fpgui::lua::compare_json_strings(*s1.second, *s2.second);
-        if ((res < -1) || (res == 0))
+    if (app_config.view_sorting)
+    {
+        std::sort(to_sort.begin(), to_sort.end(), [](const std::pair<const std::string*, const std::string*>& s1, const std::pair<const std::string*, const std::string*>& s2) {
+            int res = fpgui::lua::compare_json_strings(*s1.second, *s2.second);
+            if ((res < -1) || (res == 0))
+                return false;
+            if (res == -1)
+                return true;
             return false;
-        if (res == -1)
-            return true;
-        return false;
-    });
+        });
+    }
 
     return to_sort;
 }
@@ -177,7 +182,7 @@ void Table_Controller::refresh_view_internal()
             data.pop();
             if (batch.size() % app_config_.view_batch_size == 0)
             {
-                auto sorted(sort_batch(batch, tab_config_));
+                auto sorted(sort_batch(batch, tab_config_, app_config_));
                 std::vector<std::string> display_batch;
 
                 for (auto& str : sorted)
@@ -198,7 +203,7 @@ void Table_Controller::refresh_view_internal()
 
     if (batch.size())
     {
-        auto sorted(sort_batch(batch, tab_config_));
+        auto sorted(sort_batch(batch, tab_config_, app_config_));
         std::vector<std::string> display_batch;
 
         for (auto& str : sorted)
@@ -224,6 +229,12 @@ void Table_Controller::on_autoscroll_change(int state)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     app_config_.view_autoscroll = (state == Qt::Checked ? true : false);
+}
+
+void Table_Controller::on_sorting_change(int state)
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    app_config_.view_sorting = (state == Qt::Checked ? true : false);
 }
 
 }

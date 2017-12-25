@@ -27,6 +27,7 @@ class Table_Controller: public QObject
 
         void refresh_view_internal();
         void on_autoscroll_change(int state);
+        void on_sorting_change(int state);
 
 
     public:

@@ -33,6 +33,7 @@ class Table_View: public QObject
         void refresh_view(std::vector<std::string>& data_batch, bool full_refresh = false);
 
         void on_autoscroll_change(int state);
+        void on_sorting_change(int state);
 
 
     public slots:
@@ -45,6 +46,7 @@ class Table_View: public QObject
 
         void closing();
         void autoscroll_change(int state);
+        void sorting_change(int state);
 
 
     private:

@@ -28,3 +28,9 @@ void MainWindow::on_autoscroll_box_stateChanged(int state)
    if (table_view_)
        table_view_->on_autoscroll_change(state);
 }
+
+void MainWindow::on_sorting_box_stateChanged(int state)
+{
+    if (table_view_)
+        table_view_->on_sorting_change(state);
+}

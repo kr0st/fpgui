@@ -15,6 +15,7 @@ struct App_Configuration
     view_refresh_time(0),
     view_clearing_ratio(0),
     view_autoscroll(false),
+    view_sorting(false),
     window_height(0),
     window_width(0)
     {}
@@ -26,6 +27,7 @@ struct App_Configuration
     int view_clearing_ratio;
 
     bool view_autoscroll;
+    bool view_sorting;
 
     int window_height;
     int window_width;

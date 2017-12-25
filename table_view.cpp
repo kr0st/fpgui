@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QCheckBox>
+#include <QScrollBar>
 
 #include <vector>
 
@@ -156,6 +157,11 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         autoscroll_box->blockSignals(true);
         autoscroll_box->setCheckState(app_config_.view_autoscroll ? Qt::Checked : Qt::Unchecked);
         autoscroll_box->blockSignals(false);
+
+        QCheckBox* sorting_box = wnd->findChild<QCheckBox*>("sorting_box");
+        sorting_box->blockSignals(true);
+        sorting_box->setCheckState(app_config_.view_sorting ? Qt::Checked : Qt::Unchecked);
+        sorting_box->blockSignals(false);
 
         if ((app_config_.window_height != 0) && (app_config_.window_width != 0))
             wnd->resize(app_config_.window_width, app_config_.window_height);
@@ -317,13 +323,20 @@ void Table_View::rows_inserted(const QModelIndex&, int, int)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (app_config_.view_autoscroll)
-        widget_->scrollToBottom();
+        //widget_->scrollToBottom();
+        widget_->verticalScrollBar()->setSliderPosition (widget_->verticalScrollBar()->maximum());
 }
 
 void Table_View::on_autoscroll_change(int state)
 {
     app_config_.view_autoscroll = (state == Qt::Checked ? true : false);
     emit autoscroll_change(state);
+}
+
+void Table_View::on_sorting_change(int state)
+{
+    app_config_.view_sorting = (state == Qt::Checked ? true : false);
+    emit sorting_change(state);
 }
 
 }}

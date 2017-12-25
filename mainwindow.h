@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow
 
 private slots:
         void on_autoscroll_box_stateChanged(int state);
+        void on_sorting_box_stateChanged(int state);
 
 private:
 
