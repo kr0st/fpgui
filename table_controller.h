@@ -29,6 +29,7 @@ class Table_Controller: public QObject
         void on_autoscroll_change(int state);
         void on_sorting_change(int state);
         void on_clear_screen();
+        void on_connection_stop_resume();
 
 
     public:

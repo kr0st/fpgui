@@ -40,3 +40,9 @@ void MainWindow::on_clear_button_clicked()
     if (table_view_)
         table_view_->on_clear_screen();
 }
+
+void MainWindow::on_connection_button_clicked()
+{
+    if (table_view_)
+        table_view_->on_connection_stop_resume();
+}

@@ -76,7 +76,7 @@
          <widget class="QPushButton" name="connection_button">
           <property name="minimumSize">
            <size>
-            <width>85</width>
+            <width>95</width>
             <height>0</height>
            </size>
           </property>
@@ -89,7 +89,7 @@
          <widget class="QPushButton" name="clear_button">
           <property name="minimumSize">
            <size>
-            <width>184</width>
+            <width>174</width>
             <height>0</height>
            </size>
           </property>

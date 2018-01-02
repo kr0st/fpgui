@@ -10,6 +10,7 @@
 #include <QMainWindow>
 #include <QCheckBox>
 #include <QScrollBar>
+#include <QPushButton>
 
 #include <vector>
 
@@ -351,6 +352,34 @@ void Table_View::clear_screen()
 void Table_View::on_clear_screen()
 {
     emit clear_view();
+}
+
+void Table_View::on_connection_stop_resume()
+{
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+
+        if (connected_)
+        {
+            QPushButton* stop_resume = widget_->parent()->findChild<QPushButton*>("connection_button");
+
+            if (stop_resume)
+                stop_resume->setText("Resume");
+
+            connected_ = false;
+        }
+        else
+        {
+            QPushButton* stop_resume = widget_->parent()->findChild<QPushButton*>("connection_button");
+
+            if (stop_resume)
+                stop_resume->setText("Stop");
+
+            connected_ = true;
+        }
+    }
+
+    emit stop_resume();
 }
 
 }}
