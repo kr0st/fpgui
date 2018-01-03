@@ -60,12 +60,17 @@ data_source_(0)
 
 void Table_Controller::stop_refreshing_view()
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
-    if (timer_thread_->isRunning())
+    bool is_running = true;
+
     {
-        timer_thread_->quit();
-        timer_thread_->wait();
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        is_running = timer_thread_->isRunning();
+        if (is_running)
+            timer_thread_->quit();
     }
+
+    if (is_running)
+        timer_thread_->wait();
 }
 
 void Table_Controller::merge_view_config(const Table_View::View_Configuration& config)
@@ -260,8 +265,14 @@ void Table_Controller::on_clear_screen()
 
 void Table_Controller::on_connection_stop_resume()
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
-    if (timer_thread_->isRunning())
+    bool is_running = true;
+
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        is_running = timer_thread_->isRunning();
+    }
+
+    if (is_running)
         stop_refreshing_view();
     else
         start_refreshing_view();
