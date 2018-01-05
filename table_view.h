@@ -65,6 +65,7 @@ class Table_View: public QObject
         bool connected_;
 
         void display_strings(std::vector<std::string>& json_strings);
+        void trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget = 0, bool clear_screen = false);
 
 
     protected:
