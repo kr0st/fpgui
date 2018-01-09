@@ -51,6 +51,9 @@ data_source_(0)
     connect(&view, SIGNAL(clear_view()), this, SLOT(on_clear_screen()), Qt::DirectConnection);
     connect(&view, SIGNAL(stop_resume()), this, SLOT(on_connection_stop_resume()), Qt::DirectConnection);
 
+    qRegisterMetaType<std::vector<std::string>>("std::vector<std::string>");
+    connect(this, SIGNAL(refresh_view(std::vector<std::string>,bool)), &view, SLOT(refresh_view(std::vector<std::string>,bool)));
+
     QSettings settings;
     app_config_ = settings::read_app_config(settings);
     tab_config_ = settings::read_tab_config(settings);
@@ -141,23 +144,32 @@ static std::vector<std::pair<const std::string*, const std::string*>> sort_batch
     return to_sort;
 }
 
-static void trim_data(std::vector<std::string>& data, settings::App_Configuration& config)
+static bool trim_data(std::vector<std::string>& data, settings::App_Configuration& config)
 {
     size_t upper_limit = (size_t)config.view_max_messages;
+    bool trimmed = false;
 
     #ifdef _UNIT_TEST
         upper_limit = 650;
         while (data.size() > upper_limit)
+        {
             data.erase(data.begin());
+            trimmed = true;
+        }
     #endif
 
     #ifndef _UNIT_TEST
         if (data.size() > upper_limit)
         {
             for (size_t i = 0; i < (upper_limit / (size_t)config.view_clearing_ratio); ++i)
+            {
                 data.erase(data.begin());
+                trimmed = true;
+            }
         }
     #endif
+
+    return trimmed;
 }
 
 void Table_Controller::start_refreshing_view()
@@ -201,7 +213,7 @@ void Table_Controller::refresh_view_internal()
                 prepare_for_display(display_batch, tab_config_);
 
                 display_data_.reserve(display_data_.size() + display_batch.size());
-                view_.refresh_view(display_batch);
+                emit refresh_view(display_batch);
                 std::move(display_batch.begin(), display_batch.end(), std::inserter(display_data_, display_data_.end()));
 
                 batch.resize(0);
@@ -222,7 +234,7 @@ void Table_Controller::refresh_view_internal()
         prepare_for_display(display_batch, tab_config_);
 
         display_data_.reserve(display_data_.size() + display_batch.size());
-        view_.refresh_view(display_batch);
+        emit refresh_view(display_batch);
         std::move(display_batch.begin(), display_batch.end(), std::inserter(display_data_, display_data_.end()));
     }
 

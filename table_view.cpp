@@ -237,39 +237,39 @@ void Table_View::col_size_changed(int, int, int)
         do_resize();
 }
 
-void Table_View::trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget, bool clear_screen)
+void Table_View::trim_view(bool clear_screen)
 {
-    size_t upper_limit = (size_t)config.view_max_messages;
+    size_t upper_limit = (size_t)app_config_.view_max_messages;
 
     #ifdef _UNIT_TEST
         upper_limit = 650;
-        while (data.size() > upper_limit)
-            data.erase(data.begin());
+        while (data_.size() > upper_limit)
+            data_.erase(data_.begin());
     #endif
 
     #ifndef _UNIT_TEST
-        if ((data.size() >= upper_limit) || clear_screen)
+        if ((data_.size() >= upper_limit) || clear_screen)
         {
-            size_t remove_count = (upper_limit / (size_t)config.view_clearing_ratio);
+            size_t remove_count = (upper_limit / (size_t)app_config_.view_clearing_ratio);
 
             if (clear_screen)
-                remove_count = data.size();
+                remove_count = data_.size();
 
             for (size_t i = 0; i < remove_count; ++i)
-                data.erase(data.begin());
+                data_.erase(data_.begin());
 
-            if (widget)
+            if (widget_)
             {
-                widget->clearSelection();
-                widget->setRowCount(1);
-                widget->clearContents();
-                display_strings(data);
+                widget_->clearSelection();
+                widget_->clearContents();
+                widget_->setRowCount(1);
+                display_strings(data_);
             }
         }
     #endif
 }
 
-void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)
+void Table_View::refresh_view(std::vector<std::string> data_batch, bool)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
 
@@ -278,10 +278,9 @@ void Table_View::refresh_view(std::vector<std::string>& data_batch, bool)
 
     #ifndef _UNIT_TEST
         display_strings(data_batch);
-        trim_data(data_, app_config_, widget_);
-    #else
-        trim_data(data_, app_config_, 0);
     #endif
+
+    trim_view();
 }
 
 void Table_View::display_strings(std::vector<std::string> &json_strings)
@@ -333,8 +332,8 @@ void Table_View::rows_inserted(const QModelIndex&, int, int)
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (app_config_.view_autoscroll)
     {
-        QTableWidgetItem* item = widget_->item(data_.size() - 1, 0);
-        widget_->scrollToItem(item);
+        //QTableWidgetItem* item = widget_->item(data_.size() - 1, 0);
+        widget_->scrollToBottom();
     }
 }
 
@@ -353,7 +352,7 @@ void Table_View::on_sorting_change(int state)
 void Table_View::clear_screen()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
-    trim_data(data_, app_config_, widget_, true);
+    trim_view(true);
 }
 
 void Table_View::on_clear_screen()

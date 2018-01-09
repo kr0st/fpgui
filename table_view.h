@@ -30,7 +30,6 @@ class Table_View: public QObject
 
         void close_view();
         void do_resize();
-        void refresh_view(std::vector<std::string>& data_batch, bool full_refresh = false);
 
         void on_autoscroll_change(int state);
         void on_sorting_change(int state);
@@ -44,6 +43,7 @@ class Table_View: public QObject
 
         void col_size_changed(int col, int old_sz, int new_sz);
         void rows_inserted(const QModelIndex & parent, int, int);
+        void refresh_view(std::vector<std::string> data_batch, bool full_refresh = false);
 
 
     signals:
@@ -65,7 +65,7 @@ class Table_View: public QObject
         bool connected_;
 
         void display_strings(std::vector<std::string>& json_strings);
-        void trim_data(std::vector<std::string>& data, settings::App_Configuration& config, QTableWidget* widget = 0, bool clear_screen = false);
+        void trim_view(bool clear_screen = false);
 
 
     protected:
