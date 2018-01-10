@@ -278,6 +278,7 @@ void Table_View::refresh_view(std::vector<std::string> data_batch, bool)
 
     #ifndef _UNIT_TEST
         display_strings(data_batch);
+        apply_quick_filter();
     #endif
 
     trim_view();
@@ -331,10 +332,7 @@ void Table_View::rows_inserted(const QModelIndex&, int, int)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (app_config_.view_autoscroll)
-    {
-        //QTableWidgetItem* item = widget_->item(data_.size() - 1, 0);
         widget_->scrollToBottom();
-    }
 }
 
 void Table_View::on_autoscroll_change(int state)
@@ -386,6 +384,36 @@ void Table_View::on_connection_stop_resume()
     }
 
     emit stop_resume();
+}
+
+void Table_View::on_quick_filter(const QString& text)
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    quick_filter_ = text;
+    apply_quick_filter();
+}
+
+void Table_View::apply_quick_filter()
+{
+    for (int i = 0; i < widget_->rowCount(); ++i)
+    {
+        bool match = false;
+
+        if ((quick_filter_.length() >= 3) && (!quick_filter_.isEmpty()))
+            for (int j = 0; j < widget_->columnCount(); ++j)
+            {
+                QTableWidgetItem *item = widget_->item(i, j);
+                if (item && item->text().contains(quick_filter_))
+                {
+                    match = true;
+                    break;
+                }
+            }
+        else
+            match = true;
+
+        widget_->setRowHidden(i, !match);
+    }
 }
 
 }}

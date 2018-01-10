@@ -29,7 +29,9 @@ class MainWindow : public QMainWindow
             void on_connection_button_clicked();
 
 
-    private:
+            void on_quickfilter_edit_textEdited(const QString &text);
+
+private:
 
             Ui::MainWindow* ui;
             fpgui::ui::Table_View* table_view_;

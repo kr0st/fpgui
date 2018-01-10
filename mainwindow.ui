@@ -140,7 +140,7 @@
          <bool>false</bool>
         </property>
         <property name="showGrid">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="gridStyle">
          <enum>Qt::SolidLine</enum>

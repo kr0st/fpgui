@@ -46,3 +46,9 @@ void MainWindow::on_connection_button_clicked()
     if (table_view_)
         table_view_->on_connection_stop_resume();
 }
+
+void MainWindow::on_quickfilter_edit_textEdited(const QString &text)
+{
+    if (table_view_)
+        table_view_->on_quick_filter(text);
+}

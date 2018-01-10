@@ -21,7 +21,7 @@ class Table_View: public QObject
             settings::App_Configuration app_config;
         };
 
-        Table_View(settings::App_Configuration& app_config): app_config_(app_config), connected_(true)
+        Table_View(settings::App_Configuration& app_config): app_config_(app_config), connected_(true), quick_filter_("")
         {
             widget_ = 0;
         }
@@ -37,6 +37,8 @@ class Table_View: public QObject
         void on_clear_screen();
         void clear_screen();
         void on_connection_stop_resume();
+
+        void on_quick_filter(const QString& text);
 
 
     public slots:
@@ -63,9 +65,11 @@ class Table_View: public QObject
         QTableWidget* widget_;
         std::recursive_mutex mutex_;
         bool connected_;
+        QString quick_filter_;
 
         void display_strings(std::vector<std::string>& json_strings);
         void trim_view(bool clear_screen = false);
+        void apply_quick_filter();
 
 
     protected:
