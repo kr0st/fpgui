@@ -225,6 +225,9 @@ void write_default_settigs(QSettings& settings)
     app_config.view_batch_size = 200;
     app_config.view_max_messages = 10000;
     app_config.view_refresh_time = 500;
+    app_config.view_autoscroll = true;
+    app_config.view_clearing_ratio = 2;
+    app_config.view_sorting = true;
 
     write_app_config(app_config, settings);
     write_db_config(db_config, settings);
