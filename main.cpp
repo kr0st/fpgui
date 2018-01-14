@@ -10,6 +10,7 @@
 #include <utils.h>
 #include <scripting.h>
 #include <var_injector.h>
+#include <mongo_data_source.h>
 
 
 class Closer: public QObject
@@ -85,10 +86,15 @@ int main(int argc, char *argv[])
     table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
     w.inject_table_view(&table);
 
+#ifdef _UNIT_TEST
     auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
 
     source->set_batch_size(app_config.view_batch_size / 4, app_config.view_batch_size);
     source->set_single_string_size(10, 50);
+#else
+    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
+#endif
+
     table_controller.set_data_source(source);
     table_controller.start_refreshing_view();
 

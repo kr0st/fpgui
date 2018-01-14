@@ -60,7 +60,9 @@ HEADERS += \
     simplecrypt.h \
     mac_util.h \
     table_view.h \
-    table_controller.h
+    table_controller.h \
+    data_source.h \
+    mongo_data_source.h
 
 FORMS += \
         mainwindow.ui
