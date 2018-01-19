@@ -92,7 +92,8 @@ int main(int argc, char *argv[])
     source->set_batch_size(app_config.view_batch_size / 4, app_config.view_batch_size);
     source->set_single_string_size(10, 50);
 #else
-    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
+    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<>>());
+    source->connect(fpgui::settings::read_db_config(settings));
 #endif
 
     table_controller.set_data_source(source);

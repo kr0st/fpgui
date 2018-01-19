@@ -2,6 +2,9 @@
 #define MONGO_DATA_SOURCE_H
 
 #include <data_source.h>
+#include <settings.h>
+#include <QSettings>
+#include <mongocxx/client.hpp>
 
 namespace fpgui { namespace data_source {
 
@@ -10,12 +13,16 @@ class Mongo_Data_Source: public Data_Source<T>
 {
     public:
 
-        void request_data(T &data)
-        {
-        }
+        Mongo_Data_Source(): client_(0) {}
+        virtual ~Mongo_Data_Source() { delete client_; }
+
+        void request_data(T& data);
+        void connect(const settings::Db_Configuration& config);
 
 
     private:
+
+        mongocxx::client* client_;
 };
 
 

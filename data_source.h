@@ -3,6 +3,7 @@
 
 #include <queue>
 #include <string>
+#include <QtCore>
 
 namespace fpgui { namespace data_source { namespace random {
 
