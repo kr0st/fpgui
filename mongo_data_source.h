@@ -23,6 +23,8 @@ class Mongo_Data_Source: public Data_Source<T>
     private:
 
         mongocxx::client* client_;
+        std::string db_name_;
+        std::string db_collection_name_;
 };
 
 

@@ -10,21 +10,28 @@
 #include <bsoncxx/json.hpp>
 
 #include <mongo_data_source.h>
+#include <utils.h>
 
 namespace fpgui { namespace data_source {
 
 static mongocxx::instance instance{};
 
-static void connect(mongocxx::client** client, const settings::Db_Configuration& config)
+static void connect(mongocxx::client** client, std::string& db_name, std::string& db_collection_name, const settings::Db_Configuration& config)
 {
     mongocxx::uri uri("mongodb://localhost:27017");
     delete *client;
     *client = new mongocxx::client(uri);
+
+    std::vector<std::string> collection = generic_utils::tokenize(config.collection.c_str(), '.');
+
+    //TODO: exception handling!!
+    db_name = collection[0];
+    db_collection_name = collection[1];
 }
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::connect(const settings::Db_Configuration& config)
 {
-    data_source::connect(&client_, config);
+    data_source::connect(&client_, db_name_, db_collection_name_, config);
 }
 
 std::string generate_first_oid()
@@ -35,24 +42,28 @@ std::string generate_first_oid()
     return (s);
 }
 
+static std::string g_last_id = generate_first_oid();
+
+mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name)
+{
+    mongocxx::database fplog = (*client)[db_name];
+    mongocxx::collection logs = fplog[db_collection_name];
+
+    mongocxx::cursor* cur = new mongocxx::cursor(logs.find(bsoncxx::builder::stream::document{} << "_id" <<
+                                                           bsoncxx::builder::stream::open_document <<
+                                                           "$gt" << bsoncxx::oid(g_last_id) <<
+                                                           bsoncxx::builder::stream::close_document <<
+                                                           bsoncxx::builder::stream::finalize));
+    return cur;
+}
+
 template <> void Mongo_Data_Source<std::queue<std::string>>::request_data(std::queue<std::string>& data)
 {
-    static std::string last_id = generate_first_oid();
-
-    mongocxx::database fplog = (*client_)["fplog"];
-    mongocxx::collection logs = fplog["logs"];
-
-    std::unique_ptr<mongocxx::cursor> cur;
-    cur.reset(new mongocxx::cursor(logs.find(bsoncxx::builder::stream::document{} << "_id" <<
-                                             bsoncxx::builder::stream::open_document <<
-                                             "$gt" << bsoncxx::oid(last_id) <<
-                                             bsoncxx::builder::stream::close_document <<
-                                             bsoncxx::builder::stream::finalize)));
+    std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_));
 
     for (const bsoncxx::document::view& doc: *cur)
     {
-        const bsoncxx::document::element& id = doc["_id"];
-        last_id = id.get_oid().value.to_string();
+        g_last_id = doc["_id"].get_oid().value.to_string();
         data.push(bsoncxx::to_json(doc));
     }
 }

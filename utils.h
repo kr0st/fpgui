@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace generic_utils {
 
@@ -25,6 +26,23 @@ template <typename T> class Variable_Reset
 std::string get_username();
 std::string& escape_quotes(std::string& str);
 std::vector<std::string> strip_json(const std::string& fields_to_leave, const std::vector<std::string>& json_strings);
+
+inline std::vector<std::string> tokenize(const char *str, char c = ' ')
+{
+    std::vector<std::string> result;
+
+    do
+    {
+        const char *begin = str;
+
+        while(*str != c && *str)
+            str++;
+
+        result.push_back(std::string(begin, str));
+    } while (0 != *str++);
+
+    return result;
+}
 
 namespace date_time {
 
