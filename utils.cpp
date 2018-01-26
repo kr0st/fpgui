@@ -25,7 +25,7 @@ namespace generic_utils {
 
 namespace ui {
 
-int message_box(const char* msg)
+int message_box(const QString &msg)
 {
     QMessageBox box;
     box.setText(msg);

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <QString>
 
 namespace generic_utils {
 
@@ -62,7 +63,7 @@ bool generate_encryption_key(unsigned char* generated_key_64bit);
 
 namespace ui {
 
-int message_box(const char* msg);
+int message_box(const QString& msg);
 
 }
 
