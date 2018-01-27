@@ -66,7 +66,8 @@ HEADERS += \
     table_view.h \
     table_controller.h \
     data_source.h \
-    mongo_data_source.h
+    mongo_data_source.h \
+    fpgui_exceptions.h
 
 FORMS += \
         mainwindow.ui

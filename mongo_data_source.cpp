@@ -9,6 +9,8 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 
+#include <QCoreApplication>
+
 #include <mongo_data_source.h>
 #include <utils.h>
 
@@ -24,7 +26,9 @@ static void connect(mongocxx::client** client, std::string& db_name, std::string
 
     std::vector<std::string> collection = generic_utils::tokenize(config.collection.c_str(), '.');
 
-    //TODO: exception handling!!
+    if (collection.size() != 2)
+        THROWM(exceptions::Incorrect_Parameter, QCoreApplication::translate("Generic_Exception", "Collection parameter in app configuration is malformed."));
+
     db_name = collection[0];
     db_collection_name = collection[1];
 }
