@@ -31,6 +31,32 @@ static void connect(mongocxx::client** client, std::string& db_name, std::string
 
     db_name = collection[0];
     db_collection_name = collection[1];
+
+    bool found = false;
+
+    auto dbs((*client)->list_databases());
+    for (const bsoncxx::document::view& db : dbs)
+        if (db["name"].get_utf8().value.to_string() == db_name)
+        {
+            found = true;
+            break;
+        }
+
+    if (!found)
+        THROWM(exceptions::Incorrect_Parameter, QCoreApplication::translate("Generic_Exception", "Database not found."));
+
+    found = false;
+    mongocxx::database fplog = (**client)[db_name];
+    auto colls(fplog.list_collections());
+    for (const bsoncxx::document::view& coll : colls)
+        if (coll["name"].get_utf8().value.to_string() == db_collection_name)
+        {
+            found = true;
+            break;
+        }
+
+    if (!found)
+        THROWM(exceptions::Incorrect_Parameter, QCoreApplication::translate("Generic_Exception", "Collection not found."));
 }
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::connect(const settings::Db_Configuration& config)
