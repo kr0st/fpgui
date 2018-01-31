@@ -45,7 +45,11 @@ class Table_Controller: public QObject
         void start_refreshing_view();
         void stop_refreshing_view();
 
-        void set_data_source(std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source){ data_source_ = data_source; }
+        void set_data_source(std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source)
+        {
+            data_source_.reset();
+            data_source_ = data_source;
+        }
 
 
     private:

@@ -65,30 +65,6 @@ int main(int argc, char *argv[])
         fpgui::settings::write_default_settigs(settings);
     }
 
-#ifdef _UNIT_TEST
-    auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
-
-    source->set_batch_size(app_config.view_batch_size / 4, app_config.view_batch_size);
-    source->set_single_string_size(10, 50);
-#else
-    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<>>());
-
-    try
-    {
-        source->connect(fpgui::settings::read_db_config(settings));
-    }
-    catch (fpgui::exceptions::Generic_Exception& e)
-    {
-        generic_utils::ui::message_box(e.what());
-        return -1;
-    }
-    catch (mongocxx::exception& e)
-    {
-        generic_utils::ui::message_box(e.what());
-        return -1;
-    }
-#endif
-
     fpgui::settings::create_default_script_file();
 
     fpgui::lua::load_from_file(fpgui::settings::get_config_path() + "/" + fpgui::settings::lua_file_name);
@@ -112,8 +88,15 @@ int main(int argc, char *argv[])
     table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
     w.inject_table_view(&table);
 
+#ifdef _UNIT_TEST
+    auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
+
+    source->set_batch_size(app_config.view_batch_size / 4, app_config.view_batch_size);
+    source->set_single_string_size(10, 50);
+
     table_controller.set_data_source(source);
     table_controller.start_refreshing_view();
+#endif
 
     Closer closer(&a, &table);
 

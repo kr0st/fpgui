@@ -5,6 +5,7 @@
 #include <utils.h>
 #include <scripting.h>
 #include <var_injector.h>
+#include <mongo_data_source.h>
 
 #include <QTimer>
 #include <QThread>
@@ -174,6 +175,28 @@ static bool trim_data(std::vector<std::string>& data, settings::App_Configuratio
 
 void Table_Controller::start_refreshing_view()
 {
+    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<>>());
+
+    try
+    {
+        QSettings settings;
+        source->connect(fpgui::settings::read_db_config(settings));
+    }
+    catch (fpgui::exceptions::Generic_Exception& e)
+    {
+        generic_utils::ui::message_box(e.what());
+        view_.reset_connected_state();
+        return;
+    }
+    catch (mongocxx::exception& e)
+    {
+        generic_utils::ui::message_box(e.what());
+        view_.reset_connected_state();
+        return;
+    }
+
+    set_data_source(source);
+
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (!timer_thread_->isRunning())
     {

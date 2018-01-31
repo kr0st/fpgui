@@ -5,6 +5,7 @@
 #include <settings.h>
 #include <QSettings>
 #include <mongocxx/client.hpp>
+#include <mongocxx/exception/exception.hpp>
 #include <fpgui_exceptions.h>
 
 namespace fpgui { namespace data_source {

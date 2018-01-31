@@ -21,7 +21,7 @@ class Table_View: public QObject
             settings::App_Configuration app_config;
         };
 
-        Table_View(settings::App_Configuration& app_config): app_config_(app_config), connected_(true), quick_filter_("")
+        Table_View(settings::App_Configuration& app_config): app_config_(app_config), connected_(false), quick_filter_("")
         {
             widget_ = 0;
         }
@@ -39,6 +39,7 @@ class Table_View: public QObject
         void on_connection_stop_resume();
 
         void on_quick_filter(const QString& text);
+        void reset_connected_state();
 
 
     public slots:

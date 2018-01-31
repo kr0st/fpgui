@@ -358,6 +358,15 @@ void Table_View::on_clear_screen()
     emit clear_view();
 }
 
+void Table_View::reset_connected_state()
+{
+    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    QPushButton* stop_resume = widget_->parent()->findChild<QPushButton*>("connection_button");
+
+    stop_resume->setText(tr("Start"));
+    connected_ = false;
+}
+
 void Table_View::on_connection_stop_resume()
 {
     {
@@ -368,7 +377,7 @@ void Table_View::on_connection_stop_resume()
             QPushButton* stop_resume = widget_->parent()->findChild<QPushButton*>("connection_button");
 
             if (stop_resume)
-                stop_resume->setText("Resume");
+                stop_resume->setText(tr("Resume"));
 
             connected_ = false;
         }
@@ -377,7 +386,7 @@ void Table_View::on_connection_stop_resume()
             QPushButton* stop_resume = widget_->parent()->findChild<QPushButton*>("connection_button");
 
             if (stop_resume)
-                stop_resume->setText("Stop");
+                stop_resume->setText(tr("Stop"));
 
             connected_ = true;
         }

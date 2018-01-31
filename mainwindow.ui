@@ -81,7 +81,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Stop</string>
+           <string>Start</string>
           </property>
          </widget>
         </item>
