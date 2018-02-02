@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include <QSignalBlocker>
+#include <utils.h>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -51,4 +54,9 @@ void MainWindow::on_quickfilter_edit_textEdited(const QString &text)
 {
     if (table_view_)
         table_view_->on_quick_filter(text);
+}
+
+void MainWindow::message_box(QString &text)
+{
+    generic_utils::ui::message_box(text);
 }

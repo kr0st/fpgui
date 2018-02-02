@@ -41,6 +41,8 @@ class Table_View: public QObject
         void on_quick_filter(const QString& text);
         void reset_connected_state();
 
+        void display_message(QString& text);
+
 
     public slots:
 

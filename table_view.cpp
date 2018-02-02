@@ -425,4 +425,14 @@ void Table_View::apply_quick_filter()
     }
 }
 
+struct init_once
+{
+    init_once(Table_View* view, QTableWidget* widget){}
+};
+
+void Table_View::display_message(QString& text)
+{
+    static init_once init(this, widget_);
+}
+
 }}

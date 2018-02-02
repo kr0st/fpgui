@@ -208,12 +208,32 @@ void Table_Controller::start_refreshing_view()
 
 void Table_Controller::refresh_view_internal()
 {
+    std::queue<std::string> data;
+
+    try
+    {
+        if (data_source_.get())
+            data_source_->request_data(data);
+    }
+    catch (fpgui::exceptions::Generic_Exception& e)
+    {
+        generic_utils::ui::message_box(e.what());
+        view_.reset_connected_state();
+        data_source_.reset();
+
+        return;
+    }
+    catch (mongocxx::exception& e)
+    {
+        generic_utils::ui::message_box(e.what());
+        view_.reset_connected_state();
+        data_source_.reset();
+
+        return;
+    }
+
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     fpgui::lua::inject_tab_sorting_config(tab_config_);
-
-    std::queue<std::string> data;
-    if (data_source_.get())
-        data_source_->request_data(data);
 
     std::vector<std::string> batch;
 
