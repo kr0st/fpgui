@@ -218,6 +218,7 @@ void Table_Controller::refresh_view_internal()
     catch (fpgui::exceptions::Generic_Exception& e)
     {
         view_.display_message(e.what());
+        stop_refreshing_view();
         view_.reset_connected_state();
         data_source_.reset();
 
@@ -226,6 +227,7 @@ void Table_Controller::refresh_view_internal()
     catch (mongocxx::exception& e)
     {
         view_.display_message(e.what());
+        stop_refreshing_view();
         view_.reset_connected_state();
         data_source_.reset();
 
