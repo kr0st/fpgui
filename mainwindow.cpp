@@ -56,7 +56,7 @@ void MainWindow::on_quickfilter_edit_textEdited(const QString &text)
         table_view_->on_quick_filter(text);
 }
 
-void MainWindow::message_box(QString &text)
+void MainWindow::message_box(const QString &text)
 {
     generic_utils::ui::message_box(text);
 }

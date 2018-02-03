@@ -427,12 +427,18 @@ void Table_View::apply_quick_filter()
 
 struct init_once
 {
-    init_once(Table_View* view, QTableWidget* widget){}
+    init_once(Table_View* view, QTableWidget* widget)
+    {
+        MainWindow* wnd = dynamic_cast<MainWindow*>(widget->parent()->parent());
+        QObject::connect(wnd, SIGNAL(display_message(const QString &)), wnd, SLOT(message_box(const QString &)), Qt::QueuedConnection);
+    }
 };
 
-void Table_View::display_message(QString& text)
+void Table_View::display_message(const QString &text)
 {
     static init_once init(this, widget_);
+    MainWindow* wnd = dynamic_cast<MainWindow*>(widget_->parent()->parent());
+    emit wnd->display_message(text);
 }
 
 }}

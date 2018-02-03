@@ -184,13 +184,13 @@ void Table_Controller::start_refreshing_view()
     }
     catch (fpgui::exceptions::Generic_Exception& e)
     {
-        generic_utils::ui::message_box(e.what());
+        view_.display_message(e.what());
         view_.reset_connected_state();
         return;
     }
     catch (mongocxx::exception& e)
     {
-        generic_utils::ui::message_box(e.what());
+        view_.display_message(e.what());
         view_.reset_connected_state();
         return;
     }
@@ -217,7 +217,7 @@ void Table_Controller::refresh_view_internal()
     }
     catch (fpgui::exceptions::Generic_Exception& e)
     {
-        generic_utils::ui::message_box(e.what());
+        view_.display_message(e.what());
         view_.reset_connected_state();
         data_source_.reset();
 
@@ -225,7 +225,7 @@ void Table_Controller::refresh_view_internal()
     }
     catch (mongocxx::exception& e)
     {
-        generic_utils::ui::message_box(e.what());
+        view_.display_message(e.what());
         view_.reset_connected_state();
         data_source_.reset();
 

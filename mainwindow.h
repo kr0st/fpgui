@@ -22,12 +22,12 @@ class MainWindow : public QMainWindow
 
     signals:
 
-        void display_message(QString &text);
+        void display_message(const QString &text);
 
 
     public slots:
 
-        void message_box(QString &text);
+        void message_box(const QString &text);
 
 
     private slots:
