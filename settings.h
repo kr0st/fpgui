@@ -51,6 +51,7 @@ struct Db_Configuration
     std::string hostname;
     std::string collection;
     std::string password;
+    std::string auth_db;
 
     int port;
     int polling_interval;

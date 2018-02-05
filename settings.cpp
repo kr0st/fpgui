@@ -140,6 +140,7 @@ Db_Configuration read_db_config(QSettings& settings)
     db_config.username = settings.value(QString((section + fpgui::settings::db_user_setting).c_str())).toString().toStdString();
     db_config.collection = settings.value(QString((section + fpgui::settings::db_collection_setting).c_str())).toString().toStdString();
     db_config.password = settings.value(QString((section + fpgui::settings::db_password_setting).c_str())).toString().toStdString();
+    db_config.auth_db = settings.value(QString((section + fpgui::settings::db_auth_db_setting).c_str())).toString().toStdString();
 
     db_config.polling_interval = settings.value(QString((section + fpgui::settings::db_polling_interval_setting).c_str())).toInt();
     db_config.port = settings.value(QString((section + fpgui::settings::db_port_setting).c_str())).toInt();
@@ -155,6 +156,7 @@ void write_db_config(Db_Configuration& db_config, QSettings& settings)
     settings.setValue(QString((section + fpgui::settings::db_host_setting).c_str()), db_config.hostname.c_str());
     settings.setValue(QString((section + fpgui::settings::db_user_setting).c_str()), db_config.username.c_str());
     settings.setValue(QString((section + fpgui::settings::db_collection_setting).c_str()), db_config.collection.c_str());
+    settings.setValue(QString((section + fpgui::settings::db_auth_db_setting).c_str()), db_config.auth_db.c_str());
 
     unsigned char key[8] = {0};
     generic_utils::crypto::generate_encryption_key(key);
@@ -220,6 +222,7 @@ void write_default_settigs(QSettings& settings)
     db_config.hostname = "127.0.0.1";
     db_config.port = 27017;
     db_config.polling_interval = 1000;
+    db_config.auth_db = "admin";
 
     App_Configuration app_config;
     app_config.view_batch_size = 200;

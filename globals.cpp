@@ -28,6 +28,7 @@ const char* db_collection_setting = "db_collection_name";
 const char* db_port_setting = "db_port";
 const char* db_user_setting = "db_user";
 const char* db_password_setting = "db_user_password";
+const char* db_auth_db_setting = "db_auth_db_name";
 
 const char* tabs_section_name = "visible_tabs";
 const char* tabs_array_name = "tabs";

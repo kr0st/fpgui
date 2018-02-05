@@ -29,6 +29,7 @@ extern const char* db_collection_setting;
 extern const char* db_port_setting;
 extern const char* db_user_setting;
 extern const char* db_password_setting;
+extern const char* db_auth_db_setting;
 
 extern const char* tabs_section_name;
 extern const char* tabs_array_name;
