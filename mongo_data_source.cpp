@@ -20,7 +20,15 @@ static mongocxx::instance instance{};
 
 static void connect(mongocxx::client** client, std::string& db_name, std::string& db_collection_name, const settings::Db_Configuration& config)
 {
-    mongocxx::uri uri("mongodb://localhost:27017");
+    unsigned char key[8] = {0};
+    generic_utils::crypto::generate_encryption_key(key);
+
+    std::string pass(config.password);
+    if (generic_utils::crypto::is_string_encrypted(pass, key))
+        pass = generic_utils::crypto::decrypt_string(pass, key);
+
+    mongocxx::uri uri("mongodb://" + config.username + ":" + pass + "@" + config.hostname + ":" +
+                      std::to_string(config.port) + "/?authSource=" + config.auth_db);
     delete *client;
     *client = new mongocxx::client(uri);
 

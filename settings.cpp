@@ -145,6 +145,12 @@ Db_Configuration read_db_config(QSettings& settings)
     db_config.polling_interval = settings.value(QString((section + fpgui::settings::db_polling_interval_setting).c_str())).toInt();
     db_config.port = settings.value(QString((section + fpgui::settings::db_port_setting).c_str())).toInt();
 
+    unsigned char key[8] = {0};
+    generic_utils::crypto::generate_encryption_key(key);
+
+    if(!generic_utils::crypto::is_string_encrypted(db_config.password, key))
+        write_db_config(db_config, settings);
+
     return db_config;
 }
 

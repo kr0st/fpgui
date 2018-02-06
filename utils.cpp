@@ -299,7 +299,7 @@ std::string encrypt_string(std::string& cleartext, unsigned char* key_64bit, int
     return encrypted.toStdString();
 }
 
-std::string decrypt_string(std::string& encrypted, unsigned char* key_64bit, int salt_size_bytes, bool *error_condition)
+std::string decrypt_string(const std::string& encrypted, unsigned char* key_64bit, int salt_size_bytes, bool *error_condition)
 {
     bool failed = true;
     if (error_condition)
