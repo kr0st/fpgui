@@ -1,11 +1,13 @@
 #include <algorithm>
 #include <iostream>
 
-#include "table_controller.h"
+#include <table_controller.h>
 #include <utils.h>
 #include <scripting.h>
 #include <var_injector.h>
 #include <mongo_data_source.h>
+#include <settings.h>
+#include <globals.h>
 
 #include <QTimer>
 #include <QThread>
@@ -82,7 +84,7 @@ void Table_Controller::merge_view_config(const Table_View::View_Configuration& c
     size_t len = config.tab_config.size(), this_len = tab_config_.size();
 
     if (len != this_len)
-        qWarning() << "Trying to merge view config that has different size, some elemtns might be misconfigured.";
+        qWarning() << "Trying to merge view config that has different size, some elements might be misconfigured.";
 
     if (len > this_len)
         len = this_len;
@@ -239,10 +241,26 @@ void Table_Controller::refresh_view_internal()
 
     std::vector<std::string> batch;
 
+    std::string mandatory_fields;
+
+    mandatory_fields += (fpgui::settings::tab_names.facility + std::string(","));
+    mandatory_fields += (fpgui::settings::tab_names.priority + std::string(","));
+    mandatory_fields += (fpgui::settings::tab_names.timestamp + std::string(","));
+    mandatory_fields += (fpgui::settings::tab_names.hostname + std::string(","));
+    mandatory_fields += (fpgui::settings::tab_names.appname + std::string(","));
+    mandatory_fields += fpgui::settings::tab_names.sequence;
+
     if (!data.empty())
         do
         {
-            batch.push_back(data.front());
+            if (generic_utils::validate_json(mandatory_fields, data.front()))
+                batch.push_back(data.front());
+            else
+            {
+                data.pop();
+                continue;
+            }
+
             data.pop();
             if (batch.size() % app_config_.view_batch_size == 0)
             {

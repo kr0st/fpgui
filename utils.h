@@ -26,7 +26,9 @@ template <typename T> class Variable_Reset
 
 std::string get_username();
 std::string& escape_quotes(std::string& str);
+
 std::vector<std::string> strip_json(const std::string& fields_to_leave, const std::vector<std::string>& json_strings);
+bool validate_json(const std::string& mandatory_fields, const std::string& json_string);
 
 inline std::vector<std::string> tokenize(const char *str, char c = ' ')
 {

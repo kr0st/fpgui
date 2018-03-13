@@ -90,7 +90,7 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
         if (js_from.IsNull())
         {
             qCritical() << "JSON document is invalid!";
-            return out_strings;
+            continue;
         }
 
         if (js_from.IsObject())
@@ -116,6 +116,53 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
     }
 
     return out_strings;
+}
+
+bool validate_json(const std::string& mandatory_fields, const std::string &json_string)
+{
+    std::vector<std::string> fields;
+
+    std::istringstream is(mandatory_fields);
+    std::string part;
+    while (std::getline(is, part, ','))
+      fields.push_back(part);
+
+    rapidjson::GenericDocument<rapidjson::UTF8<>> js_from;
+    std::unique_ptr<char[]> to_parse(new char[json_string.size() + 1]);
+
+    memcpy(to_parse.get(), json_string.c_str(), json_string.size());
+    to_parse.get()[json_string.size()] = 0;
+
+    js_from.ParseInsitu(to_parse.get());
+
+    if (js_from.IsNull())
+    {
+        qCritical() << "JSON document validation failed!";
+        return false;
+    }
+
+    if (js_from.IsObject())
+    {
+        rapidjson::Value::Object jsobj(js_from.GetObject());
+        size_t total_fields = fields.size();
+        size_t counted_fields = 0;
+
+        for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
+        {
+            std::string key(it->name.GetString());
+            for (const auto& field: fields)
+                if (key.compare(field) == 0)
+                {
+                    counted_fields++;
+                    break;
+                }
+        }
+
+        if (total_fields != counted_fields)
+            return false;
+    }
+
+    return true;
 }
 
 namespace date_time {
