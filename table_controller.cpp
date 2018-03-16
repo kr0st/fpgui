@@ -68,6 +68,20 @@ void Table_Controller::stop_refreshing_view()
 {
     bool is_running = true;
 
+    try
+    {
+        if (data_source_.get())
+            data_source_->disconnect();
+    }
+    catch (fpgui::exceptions::Generic_Exception& e)
+    {
+        view_.display_message(e.what());
+    }
+    catch (mongocxx::exception& e)
+    {
+        view_.display_message(e.what());
+    }
+
     {
         std::lock_guard<std::recursive_mutex> lock(mutex_);
         is_running = timer_thread_->isRunning();
@@ -177,12 +191,13 @@ static bool trim_data(std::vector<std::string>& data, settings::App_Configuratio
 
 void Table_Controller::start_refreshing_view()
 {
-    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<>>());
-
     try
     {
         QSettings settings;
-        source->connect(fpgui::settings::read_db_config(settings));
+        if (data_source_.get())
+            data_source_->connect(settings);
+        else
+            THROWM(fpgui::exceptions::Incorrect_Parameter, "Cannot establish data source connection! Please re-launch the application.");
     }
     catch (fpgui::exceptions::Generic_Exception& e)
     {
@@ -196,8 +211,6 @@ void Table_Controller::start_refreshing_view()
         view_.reset_connected_state();
         return;
     }
-
-    set_data_source(source);
 
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     if (!timer_thread_->isRunning())

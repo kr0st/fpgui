@@ -96,6 +96,9 @@ int main(int argc, char *argv[])
 
     table_controller.set_data_source(source);
     table_controller.start_refreshing_view();
+#else
+    auto source(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
+    table_controller.set_data_source(source);
 #endif
 
     Closer closer(&a, &table);

@@ -20,6 +20,8 @@ class Mongo_Data_Source: public Data_Source<T>
 
         void request_data(T& data);
         void connect(const settings::Db_Configuration& config);
+        void connect(QSettings& settings);
+        void disconnect();
 
 
     private:

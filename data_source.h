@@ -81,6 +81,8 @@ class Data_Source
   public:
 
       virtual void request_data(T& data) = 0;
+      virtual void connect(QSettings&){}
+      virtual void disconnect(){}
       virtual ~Data_Source(){}
 };
 
@@ -104,6 +106,8 @@ class Random_Data_Source: public Data_Source<T>
 
             random::generate_json_strings(data, batch_sz, min_sz_string_, max_sz_string_);
         }
+
+        void connect(QSettings&){}
 
 
     private:

@@ -72,6 +72,17 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::connect(const setti
     data_source::connect(&client_, db_name_, db_collection_name_, config);
 }
 
+template <> void Mongo_Data_Source<std::queue<std::string>>::connect(QSettings& settings)
+{
+    connect(fpgui::settings::read_db_config(settings));
+}
+
+template <> void Mongo_Data_Source<std::queue<std::string>>::disconnect()
+{
+    delete client_;
+    client_ = 0;
+}
+
 std::string generate_first_oid()
 {
     long long t = std::time(0);

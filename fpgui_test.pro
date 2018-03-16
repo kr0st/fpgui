@@ -10,10 +10,13 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 INCLUDEPATH += "$$_PRO_FILE_PWD_/dependencies/include/"
+INCLUDEPATH += "/usr/local/include/"
+INCLUDEPATH += "/usr/local/include/mongocxx/v_noabi/"
+INCLUDEPATH += "/usr/local/include/bsoncxx/v_noabi/"
 
 LIBS += -L"$$_PRO_FILE_PWD_/dependencies/lib/x64/"
 LIBS += -L/usr/local/lib/
-LIBS += -lmongocxx -lgtest -lluajit
+LIBS += -lmongocxx -lbsoncxx -lgtest -lluajit
 
 SOURCES += \
     fpgui_test.cpp \
@@ -28,7 +31,8 @@ SOURCES += \
     table_controller.cpp \
     mainwindow.cpp \
     data_source.cpp \
-    business_logic_test_data.cpp
+    business_logic_test_data.cpp \
+    mongo_data_source.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -61,7 +65,8 @@ HEADERS += \
     mainwindow.h \
     table_view.h \
     data_source.h \
-    business_logic_test_data.h
+    business_logic_test_data.h \
+    mongo_data_source.h
 
 FORMS += mainwindow.ui
 
