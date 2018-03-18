@@ -1,5 +1,6 @@
 #include "table_view.h"
 #include "mainwindow.h"
+#include "historybrowserwindow.h"
 #include <utils.h>
 
 #include <rapidjson/rapidjson.h>
@@ -193,7 +194,7 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         absolute_width_to_percentage(config_copy, widget);
         balance_size_percentages(config_copy);
         config_ = config_copy;
-        QMainWindow* wnd = dynamic_cast<QMainWindow*>(widget_->parent()->parent());
+        MainWindow* wnd = dynamic_cast<MainWindow*>(widget_->parent()->parent());
 
         app_config_.window_width = wnd->geometry().width();
         app_config_.window_height = wnd->geometry().height();

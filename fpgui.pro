@@ -52,7 +52,8 @@ SOURCES += \
     mac_util.cpp \
     table_view.cpp \
     table_controller.cpp \
-    mongo_data_source.cpp
+    mongo_data_source.cpp \
+    historybrowserwindow.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -67,9 +68,11 @@ HEADERS += \
     table_controller.h \
     data_source.h \
     mongo_data_source.h \
-    fpgui_exceptions.h
+    fpgui_exceptions.h \
+    historybrowserwindow.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    historybrowserwindow.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
