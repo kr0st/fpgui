@@ -13,6 +13,7 @@
 #include <var_injector.h>
 #include <mongo_data_source.h>
 #include <fpgui_exceptions.h>
+#include <historybrowserwindow.h>
 
 
 class Closer: public QObject
@@ -88,6 +89,19 @@ int main(int argc, char *argv[])
     table.setup_view(fpgui::settings::read_tab_config(settings), *widget);
     w.inject_table_view(&table);
 
+    //trying out the history browser window
+    HistoryBrowserWindow w2;
+    fpgui::ui::Table_View table2(app_config);
+    fpgui::ui::Table_Controller table_controller2(table2);
+    QTableWidget* widget2(w2.findChild<QTableWidget*>("tableWidget"));
+
+    w2.show();
+    table2.setup_view(fpgui::settings::read_tab_config(settings), *widget2);
+    w2.inject_table_view(&table2);
+
+    auto source2(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
+    table_controller2.set_data_source(source2);
+
 #ifdef _UNIT_TEST
     auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
 
@@ -101,6 +115,7 @@ int main(int argc, char *argv[])
     table_controller.set_data_source(source);
 #endif
 
+    Closer closer2(&a, &table2);
     Closer closer(&a, &table);
 
     int res = a.exec();

@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "historybrowserwindow.h"
 #include <utils.h>
+#include <windowwithmessagebox.h>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
@@ -153,7 +154,8 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         widget.setSelectionBehavior(QAbstractItemView::SelectRows);
         widget.setSelectionMode(QAbstractItemView::SingleSelection);
 
-        MainWindow* wnd = dynamic_cast<MainWindow*>(widget.parent()->parent());
+        QWidget* wnd = dynamic_cast<QWidget*>(widget.parent()->parent());
+        if (!wnd) wnd = dynamic_cast<QWidget*>(widget.parent());
 
         QCheckBox* autoscroll_box = wnd->findChild<QCheckBox*>("autoscroll_box");
         autoscroll_box->blockSignals(true);
@@ -194,7 +196,9 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         absolute_width_to_percentage(config_copy, widget);
         balance_size_percentages(config_copy);
         config_ = config_copy;
-        MainWindow* wnd = dynamic_cast<MainWindow*>(widget_->parent()->parent());
+
+        QWidget* wnd = dynamic_cast<QWidget*>(widget_->parent()->parent());
+        if (!wnd) wnd = dynamic_cast<QWidget*>(widget_->parent());
 
         app_config_.window_width = wnd->geometry().width();
         app_config_.window_height = wnd->geometry().height();
@@ -430,7 +434,9 @@ struct init_once
 {
     init_once(QTableWidget* widget)
     {
-        MainWindow* wnd = dynamic_cast<MainWindow*>(widget->parent()->parent());
+        QObject* wnd = widget->parent()->parent();
+        if (!wnd) wnd = dynamic_cast<QWidget*>(widget->parent());
+        //WindowWithMessageBoxInterface* wnd_iface = dynamic_cast<WindowWithMessageBoxInterface*>(wnd);
         QObject::connect(wnd, SIGNAL(display_message(const QString &)), wnd, SLOT(message_box(const QString &)), Qt::QueuedConnection);
     }
 };
@@ -438,7 +444,8 @@ struct init_once
 void Table_View::display_message(const QString &text)
 {
     static init_once init(widget_);
-    MainWindow* wnd = dynamic_cast<MainWindow*>(widget_->parent()->parent());
+    WindowWithMessageBoxInterface* wnd = dynamic_cast<WindowWithMessageBoxInterface*>(widget_->parent()->parent());
+    if (!wnd) wnd = dynamic_cast<WindowWithMessageBoxInterface*>(widget_->parent());
     emit wnd->display_message(text);
 }
 

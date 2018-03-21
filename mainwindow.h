@@ -3,12 +3,13 @@
 
 #include <QMainWindow>
 #include <table_view.h>
+#include <windowwithmessagebox.h>
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 {
     Q_OBJECT
 

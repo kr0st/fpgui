@@ -69,7 +69,8 @@ HEADERS += \
     data_source.h \
     mongo_data_source.h \
     fpgui_exceptions.h \
-    historybrowserwindow.h
+    historybrowserwindow.h \
+    windowwithmessagebox.h
 
 FORMS += \
         mainwindow.ui \

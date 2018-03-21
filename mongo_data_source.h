@@ -29,6 +29,7 @@ class Mongo_Data_Source: public Data_Source<T>
         mongocxx::client* client_;
         std::string db_name_;
         std::string db_collection_name_;
+        std::string last_id_;
 };
 
 
