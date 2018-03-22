@@ -157,6 +157,9 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         QWidget* wnd = dynamic_cast<QWidget*>(widget.parent()->parent());
         if (!wnd) wnd = dynamic_cast<QWidget*>(widget.parent());
 
+        QObject::disconnect(wnd, SIGNAL(display_message(const QString &)), wnd, SLOT(message_box(const QString &)));
+        QObject::connect(wnd, SIGNAL(display_message(const QString &)), wnd, SLOT(message_box(const QString &)), Qt::QueuedConnection);
+
         QCheckBox* autoscroll_box = wnd->findChild<QCheckBox*>("autoscroll_box");
         autoscroll_box->blockSignals(true);
         autoscroll_box->setCheckState(app_config_.view_autoscroll ? Qt::Checked : Qt::Unchecked);
@@ -430,20 +433,8 @@ void Table_View::apply_quick_filter()
     }
 }
 
-struct init_once
-{
-    init_once(QTableWidget* widget)
-    {
-        QObject* wnd = widget->parent()->parent();
-        if (!wnd) wnd = dynamic_cast<QWidget*>(widget->parent());
-        //WindowWithMessageBoxInterface* wnd_iface = dynamic_cast<WindowWithMessageBoxInterface*>(wnd);
-        QObject::connect(wnd, SIGNAL(display_message(const QString &)), wnd, SLOT(message_box(const QString &)), Qt::QueuedConnection);
-    }
-};
-
 void Table_View::display_message(const QString &text)
 {
-    static init_once init(widget_);
     WindowWithMessageBoxInterface* wnd = dynamic_cast<WindowWithMessageBoxInterface*>(widget_->parent()->parent());
     if (!wnd) wnd = dynamic_cast<WindowWithMessageBoxInterface*>(widget_->parent());
     emit wnd->display_message(text);
