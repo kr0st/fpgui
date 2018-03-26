@@ -128,10 +128,24 @@ static void absolute_width_to_percentage(std::vector<settings::Tab_Configuration
 
 static bool suppress_resize_signals = false;
 
-void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only)
+void Table_View::show_hide()
+{
+    if (window_)
+    {
+        QWidget* wnd = (QWidget)window_;
+        if (wnd->isHidden())
+            wnd->show();
+        else
+            wnd->hide();
+    }
+}
+
+void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only, WindowWithMessageBox* window)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     generic_utils::Variable_Reset <bool> reset(suppress_resize_signals, true, false);
+
+    window_ = window;
 
     double widget_width(widget.geometry().width());
     std::vector<settings::Tab_Configuration> config_copy(config);

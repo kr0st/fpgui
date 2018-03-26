@@ -15,6 +15,7 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 
     public:
 
+        Ui::MainWindow* ui;
         explicit MainWindow(QWidget *parent = 0);
         ~MainWindow();
 
@@ -45,7 +46,6 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 
     private:
 
-        Ui::MainWindow* ui;
         fpgui::ui::Table_View* table_view_;
 
         void resizeEvent(QResizeEvent* event);

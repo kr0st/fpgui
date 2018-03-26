@@ -5,6 +5,11 @@
 
 class WindowWithMessageBoxInterface
 {
+    public:
+
+        virtual void show_hide(){}
+
+
     public slots:
 
         virtual void message_box(const QString &text) = 0;

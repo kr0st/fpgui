@@ -6,6 +6,8 @@
 #include <QTableWidget>
 #include <mutex>
 
+class WindowWithMessageBox;
+
 namespace fpgui {
 namespace ui {
 
@@ -25,7 +27,8 @@ class Table_View: public QObject
         {
             widget_ = 0;
         }
-        void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget, bool resize_only = false);
+        void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget,
+                        bool resize_only = false, WindowWithMessageBox* window = 0);
         View_Configuration get_view_configuration();
 
         void close_view();
@@ -42,6 +45,7 @@ class Table_View: public QObject
         void reset_connected_state();
 
         void display_message(const QString& text);
+        void show_hide();
 
 
     public slots:
@@ -69,6 +73,8 @@ class Table_View: public QObject
         std::recursive_mutex mutex_;
         bool connected_;
         QString quick_filter_;
+
+        WindowWithMessageBox* window_;
 
         void display_strings(std::vector<std::string>& json_strings);
         void trim_view(bool clear_screen = false);

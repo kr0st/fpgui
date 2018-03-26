@@ -53,7 +53,8 @@ SOURCES += \
     table_view.cpp \
     table_controller.cpp \
     mongo_data_source.cpp \
-    historybrowserwindow.cpp
+    historybrowserwindow.cpp \
+    main_menu_controller.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -70,7 +71,8 @@ HEADERS += \
     mongo_data_source.h \
     fpgui_exceptions.h \
     historybrowserwindow.h \
-    windowwithmessagebox.h
+    windowwithmessagebox.h \
+    main_menu_controller.h
 
 FORMS += \
         mainwindow.ui \

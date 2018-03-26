@@ -51,10 +51,11 @@ class Table_Controller: public QObject
             data_source_ = data_source;
         }
 
+        void display_message(const QString &text){ view_.display_message(text); }
+
 
     private:
 
-        Table_View& view_;
         std::recursive_mutex mutex_;
 
         settings::App_Configuration app_config_;
@@ -69,6 +70,7 @@ class Table_Controller: public QObject
 
     protected:
 
+        Table_View& view_;
         std::vector<std::string> data_, display_data_;
 };
 
