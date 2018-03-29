@@ -6,7 +6,7 @@
 #include <QTableWidget>
 #include <mutex>
 
-class WindowWithMessageBox;
+class WindowWithMessageBoxInterface;
 
 namespace fpgui {
 namespace ui {
@@ -28,7 +28,7 @@ class Table_View: public QObject
             widget_ = 0;
         }
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget,
-                        bool resize_only = false, WindowWithMessageBox* window = 0);
+                        bool resize_only = false, WindowWithMessageBoxInterface* window = 0);
         View_Configuration get_view_configuration();
 
         void close_view();
@@ -74,7 +74,7 @@ class Table_View: public QObject
         bool connected_;
         QString quick_filter_;
 
-        WindowWithMessageBox* window_;
+        WindowWithMessageBoxInterface* window_;
 
         void display_strings(std::vector<std::string>& json_strings);
         void trim_view(bool clear_screen = false);

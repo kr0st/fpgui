@@ -60,3 +60,9 @@ void MainWindow::message_box(const QString &text)
 {
     generic_utils::ui::message_box(text);
 }
+
+void MainWindow::on_actionBrowse_triggered()
+{
+    if (main_menu_view_)
+        main_menu_view_->on_history_browse();
+}

@@ -2,6 +2,7 @@
 #define HISTORYBROWSERWINDOW_H
 
 #include <QWidget>
+#include <QCloseEvent>
 #include <table_view.h>
 #include <windowwithmessagebox.h>
 
@@ -12,6 +13,7 @@ class HistoryBrowserWindow;
 class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterface
 {
     Q_OBJECT
+    Q_INTERFACES(WindowWithMessageBoxInterface)
 
     public:
 
@@ -48,6 +50,11 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
         fpgui::ui::Table_View* table_view_;
 
         void resizeEvent(QResizeEvent* event);
+
+
+    protected:
+
+      //void closeEvent(QCloseEvent *event) { event->ignore(); hide(); }
 };
 
 #endif // HISTORYBROWSERWINDOW_H

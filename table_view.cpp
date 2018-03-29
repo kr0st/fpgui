@@ -132,7 +132,7 @@ void Table_View::show_hide()
 {
     if (window_)
     {
-        QWidget* wnd = (QWidget)window_;
+        QWidget* wnd = dynamic_cast<QWidget*>(window_);
         if (wnd->isHidden())
             wnd->show();
         else
@@ -140,18 +140,18 @@ void Table_View::show_hide()
     }
 }
 
-void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only, WindowWithMessageBox* window)
+void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only, WindowWithMessageBoxInterface *window)
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     generic_utils::Variable_Reset <bool> reset(suppress_resize_signals, true, false);
-
-    window_ = window;
 
     double widget_width(widget.geometry().width());
     std::vector<settings::Tab_Configuration> config_copy(config);
 
     if (!resize_only)
     {
+        window_ = window;
+
         disconnect(widget.horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this,
                 SLOT(col_size_changed(int, int, int)));
         disconnect(widget.model(), SIGNAL(rowsInserted(const QModelIndex&, int, int)), this,

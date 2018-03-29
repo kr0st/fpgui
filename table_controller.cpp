@@ -45,8 +45,8 @@ Table_Controller::~Table_Controller()
 }
 
 Table_Controller::Table_Controller(Table_View& view):
-view_(view),
-data_source_(0)
+data_source_(0),
+view_(view)
 {
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
     connect(&view, SIGNAL(autoscroll_change(int)), this, SLOT(on_autoscroll_change(int)), Qt::DirectConnection);

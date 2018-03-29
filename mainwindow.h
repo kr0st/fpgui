@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <table_view.h>
 #include <windowwithmessagebox.h>
+#include <main_menu_view.h>
 
 namespace Ui {
 class MainWindow;
@@ -12,6 +13,7 @@ class MainWindow;
 class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 {
     Q_OBJECT
+    Q_INTERFACES(WindowWithMessageBoxInterface)
 
     public:
 
@@ -20,6 +22,7 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
         ~MainWindow();
 
         void inject_table_view(fpgui::ui::Table_View* table_view) { table_view_ = table_view; }
+        void inject_main_menu_view(fpgui::ui::Main_Menu_View* main_menu_view){ main_menu_view_ = main_menu_view; }
 
 
     signals:
@@ -44,9 +47,12 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
         void on_quickfilter_edit_textEdited(const QString &text);
 
 
-    private:
+        void on_actionBrowse_triggered();
+
+private:
 
         fpgui::ui::Table_View* table_view_;
+        fpgui::ui::Main_Menu_View* main_menu_view_;
 
         void resizeEvent(QResizeEvent* event);
 };

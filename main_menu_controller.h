@@ -2,7 +2,7 @@
 #define MAIN_MENU_CONTROLLER_H
 
 #include <table_controller.h>
-#include <table_view.h>
+#include <main_menu_view.h>
 
 class Main_Menu_Controller: public fpgui::ui::Table_Controller
 {
@@ -10,7 +10,7 @@ class Main_Menu_Controller: public fpgui::ui::Table_Controller
 
     public:
 
-        Main_Menu_Controller(fpgui::ui::Table_View& view);
+        Main_Menu_Controller(fpgui::ui::Main_Menu_View& view);
 
 
     public slots:
