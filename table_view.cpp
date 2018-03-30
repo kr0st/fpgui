@@ -128,6 +128,26 @@ static void absolute_width_to_percentage(std::vector<settings::Tab_Configuration
 
 static bool suppress_resize_signals = false;
 
+void Table_View::show()
+{
+    if (window_)
+    {
+        QWidget* wnd = dynamic_cast<QWidget*>(window_);
+        if (wnd->isHidden())
+            wnd->show();
+    }
+}
+
+void Table_View::hide()
+{
+    if (window_)
+    {
+        QWidget* wnd = dynamic_cast<QWidget*>(window_);
+        if (!wnd->isHidden())
+            wnd->hide();
+    }
+}
+
 void Table_View::show_hide()
 {
     if (window_)
@@ -175,14 +195,20 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         QObject::connect(wnd, SIGNAL(display_message(const QString &)), wnd, SLOT(message_box(const QString &)), Qt::QueuedConnection);
 
         QCheckBox* autoscroll_box = wnd->findChild<QCheckBox*>("autoscroll_box");
-        autoscroll_box->blockSignals(true);
-        autoscroll_box->setCheckState(app_config_.view_autoscroll ? Qt::Checked : Qt::Unchecked);
-        autoscroll_box->blockSignals(false);
+        if (autoscroll_box)
+        {
+            autoscroll_box->blockSignals(true);
+            autoscroll_box->setCheckState(app_config_.view_autoscroll ? Qt::Checked : Qt::Unchecked);
+            autoscroll_box->blockSignals(false);
+        }
 
         QCheckBox* sorting_box = wnd->findChild<QCheckBox*>("sorting_box");
-        sorting_box->blockSignals(true);
-        sorting_box->setCheckState(app_config_.view_sorting ? Qt::Checked : Qt::Unchecked);
-        sorting_box->blockSignals(false);
+        if (sorting_box)
+        {
+            sorting_box->blockSignals(true);
+            sorting_box->setCheckState(app_config_.view_sorting ? Qt::Checked : Qt::Unchecked);
+            sorting_box->blockSignals(false);
+        }
 
         if ((app_config_.window_height != 0) && (app_config_.window_width != 0))
             wnd->resize(app_config_.window_width, app_config_.window_height);

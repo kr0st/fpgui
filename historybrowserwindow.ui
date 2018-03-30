@@ -173,20 +173,6 @@
        </attribute>
       </widget>
      </item>
-     <item>
-      <widget class="QCheckBox" name="autoscroll_box">
-       <property name="text">
-        <string>autoscroll</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="sorting_box">
-       <property name="text">
-        <string>sorting</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>

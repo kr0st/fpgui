@@ -8,5 +8,5 @@ Table_Controller(view)
 
 void Main_Menu_Controller::on_history_browse()
 {
-    view_.show_hide();
+    view_.show();
 }

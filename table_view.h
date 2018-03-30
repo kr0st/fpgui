@@ -23,7 +23,7 @@ class Table_View: public QObject
             settings::App_Configuration app_config;
         };
 
-        Table_View(settings::App_Configuration& app_config): app_config_(app_config), connected_(false), quick_filter_("")
+        Table_View(settings::App_Configuration& app_config): connected_(false), quick_filter_(""), app_config_(app_config)
         {
             widget_ = 0;
         }
@@ -45,6 +45,9 @@ class Table_View: public QObject
         void reset_connected_state();
 
         void display_message(const QString& text);
+
+        void show();
+        void hide();
         void show_hide();
 
 
@@ -67,7 +70,6 @@ class Table_View: public QObject
     private:
 
         std::vector<settings::Tab_Configuration> config_;
-        settings::App_Configuration app_config_;
 
         QTableWidget* widget_;
         std::recursive_mutex mutex_;
@@ -84,6 +86,7 @@ class Table_View: public QObject
     protected:
 
         std::vector<std::string> data_;
+        settings::App_Configuration app_config_;
 };
 
 }}
