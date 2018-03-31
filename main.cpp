@@ -100,13 +100,12 @@ int main(int argc, char *argv[])
     Main_Menu_Controller main_menu_controller(main_menu_view);
     QTableWidget* widget2(w2.findChild<QTableWidget*>("tableWidget"));
 
+    w2.show();
     main_menu_view.setup_view(fpgui::settings::read_tab_config(settings), *widget2, false, &w2);
     w2.inject_table_view(&main_menu_view);
 
     auto source2(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
     main_menu_controller.set_data_source(source2);
-
-    w2.hide();
 
 #ifdef _UNIT_TEST
     auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
@@ -123,6 +122,9 @@ int main(int argc, char *argv[])
 
     Closer closer2(&a, &main_menu_view);
     Closer closer(&a, &table);
+
+    QTimer timer;
+    timer.singleShot(1, &w2, SLOT(hide()));
 
     int res = a.exec();
     fpgui::lua::free_resources();
