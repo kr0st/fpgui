@@ -24,7 +24,7 @@ static void connect(mongocxx::client** client, std::string& db_name, std::string
     generic_utils::crypto::generate_encryption_key(key);
 
     std::string pass(config.password);
-    if (generic_utils::crypto::is_string_encrypted(pass, key))
+    while (generic_utils::crypto::is_string_encrypted(pass, key))
         pass = generic_utils::crypto::decrypt_string(pass, key);
 
     mongocxx::uri uri("mongodb://" + config.username + ":" + pass + "@" + config.hostname + ":" +
