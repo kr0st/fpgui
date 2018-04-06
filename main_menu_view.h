@@ -15,11 +15,13 @@ class Main_Menu_View : public Table_View
     public:
 
         Main_Menu_View(settings::App_Configuration& app_config);
+        void on_datetime_changed(qint64 start_datetime, qint64 end_datetime);
 
 
     signals:
 
         void history_browse();
+        void datetime_changed(qint64 start_datetime, qint64 end_datetime);
 
 
     public slots:

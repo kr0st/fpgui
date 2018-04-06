@@ -14,4 +14,9 @@ void Main_Menu_View::on_history_browse()
     emit history_browse();
 }
 
+void Main_Menu_View::on_datetime_changed(qint64 start_datetime, qint64 end_datetime)
+{
+    emit datetime_changed(start_datetime, end_datetime);
+}
+
 }}

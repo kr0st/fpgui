@@ -16,6 +16,7 @@ class Main_Menu_Controller: public fpgui::ui::Table_Controller
     public slots:
 
         void on_history_browse();
+        void on_datetime_changed(qint64 start_datetime, qint64 end_datetime);
 };
 
 #endif // MAIN_MENU_CONTROLLER_H
