@@ -94,6 +94,9 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::disconnect()
 
 mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name, const std::string& last_id)
 {
+    if (!client)
+        return 0;
+
     mongocxx::database fplog = (*client)[db_name];
     mongocxx::collection logs = fplog[db_collection_name];
 
@@ -107,6 +110,9 @@ mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_n
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::request_data(std::queue<std::string>& data)
 {
+    if (!client_)
+        return;
+
     std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_, last_id_));
 
     for (const bsoncxx::document::view& doc: *cur)

@@ -17,27 +17,6 @@
 namespace fpgui {
 namespace ui {
 
-class Table_Controller::Timer_Thread: public QThread
-{
-    public:
-
-        Timer_Thread(Table_Controller& controller):
-        controller_(controller)
-        {
-        }
-
-
-    private:
-
-        Table_Controller& controller_;
-
-        void run()
-        {
-            controller_.refresh_view_internal();
-            exec();
-        }
-};
-
 Table_Controller::~Table_Controller()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
@@ -61,12 +40,12 @@ view_(view)
     app_config_ = settings::read_app_config(settings);
     tab_config_ = settings::read_tab_config(settings);
 
-    timer_thread_.reset(new Timer_Thread(*this));
+    is_running_ = false;
 }
 
 void Table_Controller::stop_refreshing_view()
 {
-    bool is_running = true;
+    is_running_ = false;
 
     try
     {
@@ -81,16 +60,6 @@ void Table_Controller::stop_refreshing_view()
     {
         view_.display_message(e.what());
     }
-
-    {
-        std::lock_guard<std::recursive_mutex> lock(mutex_);
-        is_running = timer_thread_->isRunning();
-        if (is_running)
-            timer_thread_->quit();
-    }
-
-    if (is_running)
-        timer_thread_->wait();
 }
 
 void Table_Controller::merge_view_config(const Table_View::View_Configuration& config)
@@ -212,17 +181,15 @@ void Table_Controller::start_refreshing_view()
         return;
     }
 
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
-    if (!timer_thread_->isRunning())
-    {
-        timer_thread_->start();
-        if (QThread::currentThread() != timer_thread_.get())
-            this->moveToThread(timer_thread_.get());
-    }
+    is_running_ = true;
+    refresh_view_internal();
 }
 
 void Table_Controller::refresh_view_internal()
 {
+    if (!is_running_)
+        return;
+
     std::queue<std::string> data;
 
     try
@@ -334,10 +301,12 @@ void Table_Controller::on_sorting_change(int state)
 
 void Table_Controller::on_clear_screen()
 {
-    bool refreshing = timer_thread_->isRunning();
-
-    if (refreshing)
+    bool was_running = false;
+    if (is_running_)
+    {
+        was_running = true;
         stop_refreshing_view();
+    }
 
     {
         std::lock_guard<std::recursive_mutex> lock(mutex_);
@@ -347,20 +316,13 @@ void Table_Controller::on_clear_screen()
 
     view_.clear_screen();
 
-    if (refreshing)
+    if (was_running)
         start_refreshing_view();
 }
 
 void Table_Controller::on_connection_stop_resume()
 {
-    bool is_running = true;
-
-    {
-        std::lock_guard<std::recursive_mutex> lock(mutex_);
-        is_running = timer_thread_->isRunning();
-    }
-
-    if (is_running)
+    if (is_running_)
         stop_refreshing_view();
     else
         start_refreshing_view();

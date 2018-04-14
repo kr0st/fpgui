@@ -62,9 +62,6 @@ class Table_Controller: public QObject
         std::vector<settings::Tab_Configuration> tab_config_;
         std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source_;
 
-        class Timer_Thread;
-        std::unique_ptr<Timer_Thread> timer_thread_;
-
         void merge_view_config(const Table_View::View_Configuration& config);
 
 
@@ -72,6 +69,7 @@ class Table_Controller: public QObject
 
         Table_View& view_;
         std::vector<std::string> data_, display_data_;
+        bool is_running_;
 };
 
 }}

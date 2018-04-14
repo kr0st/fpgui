@@ -71,8 +71,6 @@ class Table_View: public QObject
 
         std::vector<settings::Tab_Configuration> config_;
 
-        QTableWidget* widget_;
-        std::recursive_mutex mutex_;
         QString quick_filter_;
 
         WindowWithMessageBoxInterface* window_;
@@ -84,7 +82,9 @@ class Table_View: public QObject
 
     protected:
 
+        QTableWidget* widget_;
         bool connected_;
+        std::recursive_mutex mutex_;
         std::vector<std::string> data_;
         settings::App_Configuration app_config_;
 };
