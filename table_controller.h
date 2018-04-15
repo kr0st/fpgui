@@ -61,6 +61,7 @@ class Table_Controller: public QObject
         settings::App_Configuration app_config_;
         std::vector<settings::Tab_Configuration> tab_config_;
         std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source_;
+        QThread event_loop_;
 
         void merge_view_config(const Table_View::View_Configuration& config);
 

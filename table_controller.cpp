@@ -21,6 +21,8 @@ Table_Controller::~Table_Controller()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
     stop_refreshing_view();
+    event_loop_.quit();
+    event_loop_.wait();
 }
 
 Table_Controller::Table_Controller(Table_View& view):
@@ -41,6 +43,10 @@ view_(view)
     tab_config_ = settings::read_tab_config(settings);
 
     is_running_ = false;
+    event_loop_.start();
+
+    if (this->thread() != &event_loop_)
+        this->moveToThread(&event_loop_);
 }
 
 void Table_Controller::stop_refreshing_view()
@@ -189,6 +195,9 @@ void Table_Controller::refresh_view_internal()
 {
     if (!is_running_)
         return;
+
+    if (this->thread() != &event_loop_)
+        this->moveToThread(&event_loop_);
 
     std::queue<std::string> data;
 
