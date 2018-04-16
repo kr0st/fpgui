@@ -15,13 +15,16 @@ class Mongo_Data_Source: public Data_Source<T>
 {
     public:
 
-        Mongo_Data_Source(): client_(0) {}
+        Mongo_Data_Source(): client_(0), time_start_(0), time_end_(0) {}
         virtual ~Mongo_Data_Source() { delete client_; }
 
         void request_data(T& data);
         void connect(const settings::Db_Configuration& config);
         void connect(QSettings& settings);
         void disconnect();
+        void configure(std::map<QVariant, QVariant>& options);
+
+        void set_timestamp_constraints(long long from, long long to){ time_start_ = from; time_end_ = to; }
 
 
     private:
@@ -29,7 +32,11 @@ class Mongo_Data_Source: public Data_Source<T>
         mongocxx::client* client_;
         std::string db_name_;
         std::string db_collection_name_;
+
+        std::string first_id_;
         std::string last_id_;
+
+        long long time_start_, time_end_;
 };
 
 

@@ -15,4 +15,11 @@ void Main_Menu_Controller::on_history_browse()
 void Main_Menu_Controller::on_datetime_changed(qint64 start_datetime, qint64 end_datetime)
 {
     stop_refreshing_view();
+    view_.clear_screen();
+
+    std::map<QVariant, QVariant> options;
+    options["time_start"] = start_datetime;
+    options["time_end"] = end_datetime;
+
+    data_source_->configure(options);
 }

@@ -67,9 +67,9 @@ static void connect(mongocxx::client** client, std::string& db_name, std::string
         THROWM(exceptions::Incorrect_Parameter, QCoreApplication::translate("Generic_Exception", "Collection not found."));
 }
 
-std::string generate_first_oid()
+std::string generate_oid(long long base_time = 0)
 {
-    long long t = std::time(0);
+    long long t = base_time <= 0 ? std::time(0) : base_time;
     char s[100] = {0};
     sprintf(s, "%8llx0000000000000000", t);
     return (s);
@@ -77,7 +77,7 @@ std::string generate_first_oid()
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::connect(const settings::Db_Configuration& config)
 {
-    last_id_ = generate_first_oid();
+    first_id_ = generate_oid();
     data_source::connect(&client_, db_name_, db_collection_name_, config);
 }
 
@@ -92,7 +92,8 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::disconnect()
     client_ = 0;
 }
 
-mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name, const std::string& last_id)
+mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name,
+                               const std::string& first_id, const std::string& last_id)
 {
     if (!client)
         return 0;
@@ -102,7 +103,7 @@ mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_n
 
     mongocxx::cursor* cur = new mongocxx::cursor(logs.find(bsoncxx::builder::stream::document{} << "_id" <<
                                                            bsoncxx::builder::stream::open_document <<
-                                                           "$gt" << bsoncxx::oid(last_id) <<
+                                                           "$gt" << bsoncxx::oid(first_id) <<
                                                            bsoncxx::builder::stream::close_document <<
                                                            bsoncxx::builder::stream::finalize));
     return cur;
@@ -113,13 +114,23 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::request_data(std::q
     if (!client_)
         return;
 
-    std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_, last_id_));
+    std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, ""));
 
     for (const bsoncxx::document::view& doc: *cur)
     {
-        last_id_ = doc["_id"].get_oid().value.to_string();
+        first_id_ = doc["_id"].get_oid().value.to_string();
         data.push(bsoncxx::to_json(doc));
     }
+}
+
+template <> void Mongo_Data_Source<std::queue<std::string>>::configure(std::map<QVariant, QVariant>& options)
+{
+    auto from = options.find("time_start");
+    auto end = options.find("time_end");
+
+    if (from != options.end())
+        if (end != options.end())
+            set_timestamp_constraints(from->second.toLongLong(), end->second.toLongLong());
 }
 
 }}

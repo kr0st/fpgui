@@ -7,6 +7,9 @@ HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
     ui(new Ui::HistoryBrowserWindow)
 {
     ui->setupUi(this);
+
+    ui->from_datetime->setDateTime(QDateTime::currentDateTimeUtc());
+    ui->to_datetime->setDateTime(QDateTime::currentDateTimeUtc());
 }
 
 HistoryBrowserWindow::~HistoryBrowserWindow()
