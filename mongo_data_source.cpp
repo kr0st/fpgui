@@ -77,7 +77,9 @@ std::string generate_oid(long long base_time = 0)
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::connect(const settings::Db_Configuration& config)
 {
-    first_id_ = generate_oid();
+    first_id_ = generate_oid(time_start_);
+    last_id_ =  generate_oid(time_end_);
+
     data_source::connect(&client_, db_name_, db_collection_name_, config);
 }
 
@@ -104,6 +106,7 @@ mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_n
     mongocxx::cursor* cur = new mongocxx::cursor(logs.find(bsoncxx::builder::stream::document{} << "_id" <<
                                                            bsoncxx::builder::stream::open_document <<
                                                            "$gt" << bsoncxx::oid(first_id) <<
+                                                           "$lt" << bsoncxx::oid(last_id) <<
                                                            bsoncxx::builder::stream::close_document <<
                                                            bsoncxx::builder::stream::finalize));
     return cur;
@@ -114,7 +117,7 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::request_data(std::q
     if (!client_)
         return;
 
-    std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, ""));
+    std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, last_id_));
 
     for (const bsoncxx::document::view& doc: *cur)
     {
