@@ -27,7 +27,8 @@ Table_Controller::~Table_Controller()
 
 Table_Controller::Table_Controller(Table_View& view):
 view_(view),
-data_source_(0)
+data_source_(0),
+stop_when_no_data_(false)
 {
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
     connect(&view, SIGNAL(autoscroll_change(int)), this, SLOT(on_autoscroll_change(int)), Qt::DirectConnection);
@@ -205,6 +206,12 @@ void Table_Controller::refresh_view_internal()
     {
         if (data_source_.get())
             data_source_->request_data(data);
+
+        if (data.empty() && stop_when_no_data_)
+        {
+            stop_refreshing_view();
+            view_.reset_connected_state();
+        }
     }
     catch (fpgui::exceptions::Generic_Exception& e)
     {

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QCloseEvent>
-#include <main_menu_view.h>
+#include <history_browser_view.h>
 #include <windowwithmessagebox.h>
 
 namespace Ui {
@@ -19,7 +19,7 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
 
         explicit HistoryBrowserWindow(QWidget *parent = 0);
         ~HistoryBrowserWindow();
-        void inject_table_view(fpgui::ui::Main_Menu_View* main_menu_view) { main_menu_view_ = main_menu_view; }
+        void inject_table_view(fpgui::ui::History_Browser_View* history_browser_view) { history_browser_view_ = history_browser_view; }
 
 
     signals:
@@ -51,7 +51,7 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
 private:
 
         Ui::HistoryBrowserWindow *ui;
-        fpgui::ui::Main_Menu_View* main_menu_view_;
+        fpgui::ui::History_Browser_View* history_browser_view_;
 
         void resizeEvent(QResizeEvent* event);
 };

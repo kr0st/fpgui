@@ -63,6 +63,6 @@ void MainWindow::message_box(const QString &text)
 
 void MainWindow::on_actionBrowse_triggered()
 {
-    if (main_menu_view_)
-        main_menu_view_->on_history_browse();
+    if (history_browser_view_)
+        history_browser_view_->on_history_browse();
 }

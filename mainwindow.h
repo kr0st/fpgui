@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <table_view.h>
 #include <windowwithmessagebox.h>
-#include <main_menu_view.h>
+#include <history_browser_view.h>
 
 namespace Ui {
 class MainWindow;
@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
         ~MainWindow();
 
         void inject_table_view(fpgui::ui::Table_View* table_view) { table_view_ = table_view; }
-        void inject_main_menu_view(fpgui::ui::Main_Menu_View* main_menu_view){ main_menu_view_ = main_menu_view; }
+        void inject_history_browser_view(fpgui::ui::History_Browser_View* history_browser_view){ history_browser_view_ = history_browser_view; }
 
 
     signals:
@@ -52,7 +52,7 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 private:
 
         fpgui::ui::Table_View* table_view_;
-        fpgui::ui::Main_Menu_View* main_menu_view_;
+        fpgui::ui::History_Browser_View* history_browser_view_;
 
         void resizeEvent(QResizeEvent* event);
 };

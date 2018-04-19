@@ -14,8 +14,8 @@
 #include <mongo_data_source.h>
 #include <fpgui_exceptions.h>
 #include <historybrowserwindow.h>
-#include <main_menu_controller.h>
-#include <main_menu_view.h>
+#include <history_browser_controller.h>
+#include <history_browser_view.h>
 
 
 class Closer: public QObject
@@ -93,19 +93,19 @@ int main(int argc, char *argv[])
 
     //trying out the history browser window
     HistoryBrowserWindow w2;
-    fpgui::ui::Main_Menu_View main_menu_view(app_config);
+    fpgui::ui::History_Browser_View history_browser_view(app_config);
 
-    w.inject_main_menu_view(&main_menu_view);
+    w.inject_history_browser_view(&history_browser_view);
 
-    Main_Menu_Controller main_menu_controller(main_menu_view);
+    History_Browser_Controller history_browser_controller(history_browser_view);
     QTableWidget* widget2(w2.findChild<QTableWidget*>("tableWidget"));
 
     w2.show();
-    main_menu_view.setup_view(fpgui::settings::read_tab_config(settings), *widget2, false, &w2);
-    w2.inject_table_view(&main_menu_view);
+    history_browser_view.setup_view(fpgui::settings::read_tab_config(settings), *widget2, false, &w2);
+    w2.inject_table_view(&history_browser_view);
 
     auto source2(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
-    main_menu_controller.set_data_source(source2);
+    history_browser_controller.set_data_source(source2);
 
 #ifdef _UNIT_TEST
     auto source(std::make_shared<fpgui::data_source::Random_Data_Source<std::queue<std::string>>>());
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
     table_controller.set_data_source(source);
 #endif
 
-    Closer closer2(&a, &main_menu_view);
+    Closer closer2(&a, &history_browser_view);
     Closer closer(&a, &table);
 
     QTimer timer;
