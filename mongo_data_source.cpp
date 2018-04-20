@@ -94,22 +94,36 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::disconnect()
     client_ = 0;
 }
 
-mongocxx::cursor* request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name,
+struct Request_Data_Return_Tuple
+{
+    mongocxx::cursor* cursor = 0;
+    long long set_size = 0;
+};
+
+Request_Data_Return_Tuple request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name,
                                const std::string& first_id, const std::string& last_id)
 {
     if (!client)
-        return 0;
+        return Request_Data_Return_Tuple();
+
+    bsoncxx::document::view_or_value filter(bsoncxx::builder::stream::document{} << "_id" <<
+                                            bsoncxx::builder::stream::open_document <<
+                                            "$gt" << bsoncxx::oid(first_id) <<
+                                            "$lt" << bsoncxx::oid(last_id) <<
+                                            bsoncxx::builder::stream::close_document <<
+                                            bsoncxx::builder::stream::finalize);
+
+    Request_Data_Return_Tuple res;
 
     mongocxx::database fplog = (*client)[db_name];
     mongocxx::collection logs = fplog[db_collection_name];
 
-    mongocxx::cursor* cur = new mongocxx::cursor(logs.find(bsoncxx::builder::stream::document{} << "_id" <<
-                                                           bsoncxx::builder::stream::open_document <<
-                                                           "$gt" << bsoncxx::oid(first_id) <<
-                                                           "$lt" << bsoncxx::oid(last_id) <<
-                                                           bsoncxx::builder::stream::close_document <<
-                                                           bsoncxx::builder::stream::finalize));
-    return cur;
+    res.set_size = logs.count(filter);
+
+    mongocxx::cursor* cur = new mongocxx::cursor(logs.find(filter));
+    res.cursor = cur;
+
+    return res;
 }
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::request_data(std::queue<std::string>& data)
@@ -117,13 +131,22 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::request_data(std::q
     if (!client_)
         return;
 
-    std::unique_ptr<mongocxx::cursor> cur(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, last_id_));
+    Request_Data_Return_Tuple data_set(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, last_id_));
+    std::unique_ptr<mongocxx::cursor> cur(data_set.cursor);
 
     for (const bsoncxx::document::view& doc: *cur)
     {
         first_id_ = doc["_id"].get_oid().value.to_string();
         data.push(bsoncxx::to_json(doc));
     }
+}
+
+template <> int Mongo_Data_Source<std::queue<std::string>>::request_paged_data(unsigned page_number, unsigned per_page_count, std::queue<std::string>& data)
+{
+    if (!client_)
+        return -1;
+
+    return -1;
 }
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::configure(std::map<QVariant, QVariant>& options)

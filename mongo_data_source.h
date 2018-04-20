@@ -19,6 +19,8 @@ class Mongo_Data_Source: public Data_Source<T>
         virtual ~Mongo_Data_Source() { delete client_; }
 
         void request_data(T& data);
+        int request_paged_data(unsigned page_number, unsigned per_page_count, T& data);
+
         void connect(const settings::Db_Configuration& config);
         void connect(QSettings& settings);
         void disconnect();

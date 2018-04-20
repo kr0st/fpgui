@@ -81,9 +81,12 @@ class Data_Source
   public:
 
       virtual void request_data(T& data) = 0;
+      virtual int request_paged_data(unsigned, unsigned, T&){ return -1; }
+
       virtual void connect(QSettings&){}
       virtual void configure(std::map<QVariant, QVariant>&){}
       virtual void disconnect(){}
+
       virtual ~Data_Source(){}
 };
 
