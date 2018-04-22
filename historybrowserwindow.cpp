@@ -1,6 +1,7 @@
 #include "historybrowserwindow.h"
 #include "ui_historybrowserwindow.h"
 #include <utils.h>
+#include <settings.h>
 
 HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
     QWidget(parent),
@@ -10,6 +11,14 @@ HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
 
     ui->from_datetime->setDateTime(QDateTime::currentDateTimeUtc());
     ui->to_datetime->setDateTime(QDateTime::currentDateTimeUtc());
+
+    QSettings settings;
+
+    auto conf = fpgui::settings::read_app_config(settings);
+    ui->per_page_edit->setText(std::to_string(conf.view_max_messages).c_str());
+
+    ui->per_page_edit->setValidator(new QIntValidator(1, 10000, this));
+    ui->goto_edit->setValidator(new QIntValidator(1, 65534, this));
 }
 
 HistoryBrowserWindow::~HistoryBrowserWindow()
@@ -74,4 +83,29 @@ void HistoryBrowserWindow::on_to_datetime_editingFinished()
            to = ui->to_datetime->dateTime().toSecsSinceEpoch();
     if (history_browser_view_)
         history_browser_view_->on_datetime_changed(from, to);
+}
+
+void HistoryBrowserWindow::on_left_button_clicked()
+{
+}
+
+void HistoryBrowserWindow::on_right_button_clicked()
+{
+}
+
+void HistoryBrowserWindow::on_per_page_edit_editingFinished()
+{
+
+}
+
+void HistoryBrowserWindow::on_goto_edit_editingFinished()
+{
+
+}
+
+void HistoryBrowserWindow::on_page_counter_update(int current_page, int total_pages)
+{
+    std::string page_counter;
+    page_counter = std::to_string(current_page) + "/" + std::to_string(total_pages);
+    ui->page_counter_label->setText(page_counter.c_str());
 }

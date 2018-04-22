@@ -73,8 +73,6 @@ class Table_View: public QObject
 
         QString quick_filter_;
 
-        WindowWithMessageBoxInterface* window_;
-
         void display_strings(std::vector<std::string>& json_strings);
         void trim_view(bool clear_screen = false);
         void apply_quick_filter();
@@ -82,8 +80,11 @@ class Table_View: public QObject
 
     protected:
 
+        WindowWithMessageBoxInterface* window_;
         QTableWidget* widget_;
+
         bool connected_;
+
         std::recursive_mutex mutex_;
         std::vector<std::string> data_;
         settings::App_Configuration app_config_;

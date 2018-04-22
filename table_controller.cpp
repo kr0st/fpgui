@@ -192,6 +192,12 @@ void Table_Controller::start_refreshing_view()
     refresh_view_internal();
 }
 
+void Table_Controller::request_data(std::queue<std::string>& data)
+{
+    if (data_source_.get())
+        data_source_->request_data(data);
+}
+
 void Table_Controller::refresh_view_internal()
 {
     if (!is_running_)
@@ -204,8 +210,7 @@ void Table_Controller::refresh_view_internal()
 
     try
     {
-        if (data_source_.get())
-            data_source_->request_data(data);
+        request_data(data);
 
         if (data.empty() && stop_when_no_data_)
         {

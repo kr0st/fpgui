@@ -72,6 +72,8 @@ class Table_Controller: public QObject
         bool is_running_;
         std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source_;
         bool stop_when_no_data_;
+
+        virtual void request_data(std::queue<std::string>& data);
 };
 
 }}

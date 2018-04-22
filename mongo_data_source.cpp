@@ -101,7 +101,7 @@ struct Request_Data_Return_Tuple
 };
 
 Request_Data_Return_Tuple request_data(mongocxx::client* client, const std::string& db_name, const std::string& db_collection_name,
-                               const std::string& first_id, const std::string& last_id)
+                               const std::string& first_id, const std::string& last_id, const int skip = 0)
 {
     if (!client)
         return Request_Data_Return_Tuple();
@@ -120,7 +120,11 @@ Request_Data_Return_Tuple request_data(mongocxx::client* client, const std::stri
 
     res.set_size = logs.count(filter);
 
-    mongocxx::cursor* cur = new mongocxx::cursor(logs.find(filter));
+    mongocxx::options::find opts;
+    opts.skip(skip);
+    opts.sort(bsoncxx::builder::stream::document{} << "_id" << 1 <<
+              bsoncxx::builder::stream::finalize);
+    mongocxx::cursor* cur = new mongocxx::cursor(logs.find(filter, opts));
     res.cursor = cur;
 
     return res;
@@ -146,7 +150,27 @@ template <> int Mongo_Data_Source<std::queue<std::string>>::request_paged_data(u
     if (!client_)
         return -1;
 
-    return -1;
+    Request_Data_Return_Tuple data_set(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, last_id_,
+                                                                 page_number * per_page_count));
+    if (data_set.set_size <= 0)
+        return data_set.set_size;
+
+    if ((unsigned long long)page_number * per_page_count >= (unsigned long long)data_set.set_size)
+        return 0;
+
+    std::unique_ptr<mongocxx::cursor> cur(data_set.cursor);
+    mongocxx::cursor::iterator it(cur->begin());
+
+    unsigned page_stop = 0;
+    for (; (it != cur->end()) && (page_stop < per_page_count); ++it, ++page_stop)
+    {
+        data.push(bsoncxx::to_json(*it));
+    }
+
+    long long total_pages = data_set.set_size / per_page_count;
+    total_pages += ((data_set.set_size % per_page_count == 0) ? 0 : 1);
+
+    return (int)total_pages;
 }
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::configure(std::map<QVariant, QVariant>& options)

@@ -1,4 +1,5 @@
 #include "history_browser_view.h"
+#include "historybrowserwindow.h"
 #include "qpushbutton.h"
 
 namespace fpgui { namespace ui {
@@ -30,6 +31,12 @@ void History_Browser_View::on_datetime_changed(qint64 start_datetime, qint64 end
     }
 
     emit datetime_changed(start_datetime, end_datetime);
+}
+
+void History_Browser_View::on_page_counter_update(int current_page, int total_pages)
+{
+    HistoryBrowserWindow* wnd = dynamic_cast<HistoryBrowserWindow*>(window_);
+    wnd->on_page_counter_update(current_page, total_pages);
 }
 
 }}
