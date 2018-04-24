@@ -28,7 +28,10 @@ class History_Browser_View : public Table_View
     public slots:
 
         void on_history_browse();
-        void on_page_counter_update(int current_page, int total_pages);
+        void on_update_page_counter(int current_page, int total_pages);
+
+        void on_browse_back() { emit browse_back(); }
+        void on_browse_forward() { emit browse_forward(); }
 };
 
 }}

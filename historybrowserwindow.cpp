@@ -87,10 +87,14 @@ void HistoryBrowserWindow::on_to_datetime_editingFinished()
 
 void HistoryBrowserWindow::on_left_button_clicked()
 {
+    if (history_browser_view_)
+        history_browser_view_->on_browse_back();
 }
 
 void HistoryBrowserWindow::on_right_button_clicked()
 {
+    if (history_browser_view_)
+        history_browser_view_->on_browse_forward();
 }
 
 void HistoryBrowserWindow::on_per_page_edit_editingFinished()

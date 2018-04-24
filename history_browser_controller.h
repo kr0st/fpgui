@@ -16,6 +16,9 @@ class History_Browser_Controller: public fpgui::ui::Table_Controller
 
         void on_history_browse();
         void on_datetime_changed(qint64 start_datetime, qint64 end_datetime);
+        void on_browse_back();
+        void on_browse_forward();
+        void on_clear_screen();
 
 
     signals:
@@ -26,4 +29,5 @@ class History_Browser_Controller: public fpgui::ui::Table_Controller
     private:
 
         void request_data(std::queue<std::string>& data);
+        int prev_page_, current_page_, total_pages_, per_page_;
 };
