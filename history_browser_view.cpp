@@ -39,4 +39,10 @@ void History_Browser_View::on_update_page_counter(int current_page, int total_pa
     wnd->on_page_counter_update(current_page, total_pages);
 }
 
+int History_Browser_View::get_per_page_count()
+{
+    HistoryBrowserWindow* wnd = dynamic_cast<HistoryBrowserWindow*>(window_);
+    return wnd->get_per_page_count();
+}
+
 }}

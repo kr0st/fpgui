@@ -1,4 +1,5 @@
 #include "history_browser_controller.h"
+#include "history_browser_view.h"
 
 History_Browser_Controller::History_Browser_Controller(fpgui::ui::History_Browser_View &view):
 Table_Controller(view)
@@ -12,7 +13,12 @@ Table_Controller(view)
     connect(&view_, SIGNAL(browse_back()), this, SLOT(on_browse_back()));
     connect(&view_, SIGNAL(clear_view()), this, SLOT(on_clear_screen()));
 
+    connect(&view, SIGNAL(per_page_changed(int)), this, SLOT(on_per_page_changed(int)));
+    connect(&view, SIGNAL(goto_page(int)), this, SLOT(on_goto_page(int)));
+
     connect(this, SIGNAL(page_counter_update(int,int)), &view, SLOT(on_update_page_counter(int, int)));
+
+    connect(&view, SIGNAL(stop_resume()), this, SLOT(on_stop_resume()), Qt::DirectConnection);
 }
 
 void History_Browser_Controller::on_history_browse()
@@ -21,10 +27,8 @@ void History_Browser_Controller::on_history_browse()
     current_page_ = 0;
     total_pages_ = 0;
 
-    QSettings settings;
-    per_page_ = fpgui::settings::read_app_config(settings).view_max_messages;
-
-    per_page_ = 3;
+    fpgui::ui::History_Browser_View* view = dynamic_cast<fpgui::ui::History_Browser_View*>(&view_);
+    per_page_ = view->get_per_page_count();
 
     emit page_counter_update(current_page_, total_pages_);
 
@@ -42,10 +46,8 @@ void History_Browser_Controller::on_datetime_changed(qint64 start_datetime, qint
 
     emit page_counter_update(current_page_, total_pages_);
 
-    QSettings settings;
-    per_page_ = fpgui::settings::read_app_config(settings).view_max_messages;
-
-    per_page_ = 3;
+    fpgui::ui::History_Browser_View* view = dynamic_cast<fpgui::ui::History_Browser_View*>(&view_);
+    per_page_ = view->get_per_page_count();
 
     std::map<QVariant, QVariant> options;
     options["time_start"] = start_datetime;
@@ -96,4 +98,38 @@ void History_Browser_Controller::on_clear_screen()
     total_pages_ = 0;
 
     emit page_counter_update(current_page_, total_pages_);
+}
+
+void History_Browser_Controller::on_goto_page(int page)
+{
+    if (total_pages_ <= 0)
+        return;
+
+    if (page <= 0)
+        page = 1;
+
+    page--;
+
+    if (page >= total_pages_)
+        page = total_pages_ - 1;
+
+    prev_page_ = -1;
+    current_page_ = page;
+
+    view_.clear_screen();
+    start_refreshing_view();
+}
+
+void History_Browser_Controller::on_per_page_changed(int per_page)
+{
+    per_page_ = per_page;
+
+    view_.on_clear_screen();
+    start_refreshing_view();
+}
+
+void History_Browser_Controller::on_stop_resume()
+{
+    fpgui::ui::History_Browser_View* view = dynamic_cast<fpgui::ui::History_Browser_View*>(&view_);
+    per_page_ = view->get_per_page_count();
 }

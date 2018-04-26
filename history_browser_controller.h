@@ -16,9 +16,16 @@ class History_Browser_Controller: public fpgui::ui::Table_Controller
 
         void on_history_browse();
         void on_datetime_changed(qint64 start_datetime, qint64 end_datetime);
+
         void on_browse_back();
         void on_browse_forward();
+
         void on_clear_screen();
+
+        void on_goto_page(int page);
+        void on_per_page_changed(int per_page);
+
+        void on_stop_resume();
 
 
     signals:

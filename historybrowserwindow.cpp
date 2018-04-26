@@ -99,12 +99,14 @@ void HistoryBrowserWindow::on_right_button_clicked()
 
 void HistoryBrowserWindow::on_per_page_edit_editingFinished()
 {
-
+    if (history_browser_view_)
+        history_browser_view_->on_per_page_changed(ui->per_page_edit->text().toInt());
 }
 
 void HistoryBrowserWindow::on_goto_edit_editingFinished()
 {
-
+    if (history_browser_view_)
+        history_browser_view_->on_goto_page(ui->goto_edit->text().toInt());
 }
 
 void HistoryBrowserWindow::on_page_counter_update(int current_page, int total_pages)
@@ -112,4 +114,9 @@ void HistoryBrowserWindow::on_page_counter_update(int current_page, int total_pa
     std::string page_counter;
     page_counter = std::to_string(current_page) + "/" + std::to_string(total_pages);
     ui->page_counter_label->setText(page_counter.c_str());
+}
+
+int HistoryBrowserWindow::get_per_page_count()
+{
+    return ui->per_page_edit->text().toInt();
 }
