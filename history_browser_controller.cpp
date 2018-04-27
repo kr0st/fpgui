@@ -29,6 +29,7 @@ void History_Browser_Controller::on_history_browse()
 
     fpgui::ui::History_Browser_View* view = dynamic_cast<fpgui::ui::History_Browser_View*>(&view_);
     per_page_ = view->get_per_page_count();
+    view_.clear_screen();
 
     emit page_counter_update(current_page_, total_pages_);
 
