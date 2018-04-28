@@ -145,6 +145,9 @@
         <property name="alternatingRowColors">
          <bool>false</bool>
         </property>
+        <property name="verticalScrollMode">
+         <enum>QAbstractItemView::ScrollPerItem</enum>
+        </property>
         <property name="showGrid">
          <bool>false</bool>
         </property>
