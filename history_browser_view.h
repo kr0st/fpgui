@@ -29,6 +29,7 @@ class History_Browser_View : public Table_View
 
         void per_page_changed(int per_page);
         void goto_page(int page);
+        void item_activated(int index);
 
 
     public slots:
@@ -41,6 +42,8 @@ class History_Browser_View : public Table_View
 
         void on_per_page_changed(int per_page){ emit per_page_changed(per_page); }
         void on_goto_page(int page){ emit goto_page(page); }
+
+        void on_item_activated(int index){ emit item_activated(index); }
 };
 
 }}

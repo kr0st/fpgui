@@ -55,6 +55,8 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
         void on_goto_edit_editingFinished();
 
 
+        void on_tableWidget_itemActivated(QTableWidgetItem *item);
+
 private:
 
         Ui::HistoryBrowserWindow *ui;

@@ -120,3 +120,9 @@ int HistoryBrowserWindow::get_per_page_count()
 {
     return ui->per_page_edit->text().toInt();
 }
+
+void HistoryBrowserWindow::on_tableWidget_itemActivated(QTableWidgetItem *item)
+{
+    if (history_browser_view_)
+        history_browser_view_->on_item_activated(item->row());
+}

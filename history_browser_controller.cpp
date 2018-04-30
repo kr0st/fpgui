@@ -1,5 +1,6 @@
 #include "history_browser_controller.h"
 #include "history_browser_view.h"
+#include "utils.h"
 
 History_Browser_Controller::History_Browser_Controller(fpgui::ui::History_Browser_View &view):
 Table_Controller(view)
@@ -19,6 +20,7 @@ Table_Controller(view)
     connect(this, SIGNAL(page_counter_update(int,int)), &view, SLOT(on_update_page_counter(int, int)));
 
     connect(&view, SIGNAL(stop_resume()), this, SLOT(on_stop_resume()), Qt::DirectConnection);
+    connect(&view, SIGNAL(item_activated(int)), this, SLOT(item_activated(int)));
 }
 
 void History_Browser_Controller::on_history_browse()
@@ -67,7 +69,10 @@ void History_Browser_Controller::request_data(std::queue<std::string>& data)
     else
         return;
 
-    emit page_counter_update(current_page_ + 1, total_pages_);
+    if (total_pages_ <= 0)
+        page_counter_update(0, 0);
+    else
+        emit page_counter_update(current_page_ + 1, total_pages_);
 }
 
 void History_Browser_Controller::on_browse_back()
@@ -133,4 +138,14 @@ void History_Browser_Controller::on_stop_resume()
 {
     fpgui::ui::History_Browser_View* view = dynamic_cast<fpgui::ui::History_Browser_View*>(&view_);
     per_page_ = view->get_per_page_count();
+}
+
+void History_Browser_Controller::item_activated(int index)
+{
+    if (index < 0)
+        return;
+
+    int res = current_page_ * per_page_ + index;
+    if (res < data_.size())
+        display_message(data_[res].c_str());
 }
