@@ -26,7 +26,6 @@ class History_Browser_Controller: public fpgui::ui::Table_Controller
         void on_per_page_changed(int per_page);
 
         void on_stop_resume();
-        void item_activated(int index);
 
 
     signals:
@@ -37,5 +36,4 @@ class History_Browser_Controller: public fpgui::ui::Table_Controller
     private:
 
         void request_data(std::queue<std::string>& data);
-        int prev_page_, current_page_, total_pages_, per_page_;
 };

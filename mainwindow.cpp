@@ -66,3 +66,9 @@ void MainWindow::on_actionBrowse_triggered()
     if (history_browser_view_)
         history_browser_view_->on_history_browse();
 }
+
+void MainWindow::on_tableWidget_itemActivated(QTableWidgetItem *item)
+{
+    if (table_view_)
+        table_view_->on_item_activated(item->row());
+}

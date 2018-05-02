@@ -56,6 +56,7 @@ class Table_View: public QObject
         void col_size_changed(int col, int old_sz, int new_sz);
         void rows_inserted(const QModelIndex & parent, int, int);
         void refresh_view(std::vector<std::string> data_batch, bool full_refresh = false);
+        void on_item_activated(int index){ emit item_activated(index); }
 
 
     signals:
@@ -65,6 +66,7 @@ class Table_View: public QObject
         void sorting_change(int state);
         void clear_view();
         void stop_resume();
+        void item_activated(int index);
 
 
     private:

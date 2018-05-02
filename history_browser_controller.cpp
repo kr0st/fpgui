@@ -20,7 +20,6 @@ Table_Controller(view)
     connect(this, SIGNAL(page_counter_update(int,int)), &view, SLOT(on_update_page_counter(int, int)));
 
     connect(&view, SIGNAL(stop_resume()), this, SLOT(on_stop_resume()), Qt::DirectConnection);
-    connect(&view, SIGNAL(item_activated(int)), this, SLOT(item_activated(int)));
 }
 
 void History_Browser_Controller::on_history_browse()
@@ -138,14 +137,4 @@ void History_Browser_Controller::on_stop_resume()
 {
     fpgui::ui::History_Browser_View* view = dynamic_cast<fpgui::ui::History_Browser_View*>(&view_);
     per_page_ = view->get_per_page_count();
-}
-
-void History_Browser_Controller::item_activated(int index)
-{
-    if (index < 0)
-        return;
-
-    int res = current_page_ * per_page_ + index;
-    if (res < data_.size())
-        display_message(data_[res].c_str());
 }

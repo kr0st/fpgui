@@ -45,9 +45,8 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 
 
         void on_quickfilter_edit_textEdited(const QString &text);
-
-
         void on_actionBrowse_triggered();
+        void on_tableWidget_itemActivated(QTableWidgetItem *item);
 
 private:
 

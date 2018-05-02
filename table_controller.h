@@ -31,10 +31,14 @@ class Table_Controller: public QObject
     private slots:
 
         void refresh_view_internal();
+
         void on_autoscroll_change(int state);
         void on_sorting_change(int state);
+
         void on_clear_screen();
         void on_connection_stop_resume();
+
+        void item_activated(int index);
 
 
     public:
@@ -72,6 +76,8 @@ class Table_Controller: public QObject
         bool is_running_;
         std::shared_ptr<data_source::Data_Source<std::queue<std::string>>> data_source_;
         bool stop_when_no_data_;
+
+        int prev_page_, current_page_, total_pages_, per_page_;
 
         virtual void request_data(std::queue<std::string>& data);
 };

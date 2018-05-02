@@ -42,9 +42,7 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
         void on_clear_button_clicked();
         void on_connection_button_clicked();
 
-
         void on_quickfilter_edit_textEdited(const QString &text);
-
 
         void on_from_datetime_editingFinished();
         void on_to_datetime_editingFinished();
@@ -54,8 +52,8 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
         void on_per_page_edit_editingFinished();
         void on_goto_edit_editingFinished();
 
-
         void on_tableWidget_itemActivated(QTableWidgetItem *item);
+
 
 private:
 

@@ -28,13 +28,18 @@ Table_Controller::~Table_Controller()
 Table_Controller::Table_Controller(Table_View& view):
 view_(view),
 data_source_(0),
-stop_when_no_data_(false)
+stop_when_no_data_(false),
+prev_page_(0),
+current_page_(0),
+total_pages_(0),
+per_page_(0)
 {
     connect(&view, SIGNAL(closing()), this, SLOT(on_view_closing()), Qt::DirectConnection);
     connect(&view, SIGNAL(autoscroll_change(int)), this, SLOT(on_autoscroll_change(int)), Qt::DirectConnection);
     connect(&view, SIGNAL(sorting_change(int)), this, SLOT(on_sorting_change(int)), Qt::DirectConnection);
     connect(&view, SIGNAL(clear_view()), this, SLOT(on_clear_screen()), Qt::DirectConnection);
     connect(&view, SIGNAL(stop_resume()), this, SLOT(on_connection_stop_resume()), Qt::DirectConnection);
+    connect(&view, SIGNAL(item_activated(int)), this, SLOT(item_activated(int)));
 
     qRegisterMetaType<std::vector<std::string>>("std::vector<std::string>");
     connect(this, SIGNAL(refresh_view(std::vector<std::string>,bool)), &view, SLOT(refresh_view(std::vector<std::string>,bool)));
@@ -347,6 +352,16 @@ void Table_Controller::on_connection_stop_resume()
         stop_refreshing_view();
     else
         start_refreshing_view();
+}
+
+void Table_Controller::item_activated(int index)
+{
+    if (index < 0)
+        return;
+
+    int res = current_page_ * per_page_ + index;
+    if (res < data_.size())
+        display_message(data_[res].c_str());
 }
 
 }
