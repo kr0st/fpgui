@@ -55,7 +55,8 @@ SOURCES += \
     mongo_data_source.cpp \
     historybrowserwindow.cpp \
     history_browser_view.cpp \
-    history_browser_controller.cpp
+    history_browser_controller.cpp \
+    key_press_emitter.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -74,7 +75,8 @@ HEADERS += \
     historybrowserwindow.h \
     windowwithmessagebox.h \
     history_browser_view.h \
-    history_browser_controller.h
+    history_browser_controller.h \
+    key_press_emitter.h
 
 FORMS += \
         mainwindow.ui \

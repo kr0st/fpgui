@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 #include <history_browser_view.h>
 #include <windowwithmessagebox.h>
+#include <key_press_emitter.h>
 
 namespace Ui {
 class HistoryBrowserWindow;
@@ -53,12 +54,14 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
         void on_goto_edit_editingFinished();
 
         void on_tableWidget_itemActivated(QTableWidgetItem *item);
+        void on_key_press(QKeyEvent e);
 
 
 private:
 
         Ui::HistoryBrowserWindow *ui;
         fpgui::ui::History_Browser_View* history_browser_view_;
+        Key_Press_Emitter key_emitter_;
 
         void resizeEvent(QResizeEvent* event);
 };

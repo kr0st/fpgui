@@ -19,6 +19,9 @@ HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
 
     ui->per_page_edit->setValidator(new QIntValidator(1, 10000, this));
     ui->goto_edit->setValidator(new QIntValidator(1, 65534, this));
+
+    this->installEventFilter(&key_emitter_);
+    connect(&key_emitter_, SIGNAL(key_pressed(QKeyEvent)), this, SLOT(on_key_press(QKeyEvent)));
 }
 
 HistoryBrowserWindow::~HistoryBrowserWindow()
@@ -125,4 +128,9 @@ void HistoryBrowserWindow::on_tableWidget_itemActivated(QTableWidgetItem *item)
 {
     if (history_browser_view_)
         history_browser_view_->on_item_activated(item->row());
+}
+
+void HistoryBrowserWindow::on_key_press(QKeyEvent e)
+{
+    display_message(std::to_string(e.key()).c_str());
 }
