@@ -5,6 +5,7 @@
 #include <table_view.h>
 #include <windowwithmessagebox.h>
 #include <history_browser_view.h>
+#include <key_press_emitter.h>
 
 namespace Ui {
 class MainWindow;
@@ -48,10 +49,15 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
         void on_actionBrowse_triggered();
         void on_tableWidget_itemActivated(QTableWidgetItem *item);
 
+        void on_key_press(QKeyEvent e);
+
+
 private:
 
         fpgui::ui::Table_View* table_view_;
         fpgui::ui::History_Browser_View* history_browser_view_;
+
+        Key_Press_Emitter key_emitter_;
 
         void resizeEvent(QResizeEvent* event);
 };

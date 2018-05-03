@@ -10,11 +10,7 @@ bool Key_Press_Emitter::eventFilter(QObject *obj, QEvent *event)
     {
         QKeyEvent keyEvent(*static_cast<QKeyEvent *>(event));
         emit key_pressed(keyEvent);
-        return true;
     }
-    else
-    {
-        // standard event processing
-        return QObject::eventFilter(obj, event);
-    }
+
+    return QObject::eventFilter(obj, event);
 }

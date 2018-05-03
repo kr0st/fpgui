@@ -132,5 +132,13 @@ void HistoryBrowserWindow::on_tableWidget_itemActivated(QTableWidgetItem *item)
 
 void HistoryBrowserWindow::on_key_press(QKeyEvent e)
 {
-    display_message(std::to_string(e.key()).c_str());
+    if (e.key() == Qt::Key_Return)
+    {
+        if (ui->tableWidget->selectedItems().size() > 0)
+        {
+            QTableWidgetItem* item = ui->tableWidget->selectedItems()[0];
+            if (history_browser_view_)
+                history_browser_view_->on_item_activated(item->row());
+        }
+    }
 }

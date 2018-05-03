@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     table_view_ = 0;
     ui->setupUi(this);
+
+    this->installEventFilter(&key_emitter_);
+    connect(&key_emitter_, SIGNAL(key_pressed(QKeyEvent)), this, SLOT(on_key_press(QKeyEvent)));
 }
 
 MainWindow::~MainWindow()
@@ -71,4 +74,17 @@ void MainWindow::on_tableWidget_itemActivated(QTableWidgetItem *item)
 {
     if (table_view_)
         table_view_->on_item_activated(item->row());
+}
+
+void MainWindow::on_key_press(QKeyEvent e)
+{
+    if (e.key() == Qt::Key_Return)
+    {
+        if (ui->tableWidget->selectedItems().size() > 0)
+        {
+            QTableWidgetItem* item = ui->tableWidget->selectedItems()[0];
+            if (table_view_)
+                table_view_->on_item_activated(item->row());
+        }
+    }
 }
