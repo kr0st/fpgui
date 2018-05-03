@@ -8,11 +8,13 @@
 #include <mongo_data_source.h>
 #include <settings.h>
 #include <globals.h>
+#include <message_details_dialog.h>
 
 #include <QTimer>
 #include <QThread>
 #include <QCheckBox>
 #include <QtDebug>
+#include <QApplication>
 
 namespace fpgui {
 namespace ui {
@@ -362,6 +364,9 @@ void Table_Controller::item_activated(int index)
     int res = current_page_ * per_page_ + index;
     if (res < data_.size())
         display_message(data_[res].c_str());
+
+    //Message_Details_Dialog* dlg = new Message_Details_Dialog(QApplication::activeWindow());
+    //dlg->show();
 }
 
 }
