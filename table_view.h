@@ -57,6 +57,7 @@ class Table_View: public QObject
         void rows_inserted(const QModelIndex & parent, int, int);
         void refresh_view(std::vector<std::string> data_batch, bool full_refresh = false);
         void on_item_activated(int index){ emit item_activated(index); }
+        void display_details(QString details);
 
 
     signals:

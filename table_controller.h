@@ -21,6 +21,7 @@ class Table_Controller: public QObject
     signals:
 
         void refresh_view(std::vector<std::string> data_batch, bool full_refresh = false);
+        void display_details(QString);
 
 
     public slots:

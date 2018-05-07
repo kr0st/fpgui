@@ -42,6 +42,7 @@ per_page_(0)
     connect(&view, SIGNAL(clear_view()), this, SLOT(on_clear_screen()), Qt::DirectConnection);
     connect(&view, SIGNAL(stop_resume()), this, SLOT(on_connection_stop_resume()), Qt::DirectConnection);
     connect(&view, SIGNAL(item_activated(int)), this, SLOT(item_activated(int)));
+    connect(this, SIGNAL(display_details(QString)), &view, SLOT(display_details(QString)), Qt::QueuedConnection);
 
     qRegisterMetaType<std::vector<std::string>>("std::vector<std::string>");
     connect(this, SIGNAL(refresh_view(std::vector<std::string>,bool)), &view, SLOT(refresh_view(std::vector<std::string>,bool)));
@@ -363,10 +364,8 @@ void Table_Controller::item_activated(int index)
 
     int res = current_page_ * per_page_ + index;
     if (res < data_.size())
-        display_message(data_[res].c_str());
-
-    //Message_Details_Dialog* dlg = new Message_Details_Dialog(QApplication::activeWindow());
-    //dlg->show();
+        //display_message(data_[res].c_str());
+        emit display_details(data_[res].c_str());
 }
 
 }

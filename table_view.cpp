@@ -6,6 +6,7 @@
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
+#include <message_details_dialog.h>
 
 #include <QHeaderView>
 #include <QDebug>
@@ -13,6 +14,7 @@
 #include <QCheckBox>
 #include <QScrollBar>
 #include <QPushButton>
+#include <QApplication>
 
 #include <vector>
 
@@ -478,6 +480,13 @@ void Table_View::display_message(const QString &text)
     WindowWithMessageBoxInterface* wnd = dynamic_cast<WindowWithMessageBoxInterface*>(widget_->parent()->parent());
     if (!wnd) wnd = dynamic_cast<WindowWithMessageBoxInterface*>(widget_->parent());
     emit wnd->display_message(text);
+}
+
+void Table_View::display_details(QString details)
+{
+    QWidget *wnd = QApplication::activeWindow();
+    Message_Details_Dialog* dlg = new Message_Details_Dialog(wnd);
+    dlg->exec();
 }
 
 }}
