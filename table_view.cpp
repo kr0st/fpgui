@@ -485,7 +485,7 @@ void Table_View::display_message(const QString &text)
 void Table_View::display_details(QString details)
 {
     QWidget *wnd = QApplication::activeWindow();
-    Message_Details_Dialog* dlg = new Message_Details_Dialog(wnd);
+    Message_Details_Dialog* dlg = new Message_Details_Dialog(wnd, details);
     dlg->exec();
 }
 

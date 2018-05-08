@@ -364,7 +364,6 @@ void Table_Controller::item_activated(int index)
 
     int res = current_page_ * per_page_ + index;
     if (res < data_.size())
-        //display_message(data_[res].c_str());
         emit display_details(data_[res].c_str());
 }
 

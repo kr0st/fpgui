@@ -2,6 +2,7 @@
 #define MESSAGE_DETAILS_DIALOG_H
 
 #include <QDialog>
+#include <QString>
 
 namespace Ui {
 class Message_Details_Dialog;
@@ -11,12 +12,16 @@ class Message_Details_Dialog : public QDialog
 {
     Q_OBJECT
 
-public:
-    explicit Message_Details_Dialog(QWidget *parent = 0);
-    ~Message_Details_Dialog();
+    public:
 
-private:
-    Ui::Message_Details_Dialog *ui;
+        explicit Message_Details_Dialog(QWidget *parent, QString& message);
+        ~Message_Details_Dialog();
+
+
+    private:
+
+        Ui::Message_Details_Dialog *ui;
+        QString message_;
 };
 
 #endif // MESSAGE_DETAILS_DIALOG_H
