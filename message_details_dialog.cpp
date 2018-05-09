@@ -6,10 +6,12 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+#include <QtDebug>
 
-Message_Details_Dialog::Message_Details_Dialog(QWidget *parent, QString& message) :
-    QDialog(parent),
-    ui(new Ui::Message_Details_Dialog)
+
+Message_Details_Dialog::Message_Details_Dialog(QWidget *parent, QString& message):
+QDialog(parent),
+ui(new Ui::Message_Details_Dialog)
 {
     ui->setupUi(this);
 
@@ -18,11 +20,63 @@ Message_Details_Dialog::Message_Details_Dialog(QWidget *parent, QString& message
     widget->clearContents();
     widget->setColumnCount(1);
 
-    for (int i = 0; i < 3; ++i)
+    std::string js(message.toStdString());
+
+    rapidjson::GenericDocument<rapidjson::UTF8<>> js_from;
+    std::unique_ptr<char[]> to_parse(new char[js.size() + 1]);
+
+    memcpy(to_parse.get(), js.c_str(), js.size());
+    to_parse.get()[js.size()] = 0;
+
+    js_from.ParseInsitu(to_parse.get());
+
+    if (js_from.IsNull())
     {
-        widget->insertRow(i);
-        widget->setVerticalHeaderItem(i, new QTableWidgetItem("one"));
-        widget->setItem(i, 0, new QTableWidgetItem("two"));
+        qCritical() << "JSON document is invalid! Cannot get log message details.";
+        return;
+    }
+
+    if (js_from.IsObject())
+    {
+        rapidjson::Value::Object jsobj(js_from.GetObject());
+
+        int i = 0;
+        for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
+        {
+            std::string key(it->name.GetString());
+
+            rapidjson::StringBuffer buffer;
+            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+
+            it->value.Accept(writer);
+            std::string value(buffer.GetString());
+
+            if (it->value.GetType() == rapidjson::Type::kTrueType)
+                value = "True";
+            if (it->value.GetType() == rapidjson::Type::kFalseType)
+                value = "False";
+
+            if (it->value.IsInt64())
+            {
+                long long num = it->value.GetInt64();
+                value = std::to_string(num);
+            }
+            else
+                if (it->value.IsDouble())
+                {
+                    double num = it->value.GetDouble();
+                    value = std::to_string(num);
+                }
+
+            if (it->value.GetType() == rapidjson::Type::kStringType)
+                value = it->value.GetString();
+
+            widget->insertRow(i);
+            widget->setVerticalHeaderItem(i, new QTableWidgetItem(key.c_str()));
+            widget->setItem(i, 0, new QTableWidgetItem(value.c_str()));
+
+            i++;
+        }
     }
 }
 
@@ -30,57 +84,3 @@ Message_Details_Dialog::~Message_Details_Dialog()
 {
     delete ui;
 }
-
-/*
-std::vector<std::string> strip_json(const std::string& fields_to_leave, const std::vector<std::string>& json_strings)
-{
-    std::vector<std::string> out_strings;
-    std::vector<std::string> fields;
-
-    std::istringstream is(fields_to_leave);
-    std::string part;
-    while (std::getline(is, part, ','))
-      fields.push_back(part);
-
-    for (const auto& js: json_strings)
-    {
-        rapidjson::GenericDocument<rapidjson::UTF8<>> js_from, js_to;
-        std::unique_ptr<char[]> to_parse(new char[js.size() + 1]);
-
-        memcpy(to_parse.get(), js.c_str(), js.size());
-        to_parse.get()[js.size()] = 0;
-
-        js_to.SetObject();
-        js_from.ParseInsitu(to_parse.get());
-
-        if (js_from.IsNull())
-        {
-            qCritical() << "JSON document is invalid!";
-            continue;
-        }
-
-        if (js_from.IsObject())
-        {
-            rapidjson::Value::Object jsobj(js_from.GetObject());
-
-            for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
-            {
-                std::string key(it->name.GetString());
-                for (const auto& field: fields)
-                    if (key.compare(field) == 0)
-                    {
-                        js_to.AddMember(it->name, it->value, js_to.GetAllocator());
-                        break;
-                    }
-            }
-        }
-
-        rapidjson::StringBuffer buffer;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        js_to.Accept(writer);
-        out_strings.push_back(buffer.GetString());
-    }
-
-    return out_strings;
-}
-*/
