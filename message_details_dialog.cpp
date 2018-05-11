@@ -19,6 +19,7 @@ ui(new Ui::Message_Details_Dialog)
     widget->clearSelection();
     widget->clearContents();
     widget->setColumnCount(1);
+    widget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     std::string js(message.toStdString());
 
