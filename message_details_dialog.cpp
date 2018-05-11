@@ -7,6 +7,8 @@
 #include <rapidjson/writer.h>
 
 #include <QtDebug>
+#include <QClipboard>
+#include <QApplication>
 
 
 Message_Details_Dialog::Message_Details_Dialog(QWidget *parent, QString& message):
@@ -79,9 +81,21 @@ ui(new Ui::Message_Details_Dialog)
             i++;
         }
     }
+
+    ui->details_widget->addAction(ui->actionCopy);
 }
 
 Message_Details_Dialog::~Message_Details_Dialog()
 {
     delete ui;
+}
+
+void Message_Details_Dialog::on_actionCopy_triggered()
+{
+    if (ui->details_widget->selectedItems().size() > 0)
+    {
+        QTableWidgetItem* item = ui->details_widget->selectedItems()[0];
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(item->text());
+    }
 }

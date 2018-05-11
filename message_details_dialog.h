@@ -18,7 +18,12 @@ class Message_Details_Dialog : public QDialog
         ~Message_Details_Dialog();
 
 
-    private:
+private slots:
+
+        void on_actionCopy_triggered();
+
+
+private:
 
         Ui::Message_Details_Dialog *ui;
         QString message_;
