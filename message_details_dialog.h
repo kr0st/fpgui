@@ -21,12 +21,12 @@ class Message_Details_Dialog : public QDialog
 private slots:
 
         void on_actionCopy_triggered();
-
+        void on_save_button_clicked();
 
 private:
 
         Ui::Message_Details_Dialog *ui;
-        QString message_;
+        std::string file_base64_;
 };
 
 #endif // MESSAGE_DETAILS_DIALOG_H

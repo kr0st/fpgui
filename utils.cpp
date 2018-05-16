@@ -93,6 +93,8 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
             continue;
         }
 
+        bool file_found = false;
+
         if (js_from.IsObject())
         {
             rapidjson::Value::Object jsobj(js_from.GetObject());
@@ -100,10 +102,22 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
             for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
             {
                 std::string key(it->name.GetString());
+                if (key.compare("file") == 0)
+                    file_found = true;
+
                 for (const auto& field: fields)
                     if (key.compare(field) == 0)
                     {
-                        js_to.AddMember(it->name, it->value, js_to.GetAllocator());
+                        if (key.compare("text") == 0)
+                        {
+                            if (file_found)
+                                js_to.AddMember(it->name, "this message contains attached file, see details (double click on this message)", js_to.GetAllocator());
+                            else
+                                js_to.AddMember(it->name, it->value, js_to.GetAllocator());
+                        }
+                        else
+                            js_to.AddMember(it->name, it->value, js_to.GetAllocator());
+
                         break;
                     }
             }

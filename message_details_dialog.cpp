@@ -9,12 +9,16 @@
 #include <QtDebug>
 #include <QClipboard>
 #include <QApplication>
+#include <QFileDialog>
+
+#include <utils.h>
 
 
 Message_Details_Dialog::Message_Details_Dialog(QWidget *parent, QString& message):
 QDialog(parent),
 ui(new Ui::Message_Details_Dialog)
 {
+    file_base64_ = "";
     ui->setupUi(this);
 
     QTableWidget* widget = ui->details_widget;
@@ -22,6 +26,7 @@ ui(new Ui::Message_Details_Dialog)
     widget->clearContents();
     widget->setColumnCount(1);
     widget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->save_button->setEnabled(false);
 
     std::string js(message.toStdString());
 
@@ -44,9 +49,23 @@ ui(new Ui::Message_Details_Dialog)
         rapidjson::Value::Object jsobj(js_from.GetObject());
 
         int i = 0;
+        bool file_found = false;
+
         for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
         {
             std::string key(it->name.GetString());
+            if (key.compare("file") == 0)
+            {
+                file_found = true;
+                ui->save_button->setEnabled(true);
+            }
+
+            if (file_found)
+                if (key.compare("text") == 0)
+                {
+                    file_base64_ = it->value.GetString();
+                    continue;
+                }
 
             rapidjson::StringBuffer buffer;
             rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -98,4 +117,19 @@ void Message_Details_Dialog::on_actionCopy_triggered()
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(item->text());
     }
+}
+
+void Message_Details_Dialog::on_save_button_clicked()
+{
+    if (file_base64_.empty())
+        return;
+
+    QFileDialog dialog(this, "Select Folder to Save Files into", QDir::homePath());
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+
+    if ((dialog.exec() == QDialog::Rejected) || (dialog.selectedFiles().empty()))
+        return;
+
+    generic_utils::ui::message_box(dialog.selectedFiles()[0]);
 }
