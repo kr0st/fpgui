@@ -65,7 +65,7 @@ bool generate_encryption_key(unsigned char* generated_key_64bit);
 
 namespace ui {
 
-int message_box(const QString& msg);
+int message_box(const QString& msg, int buttons = 0x00000400);
 
 }
 

@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QFile>
+#include <QMessageBox>
 
 #include <utils.h>
 
@@ -128,6 +129,7 @@ void Message_Details_Dialog::on_save_button_clicked()
     QFileDialog dialog(this, "Select Folder to Save Files into", QDir::homePath());
     dialog.setFileMode(QFileDialog::Directory);
     dialog.setOption(QFileDialog::ShowDirsOnly);
+    dialog.setLabelText(QFileDialog::Accept, "Save");
 
     if ((dialog.exec() == QDialog::Rejected) || (dialog.selectedFiles().empty()))
         return;
@@ -136,14 +138,8 @@ void Message_Details_Dialog::on_save_button_clicked()
 
     for (int i = 0; i < ui->details_widget->rowCount(); ++i)
     {
-
-        QTextStream(stdout) << ui->details_widget->verticalHeaderItem(i)->text();
-        QTextStream(stdout) << ui->details_widget->item(i, 0)->text();
-
         if (ui->details_widget->verticalHeaderItem(i)->text().compare("file") == 0)
         {
-            QTextStream(stdout) << "bingo!";
-
             file_path += ("/" + ui->details_widget->item(i, 0)->text());
             break;
         }
@@ -152,7 +148,11 @@ void Message_Details_Dialog::on_save_button_clicked()
     try
     {
         if (QFile::exists(file_path))
-            generic_utils::ui::message_box("File exists!");
+            if (generic_utils::ui::message_box("File exists, overwrite?", QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+            {
+                generic_utils::ui::message_box("File was not saved.");
+                return;
+            };
 
         QFile file(file_path);
         file.open(QFile::WriteOnly | QFile::Truncate);
@@ -164,6 +164,8 @@ void Message_Details_Dialog::on_save_button_clicked()
 
         file.write(to);
         file.close();
+
+        generic_utils::ui::message_box("File successfully saved.");
     }
     catch (std::exception& e)
     {

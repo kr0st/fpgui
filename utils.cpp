@@ -13,6 +13,7 @@
 #include <QJsonObject>
 #include <QtDebug>
 #include <QMessageBox>
+#include <QVBoxLayout>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
@@ -25,10 +26,14 @@ namespace generic_utils {
 
 namespace ui {
 
-int message_box(const QString &msg)
+int message_box(const QString &msg, int buttons)
 {
-    QMessageBox box;
-    box.setText(msg);
+    QMessageBox box((buttons == QMessageBox::Ok) ? QMessageBox::Icon::Warning : QMessageBox::Icon::Question,
+                    "fpgui", msg, (QMessageBox::StandardButtons)buttons);
+
+    QSpacerItem* vertical_spacer = new QSpacerItem(0, 500, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QGridLayout* layout = (QGridLayout*)box.layout();
+    layout->addItem(vertical_spacer, 0, 1);
     return box.exec();
 }
 
