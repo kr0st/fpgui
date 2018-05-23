@@ -22,6 +22,7 @@ ui(new Ui::Message_Details_Dialog)
 {
     file_base64_ = "";
     ui->setupUi(this);
+    ui->label_info->setText("");
 
     QTableWidget* widget = ui->details_widget;
     widget->clearSelection();
@@ -134,13 +135,16 @@ void Message_Details_Dialog::on_save_button_clicked()
     if ((dialog.exec() == QDialog::Rejected) || (dialog.selectedFiles().empty()))
         return;
 
+    QString file_name;
     QString file_path(dialog.selectedFiles()[0]);
 
     for (int i = 0; i < ui->details_widget->rowCount(); ++i)
     {
         if (ui->details_widget->verticalHeaderItem(i)->text().compare("file") == 0)
         {
-            file_path += ("/" + ui->details_widget->item(i, 0)->text());
+            file_name = ui->details_widget->item(i, 0)->text();
+            file_path += ("/" + file_name);
+
             break;
         }
     }
@@ -148,9 +152,9 @@ void Message_Details_Dialog::on_save_button_clicked()
     try
     {
         if (QFile::exists(file_path))
-            if (generic_utils::ui::message_box("File exists, overwrite?", QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+            if (generic_utils::ui::message_box("File '" + file_name + "' exists, overwrite?", QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
             {
-                generic_utils::ui::message_box("File was not saved.");
+                ui->label_info->setText("File '" + file_name + "' was not saved.");
                 return;
             };
 
@@ -165,7 +169,7 @@ void Message_Details_Dialog::on_save_button_clicked()
         file.write(to);
         file.close();
 
-        generic_utils::ui::message_box("File successfully saved.");
+        ui->label_info->setText("File '" + file_name + "' successfully saved.");
     }
     catch (std::exception& e)
     {
