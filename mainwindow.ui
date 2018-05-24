@@ -145,6 +145,9 @@
         <property name="alternatingRowColors">
          <bool>false</bool>
         </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::MultiSelection</enum>
+        </property>
         <property name="verticalScrollMode">
          <enum>QAbstractItemView::ScrollPerItem</enum>
         </property>
@@ -221,6 +224,17 @@
   <action name="actionBrowse">
    <property name="text">
     <string>Browse</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copies cell content</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
  </widget>

@@ -1,7 +1,11 @@
+#include <QClipboard>
+
 #include "historybrowserwindow.h"
 #include "ui_historybrowserwindow.h"
 #include <utils.h>
 #include <settings.h>
+
+#include <set>
 
 HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
     QWidget(parent),
@@ -22,6 +26,7 @@ HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
 
     this->installEventFilter(&key_emitter_);
     connect(&key_emitter_, SIGNAL(key_pressed(QKeyEvent)), this, SLOT(on_key_press(QKeyEvent)));
+    ui->tableWidget->addAction(ui->actionCopy);
 }
 
 HistoryBrowserWindow::~HistoryBrowserWindow()
@@ -140,5 +145,45 @@ void HistoryBrowserWindow::on_key_press(QKeyEvent e)
             if (history_browser_view_)
                 history_browser_view_->on_item_activated(item->row());
         }
+    }
+}
+
+void HistoryBrowserWindow::on_actionCopy_triggered()
+{
+    int sz = ui->tableWidget->selectedItems().size();
+    std::set<int> rows;
+    int min_row = 100000000;
+
+    for (int i = 0; i < sz; ++i)
+    {
+        QTableWidgetItem* item = ui->tableWidget->selectedItems()[i];
+        int row(item->row());
+
+        if (row < min_row)
+            min_row = row;
+
+        rows.insert(row);
+    }
+
+    if (rows.size() > 0)
+    {
+        sz = (int)rows.size();
+        QString result("");
+
+        for (int i = 0; i < sz; ++i)
+        {
+            for (int j = 0; j < ui->tableWidget->columnCount(); ++j)
+            {
+                QTableWidgetItem* item = ui->tableWidget->item(i + min_row, j);
+                if (item)
+                    result += (item->text() + "|");
+                else
+                    result += ("|");
+            }
+            result += "\n";
+        }
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(result);
     }
 }

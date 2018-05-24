@@ -57,6 +57,8 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
         void on_key_press(QKeyEvent e);
 
 
+        void on_actionCopy_triggered();
+
 private:
 
         Ui::HistoryBrowserWindow *ui;

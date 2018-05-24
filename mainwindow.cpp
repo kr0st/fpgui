@@ -2,8 +2,10 @@
 #include "ui_mainwindow.h"
 
 #include <QSignalBlocker>
+#include <QClipboard>
 #include <utils.h>
 
+#include <set>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->installEventFilter(&key_emitter_);
     connect(&key_emitter_, SIGNAL(key_pressed(QKeyEvent)), this, SLOT(on_key_press(QKeyEvent)));
+    ui->tableWidget->addAction(ui->actionCopy);
 }
 
 MainWindow::~MainWindow()
@@ -86,5 +89,45 @@ void MainWindow::on_key_press(QKeyEvent e)
             if (table_view_)
                 table_view_->on_item_activated(item->row());
         }
+    }
+}
+
+void MainWindow::on_actionCopy_triggered()
+{
+    int sz = ui->tableWidget->selectedItems().size();
+    std::set<int> rows;
+    int min_row = 100000000;
+
+    for (int i = 0; i < sz; ++i)
+    {
+        QTableWidgetItem* item = ui->tableWidget->selectedItems()[i];
+        int row(item->row());
+
+        if (row < min_row)
+            min_row = row;
+
+        rows.insert(row);
+    }
+
+    if (rows.size() > 0)
+    {
+        sz = (int)rows.size();
+        QString result("");
+
+        for (int i = 0; i < sz; ++i)
+        {
+            for (int j = 0; j < ui->tableWidget->columnCount(); ++j)
+            {
+                QTableWidgetItem* item = ui->tableWidget->item(i + min_row, j);
+                if (item)
+                    result += (item->text() + "|");
+                else
+                    result += ("|");
+            }
+            result += "\n";
+        }
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(result);
     }
 }

@@ -188,7 +188,7 @@ void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &conf
         widget.setColumnCount(config_copy.size() - invisible);
         widget.setRowCount(1);
         widget.setSelectionBehavior(QAbstractItemView::SelectRows);
-        widget.setSelectionMode(QAbstractItemView::SingleSelection);
+        widget.setSelectionMode(QAbstractItemView::ContiguousSelection);
 
         QWidget* wnd = dynamic_cast<QWidget*>(widget.parent()->parent());
         if (!wnd) wnd = dynamic_cast<QWidget*>(widget.parent());
