@@ -39,6 +39,12 @@ int message_box(const QString &msg, int buttons)
 
 }
 
+QTextStream& qStdOut()
+{
+    static QTextStream ts( stdout );
+    return ts;
+}
+
 std::string get_username()
 {
 #ifdef WIN32
@@ -314,10 +320,13 @@ static QByteArray get_salt(unsigned char* key_64bit, int salt_size_bytes = 50)
         seed = (seed ^ key_64bit[i]);
     qsrand(seed);
 
+    generic_utils::qStdOut() << "Seed=" << hex << seed << endl;
+
     QByteArray salt;
     for (int i = 0; i < salt_size_bytes; ++i)
         salt.append(qrand());
 
+    generic_utils::qStdOut() << "Salt=" << hex << salt.toHex() << endl;
     return salt;
 }
 
@@ -421,9 +430,15 @@ bool generate_encryption_key(unsigned char* generated_key_64bit)
     if (MACAddressUtility::GetMACAddress(generated_key_64bit) != 0)
         return false;
 
+    generic_utils::qStdOut() << "MAC=" << hex << generated_key_64bit[0] << hex << generated_key_64bit[1] << hex
+                             << generated_key_64bit[2] << hex << generated_key_64bit[3] << hex << generated_key_64bit[4]
+                             << hex << generated_key_64bit[5] << endl;
+
     std::string username(get_username());
     if (username.length() == 0)
         return false;
+
+    generic_utils::qStdOut() << "Username=" << username.c_str() << endl;
 
     unsigned char zero[8] = {0};
     if (memcmp(zero, generated_key_64bit, 8) == 0)

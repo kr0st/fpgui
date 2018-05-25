@@ -3,8 +3,11 @@
 #include <string>
 #include <vector>
 #include <QString>
+#include <QTextStream>
 
 namespace generic_utils {
+
+inline QTextStream& qStdOut();
 
 template <typename T> class Variable_Reset
 {
