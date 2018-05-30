@@ -15,6 +15,9 @@ public:
     explicit Preferences(QWidget *parent = 0);
     ~Preferences();
 
+private slots:
+    void on_button_config_tabs_clicked();
+
 private:
     Ui::Preferences *ui;
 };

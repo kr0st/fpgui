@@ -17,16 +17,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_config_tabs">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Configure visible tabs:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="button_config_tabs">
        <property name="text">
-        <string>PushButton</string>
+        <string>Tabs on Main WIndow</string>
        </property>
       </widget>
      </item>
