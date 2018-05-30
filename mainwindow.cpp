@@ -1,8 +1,11 @@
+#include <preferences.h>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QSignalBlocker>
 #include <QClipboard>
+#include <qlist.h>
 #include <utils.h>
 
 #include <set>
@@ -130,4 +133,10 @@ void MainWindow::on_actionCopy_triggered()
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(result);
     }
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    Preferences settings;
+    settings.exec();
 }

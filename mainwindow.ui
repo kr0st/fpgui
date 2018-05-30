@@ -210,7 +210,14 @@
     </property>
     <addaction name="actionBrowse"/>
    </widget>
+   <widget class="QMenu" name="menuPreferences">
+    <property name="title">
+     <string>Configuration</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
    <addaction name="menuHistory"/>
+   <addaction name="menuPreferences"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -235,6 +242,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
  </widget>

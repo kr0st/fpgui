@@ -57,7 +57,9 @@ SOURCES += \
     history_browser_view.cpp \
     history_browser_controller.cpp \
     key_press_emitter.cpp \
-    message_details_dialog.cpp
+    message_details_dialog.cpp \
+    preferences.cpp \
+    tabs_configuration.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -78,11 +80,15 @@ HEADERS += \
     history_browser_view.h \
     history_browser_controller.h \
     key_press_emitter.h \
-    message_details_dialog.h
+    message_details_dialog.h \
+    preferences.h \
+    tabs_configuration.h
 
 FORMS += \
         mainwindow.ui \
     historybrowserwindow.ui \
-    message_details_dialog.ui
+    message_details_dialog.ui \
+    preferences.ui \
+    tabs_configuration.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000

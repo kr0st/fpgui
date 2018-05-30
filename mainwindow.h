@@ -54,6 +54,8 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 
         void on_actionCopy_triggered();
 
+        void on_actionPreferences_triggered();
+
 private:
 
         fpgui::ui::Table_View* table_view_;
