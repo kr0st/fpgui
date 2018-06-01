@@ -2,6 +2,7 @@
 #include "ui_preferences.h"
 
 #include <tabs_configuration.h>
+#include <settings.h>
 
 Preferences::Preferences(QWidget *parent) :
     QDialog(parent),
