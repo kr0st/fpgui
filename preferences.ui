@@ -19,14 +19,14 @@
      <item>
       <widget class="QLabel" name="label_config_tabs">
        <property name="text">
-        <string>Configure visible tabs:</string>
+        <string>Tabs on main window:</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="button_config_tabs">
        <property name="text">
-        <string>Tabs on Main WIndow</string>
+        <string>Configure tabs</string>
        </property>
       </widget>
      </item>

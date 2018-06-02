@@ -20,7 +20,10 @@ class Tabs_Configuration : public QDialog
         std::vector<fpgui::settings::Tab_Configuration> get_configuration();
 
 
-    private:
+private slots:
+        void on_button_add_clicked();
+
+private:
 
         Ui::Tabs_Configuration *ui;
         std::vector<fpgui::settings::Tab_Configuration> tab_config_;

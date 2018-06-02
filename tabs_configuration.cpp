@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QCheckBox>
+#include <utils.h>
 
 Tabs_Configuration::Tabs_Configuration(QWidget *parent) :
     QDialog(parent),
@@ -39,17 +40,37 @@ void Tabs_Configuration::populate_table_widget()
     for (fpgui::settings::Tab_Configuration& tab : tab_config_)
     {
         ui->table_tabs->setVerticalHeaderItem(i, new QTableWidgetItem(tab.name.c_str()));
+        ui->table_tabs->verticalHeaderItem(i)->setTextAlignment(Qt::AlignCenter);
 
-        QCheckBox* checkbox = new QCheckBox();
+        QCheckBox* checkbox = new QCheckBox(ui->table_tabs);
         checkbox->setChecked(tab.show);
+        checkbox->setStyleSheet("margin:auto;");
 
         ui->table_tabs->setCellWidget(i, 0, checkbox);
 
-        checkbox = new QCheckBox();
+        checkbox = new QCheckBox(ui->table_tabs);
         checkbox->setChecked(tab.sort_by);
+        checkbox->setStyleSheet("margin:auto;");
 
         ui->table_tabs->setCellWidget(i, 1, checkbox);
 
         i++;
     }
+}
+
+void Tabs_Configuration::on_button_add_clicked()
+{
+    QString res("");
+
+    for (int i = 0; i < ui->table_tabs->rowCount(); ++i)
+    {
+        QString str(QString::number(ui->table_tabs->model()->index(i, 0).row()));
+        str += " = ";
+        str += ui->table_tabs->verticalHeaderItem(i)->text();
+        str += "\n";
+
+        res += str;
+    }
+
+    generic_utils::ui::message_box(res);
 }
