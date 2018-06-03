@@ -29,7 +29,7 @@ This will also change tabs priorities during sorting, tabs higher in the list be
    <item>
     <widget class="QTableWidget" name="table_tabs">
      <property name="dragEnabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="dragDropOverwriteMode">
       <bool>false</bool>

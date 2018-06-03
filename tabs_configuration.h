@@ -20,15 +20,18 @@ class Tabs_Configuration : public QDialog
         std::vector<fpgui::settings::Tab_Configuration> get_configuration();
 
 
-private slots:
+    private slots:
+
         void on_button_add_clicked();
 
-private:
+
+    private:
 
         Ui::Tabs_Configuration *ui;
         std::vector<fpgui::settings::Tab_Configuration> tab_config_;
 
         void populate_table_widget();
+        std::map<int, fpgui::settings::Tab_Configuration> remap_tabs();
 };
 
 #endif // TABS_CONFIGURATION_H

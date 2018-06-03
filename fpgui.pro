@@ -59,7 +59,8 @@ SOURCES += \
     key_press_emitter.cpp \
     message_details_dialog.cpp \
     preferences.cpp \
-    tabs_configuration.cpp
+    tabs_configuration.cpp \
+    add_new_tab.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -82,13 +83,15 @@ HEADERS += \
     key_press_emitter.h \
     message_details_dialog.h \
     preferences.h \
-    tabs_configuration.h
+    tabs_configuration.h \
+    add_new_tab.h
 
 FORMS += \
         mainwindow.ui \
     historybrowserwindow.ui \
     message_details_dialog.ui \
     preferences.ui \
-    tabs_configuration.ui
+    tabs_configuration.ui \
+    add_new_tab.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000

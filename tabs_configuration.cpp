@@ -58,17 +58,28 @@ void Tabs_Configuration::populate_table_widget()
     }
 }
 
+std::map<int, fpgui::settings::Tab_Configuration> Tabs_Configuration::remap_tabs()
+{
+    std::map<int, fpgui::settings::Tab_Configuration> remapped;
+
+    for (int i = 0; i < ui->table_tabs->rowCount(); ++i)
+    {
+        int index = ui->table_tabs->verticalHeader()->visualIndex(i);
+        remapped[index] = tab_config_[i];
+    }
+
+    return remapped;
+}
+
 void Tabs_Configuration::on_button_add_clicked()
 {
+    std::map<int, fpgui::settings::Tab_Configuration> remapped(remap_tabs());
     QString res("");
 
     for (int i = 0; i < ui->table_tabs->rowCount(); ++i)
     {
-        QString str(QString::number(ui->table_tabs->model()->index(i, 0).row()));
-        str += " = ";
-        str += ui->table_tabs->verticalHeaderItem(i)->text();
+        QString str(remapped[i].name.c_str());
         str += "\n";
-
         res += str;
     }
 
