@@ -14,6 +14,7 @@
 #include <QtDebug>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <QRegularExpression>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
@@ -31,7 +32,7 @@ int message_box(const QString &msg, int buttons)
     QMessageBox box((buttons == QMessageBox::Ok) ? QMessageBox::Icon::Warning : QMessageBox::Icon::Question,
                     "fpgui", msg, (QMessageBox::StandardButtons)buttons);
 
-    QSpacerItem* vertical_spacer = new QSpacerItem(0, 500, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem* vertical_spacer = new QSpacerItem(0, 50, QSizePolicy::Minimum);
     QGridLayout* layout = (QGridLayout*)box.layout();
     layout->addItem(vertical_spacer, 0, 1);
     return box.exec();
@@ -69,6 +70,13 @@ void ReplaceStringInPlace(std::string& subject, const std::string& search, const
          subject.replace(pos, search.length(), replace);
          pos += replace.length();
     }
+}
+
+QString to_alphanumeric(QString toClean)
+{
+    QString toReturn = toClean;
+    toReturn.remove(QRegularExpression(QString::fromUtf8("[-`~!@#$%^&*()_—+=|:;<>«»,.?/{}\'\"\\[\\]\\\\]")));
+    return toReturn;
 }
 
 std::string& escape_quotes(std::string& str)

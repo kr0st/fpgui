@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QCheckBox>
 #include <utils.h>
+#include <add_new_tab.h>
 
 Tabs_Configuration::Tabs_Configuration(QWidget *parent) :
     QDialog(parent),
@@ -71,7 +72,7 @@ std::map<int, fpgui::settings::Tab_Configuration> Tabs_Configuration::remap_tabs
     return remapped;
 }
 
-void Tabs_Configuration::on_button_add_clicked()
+/*void Tabs_Configuration::on_button_add_clicked()
 {
     std::map<int, fpgui::settings::Tab_Configuration> remapped(remap_tabs());
     QString res("");
@@ -84,4 +85,53 @@ void Tabs_Configuration::on_button_add_clicked()
     }
 
     generic_utils::ui::message_box(res);
+}*/
+
+void Tabs_Configuration::on_button_add_clicked()
+{
+    bool complete = false;
+    while (!complete)
+    {
+        Add_New_Tab add_new;
+        int res = add_new.exec();
+        if (res == 0)
+        {
+            complete = true;
+            continue;
+        }
+
+        fpgui::settings::Tab_Configuration new_tab(add_new.get_new_tab());
+
+        QString tab_name(new_tab.name.c_str());
+        tab_name = tab_name.trimmed();
+        tab_name = generic_utils::to_alphanumeric(tab_name);
+
+        if (tab_name.size() < 3)
+        {
+            generic_utils::ui::message_box("New tab name '" + QString(new_tab.name.c_str()) + "' cannot be shorter than 3 characters and cannot contain special symbols, including spaces.");
+            continue;
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
