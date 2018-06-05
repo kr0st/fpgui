@@ -20,8 +20,11 @@ fpgui::settings::Tab_Configuration Add_New_Tab::get_new_tab()
 
 void Add_New_Tab::on_Add_New_Tab_finished(int result)
 {
-    new_tab_.name = ui->edit_tab_name->text().toStdString();
-    new_tab_.show = ui->check_show->isChecked();
-    new_tab_.sort_by = ui->check_sort->isChecked();
-    new_tab_.size = 0;
+    if (result == QDialog::Accepted)
+    {
+        new_tab_.name = ui->edit_tab_name->text().toStdString();
+        new_tab_.show = ui->check_show->isChecked();
+        new_tab_.sort_by = ui->check_sort->isChecked();
+        new_tab_.size = 0;
+    }
 }
