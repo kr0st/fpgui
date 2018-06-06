@@ -15,7 +15,7 @@ void inject_tab_sorting_config()
 
 void inject_tab_sorting_config(const std::vector<fpgui::settings::Tab_Configuration>& tabs)
 {
-    int order = 1;    
+    int order = 1;
     for (const auto& tab: tabs)
     {
         #ifdef _UNIT_TEST

@@ -27,6 +27,8 @@ class Tabs_Configuration : public QDialog
 
         void on_Tabs_Configuration_finished(int result);
 
+        void on_button_remove_clicked();
+
 private:
 
         Ui::Tabs_Configuration *ui;

@@ -43,7 +43,7 @@ ui(new Ui::Message_Details_Dialog)
 
     if (js_from.IsNull())
     {
-        qCritical() << "JSON document is invalid! Cannot get log message details.";
+        qCritical() << tr("JSON document is invalid! Cannot get log message details.");
         return;
     }
 
@@ -127,7 +127,7 @@ void Message_Details_Dialog::on_save_button_clicked()
     if (file_base64_.empty())
         return;
 
-    QFileDialog dialog(this, "Select Folder to Save Files into", QDir::homePath());
+    QFileDialog dialog(this, tr("Select Folder to Save Files into"), QDir::homePath());
     dialog.setFileMode(QFileDialog::Directory);
     dialog.setOption(QFileDialog::ShowDirsOnly);
     dialog.setLabelText(QFileDialog::Accept, "Save");

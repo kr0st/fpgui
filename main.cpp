@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
     if (!widget)
     {
-        generic_utils::ui::message_box("Fatal error: user interface is broken, exiting..");
+        generic_utils::ui::message_box(QCoreApplication::tr("Fatal error: user interface is broken, exiting.."));
         return -1;
     }
 

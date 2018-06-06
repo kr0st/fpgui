@@ -53,8 +53,8 @@ void Tabs_Configuration::populate_table_widget()
     ui->table_tabs->setColumnCount(2);
     ui->table_tabs->verticalHeader()->setSectionsMovable(true);
 
-    ui->table_tabs->setHorizontalHeaderItem(0, new QTableWidgetItem("Tab displayed"));
-    ui->table_tabs->setHorizontalHeaderItem(1, new QTableWidgetItem("Used for sorting"));
+    ui->table_tabs->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Tab displayed")));
+    ui->table_tabs->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Used for sorting")));
 
     for (fpgui::settings::Tab_Configuration& tab : tab_config_)
         insert_row(ui->table_tabs, tab);
@@ -94,7 +94,7 @@ void Tabs_Configuration::on_button_add_clicked()
 
         if (tab_name.size() < 3)
         {
-            generic_utils::ui::message_box("New tab name '" + QString(new_tab.name.c_str()) + "' cannot be shorter than 3 characters and cannot contain special symbols, including spaces.");
+            generic_utils::ui::message_box(tr("New tab name '") + QString(new_tab.name.c_str()) + tr("' cannot be shorter than 3 characters and cannot contain special symbols, including spaces."));
             continue;
         }
 
@@ -104,18 +104,6 @@ void Tabs_Configuration::on_button_add_clicked()
         tab_config_.push_back(new_tab);
         insert_row(ui->table_tabs, new_tab);
     }
-
-    /*std::map<int, fpgui::settings::Tab_Configuration> remapped(remap_tabs());
-    QString res("");
-
-    for (int i = 0; i < ui->table_tabs->rowCount(); ++i)
-    {
-        QString str(remapped[i].name.c_str());
-        str += "\n";
-        res += str;
-    }*/
-
-    //generic_utils::ui::message_box(res);
 }
 
 void Tabs_Configuration::on_Tabs_Configuration_finished(int result)
@@ -125,9 +113,20 @@ void Tabs_Configuration::on_Tabs_Configuration_finished(int result)
         std::vector<fpgui::settings::Tab_Configuration> remapped;
 
         auto map(remap_tabs());
-        for (int i = 0; i < map.size(); ++i)
+        for (size_t i = 0; i < map.size(); ++i)
             remapped.push_back(map[i]);
 
         tab_config_ = remapped;
+    }
+}
+
+void Tabs_Configuration::on_button_remove_clicked()
+{
+    QItemSelectionModel *selectionModel = ui->table_tabs->selectionModel();
+
+    if (selectionModel->selectedRows().size())
+    {
+        int row(selectionModel->selectedRows()[0].row());
+        generic_utils::ui::message_box(ui->table_tabs->verticalHeaderItem(row)->text());
     }
 }

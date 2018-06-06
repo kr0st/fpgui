@@ -348,7 +348,7 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
 
         if (js_from.IsNull())
         {
-            qCritical() << "JSON document is invalid!";
+            qCritical() << tr("JSON document is invalid!");
             return;
         }
 

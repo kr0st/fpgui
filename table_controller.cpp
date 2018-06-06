@@ -82,7 +82,7 @@ void Table_Controller::merge_view_config(const Table_View::View_Configuration& c
     size_t len = config.tab_config.size(), this_len = tab_config_.size();
 
     if (len != this_len)
-        qWarning() << "Trying to merge view config that has different size, some elements might be misconfigured.";
+        qWarning() << tr("Trying to merge view config that has different size, some elements might be misconfigured.");
 
     if (len > this_len)
         len = this_len;
@@ -181,7 +181,7 @@ void Table_Controller::start_refreshing_view()
         if (data_source_.get())
             data_source_->connect(settings);
         else
-            THROWM(fpgui::exceptions::Incorrect_Parameter, "Cannot establish data source connection! Please re-launch the application.");
+            THROWM(fpgui::exceptions::Incorrect_Parameter, tr("Cannot establish data source connection! Please re-launch the application."));
     }
     catch (fpgui::exceptions::Generic_Exception& e)
     {
@@ -362,7 +362,7 @@ void Table_Controller::item_activated(int index)
     if (index < 0)
         return;
 
-    int res = current_page_ * per_page_ + index;
+    size_t res = current_page_ * per_page_ + index;
     if (res < data_.size())
         emit display_details(data_[res].c_str());
 }
