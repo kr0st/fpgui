@@ -127,6 +127,12 @@ void Tabs_Configuration::on_button_remove_clicked()
     if (selectionModel->selectedRows().size())
     {
         int row(selectionModel->selectedRows()[0].row());
-        generic_utils::ui::message_box(ui->table_tabs->verticalHeaderItem(row)->text());
+        for (auto tab = tab_config_.begin(); tab != tab_config_.end(); ++tab)
+            if (tab->name.compare(ui->table_tabs->verticalHeaderItem(row)->text().toStdString()) == 0)
+            {
+                ui->table_tabs->removeRow(row);
+                tab_config_.erase(tab);
+                break;
+            }
     }
 }
