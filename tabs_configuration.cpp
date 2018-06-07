@@ -98,6 +98,17 @@ void Tabs_Configuration::on_button_add_clicked()
             continue;
         }
 
+        auto tab = tab_config_.begin();
+        for (; tab != tab_config_.end(); ++tab)
+            if (tab->name.compare(tab_name.toStdString()) == 0)
+            {
+                generic_utils::ui::message_box(tr("New tab name '") + QString(new_tab.name.c_str()) + tr("' cannot be a duplicate of an existing tab."));
+                break;
+            }
+
+        if (tab != tab_config_.end())
+            continue;
+
         complete = true;
         new_tab.name = tab_name.toStdString();
 
