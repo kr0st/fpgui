@@ -28,6 +28,8 @@ class Preferences : public QDialog
 
         Ui::Preferences *ui;
         std::vector<fpgui::settings::Tab_Configuration> tab_config_;
+        fpgui::settings::App_Configuration app_config_;
+        fpgui::settings::Db_Configuration db_config_;
 };
 
 #endif // PREFERENCES_H
