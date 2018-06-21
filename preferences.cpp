@@ -5,6 +5,7 @@
 #include <QProcess>
 
 #include <tabs_configuration.h>
+#include <app_settings_advanced.h>
 #include <settings.h>
 #include <utils.h>
 
@@ -28,7 +29,6 @@ Preferences::~Preferences()
 {
     delete ui;
 }
-
 
 void Preferences::on_button_config_tabs_clicked()
 {
@@ -65,4 +65,10 @@ void Preferences::on_Preferences_finished(int result)
             QProcess::startDetached(QApplication::arguments()[0], QApplication::arguments());
         }
     }
+}
+
+void Preferences::on_button_advanced_view_clicked()
+{
+    App_Settings_Advanced dialog(app_config_);
+    dialog.exec();
 }

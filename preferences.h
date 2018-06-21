@@ -24,7 +24,9 @@ class Preferences : public QDialog
         void on_Preferences_finished(int result);
 
 
-    private:
+        void on_button_advanced_view_clicked();
+
+private:
 
         Ui::Preferences *ui;
         std::vector<fpgui::settings::Tab_Configuration> tab_config_;

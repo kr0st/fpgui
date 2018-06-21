@@ -60,7 +60,8 @@ SOURCES += \
     message_details_dialog.cpp \
     preferences.cpp \
     tabs_configuration.cpp \
-    add_new_tab.cpp
+    add_new_tab.cpp \
+    app_settings_advanced.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -84,7 +85,8 @@ HEADERS += \
     message_details_dialog.h \
     preferences.h \
     tabs_configuration.h \
-    add_new_tab.h
+    add_new_tab.h \
+    app_settings_advanced.h
 
 FORMS += \
         mainwindow.ui \
@@ -92,6 +94,7 @@ FORMS += \
     message_details_dialog.ui \
     preferences.ui \
     tabs_configuration.ui \
-    add_new_tab.ui
+    add_new_tab.ui \
+    app_settings_advanced.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
