@@ -26,6 +26,8 @@ class Preferences : public QDialog
 
         void on_button_advanced_view_clicked();
 
+        void on_button_advanced_db_clicked();
+
 private:
 
         Ui::Preferences *ui;

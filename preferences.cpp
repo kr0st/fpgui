@@ -6,6 +6,7 @@
 
 #include <tabs_configuration.h>
 #include <app_settings_advanced.h>
+#include <db_settings_advanced.h>
 #include <settings.h>
 #include <utils.h>
 
@@ -70,5 +71,11 @@ void Preferences::on_Preferences_finished(int result)
 void Preferences::on_button_advanced_view_clicked()
 {
     App_Settings_Advanced dialog(app_config_);
+    dialog.exec();
+}
+
+void Preferences::on_button_advanced_db_clicked()
+{
+    DB_Settings_Advanced dialog(db_config_);
     dialog.exec();
 }
