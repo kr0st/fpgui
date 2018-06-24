@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT += network
 
 CONFIG += c++14
 
@@ -49,7 +50,6 @@ SOURCES += \
     utils.cpp \
     globals.cpp \
     simplecrypt.cpp \
-    mac_util.cpp \
     table_view.cpp \
     table_controller.cpp \
     mongo_data_source.cpp \
@@ -72,7 +72,6 @@ HEADERS += \
     utils.h \
     globals.h \
     simplecrypt.h \
-    mac_util.h \
     table_view.h \
     table_controller.h \
     data_source.h \

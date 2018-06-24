@@ -3,10 +3,12 @@
 #include <unistd.h>
 #endif
 
+#include <algorithm>
+
 #include <utils.h>
-#include <mac_util.h>
 #include <simplecrypt.h>
 
+#include <QNetworkInterface>
 #include <QString>
 #include <QByteArray>
 #include <QJsonDocument>
@@ -435,8 +437,28 @@ bool generate_encryption_key(unsigned char* generated_key_64bit)
     memset(generated_key_64bit, 0, 8);
     unsigned short padding = 0x029a;
 
-    if (MACAddressUtility::GetMACAddress(generated_key_64bit) != 0)
-        return false;
+    unsigned long long addr = 0;
+    std::vector<unsigned long long> addrs;
+
+    auto interfaces = QNetworkInterface::allInterfaces();
+    for(QNetworkInterface iface : interfaces)
+    {
+        QString str = iface.hardwareAddress();
+
+        auto list = str.split(":");
+        str = "0x";
+        for (QString s : list)
+            str += s;
+
+        unsigned long long addr2 = str.toLongLong(0, 16);
+        addrs.push_back(addr2);
+    }
+
+    std::sort(addrs.begin(), addrs.end());
+    for (unsigned long long a : addrs)
+        addr = (addr ^ a);
+
+    memcpy(generated_key_64bit, &addr, 6);
 
     generic_utils::qStdOut() << "MAC=" << hex << generated_key_64bit[0] << hex << generated_key_64bit[1] << hex
                              << generated_key_64bit[2] << hex << generated_key_64bit[3] << hex << generated_key_64bit[4]
