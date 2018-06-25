@@ -62,7 +62,8 @@ SOURCES += \
     tabs_configuration.cpp \
     add_new_tab.cpp \
     app_settings_advanced.cpp \
-    db_settings_advanced.cpp
+    db_settings_advanced.cpp \
+    hsv_rgb_converter.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -87,7 +88,8 @@ HEADERS += \
     tabs_configuration.h \
     add_new_tab.h \
     app_settings_advanced.h \
-    db_settings_advanced.h
+    db_settings_advanced.h \
+    hsv_rgb_converter.h
 
 FORMS += \
         mainwindow.ui \
