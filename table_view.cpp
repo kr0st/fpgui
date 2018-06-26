@@ -363,13 +363,41 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
         {
             rapidjson::Value::Object jsobj(js_from.GetObject());
 
+            Hsv_Rgb_Converter::rgb highlight(1, 1, 1);
+
             for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
             {
                 auto item(col_name_to_number.find(it->name.GetString()));
                 if (item == col_name_to_number.end())
                     continue;
 
+                std::string hostname("hostname");
+                if (hostname.compare(it->name.GetString()) == 0)
+                    highlight = colorizer_.colorize(it->value.GetString());
+
                 widget_->setItem(widget_->rowCount() - 1, item->second, new QTableWidgetItem(it->value.GetString()));
+            }
+
+            for (int i = 0; i < widget_->columnCount(); ++i)
+            {
+                QTableWidgetItem* item = widget_->item(widget_->rowCount() - 1, i);
+                if (item)
+                {
+                    int r = highlight.r * 255;
+                    if (r > 255) r = 255;
+                    if (r < 0) r = 0;
+
+                    int g = highlight.g * 255;
+                    if (g > 255) g = 255;
+                    if (g < 0) g = 0;
+
+                    int b = highlight.b * 255;
+                    if (b > 255) b = 255;
+                    if (b < 0) b = 0;
+
+                    QColor background(r, g, b);
+                    item->setData(Qt::BackgroundRole, background);
+                }
             }
 
             widget_->insertRow(widget_->rowCount());

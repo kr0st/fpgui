@@ -2,6 +2,7 @@
 #define TABLE_VIEW_H
 
 #include <settings.h>
+#include <colorizer.h>
 
 #include <QTableWidget>
 #include <mutex>
@@ -23,10 +24,12 @@ class Table_View: public QObject
             settings::App_Configuration app_config;
         };
 
-        Table_View(settings::App_Configuration& app_config): quick_filter_(""), connected_(false), app_config_(app_config)
+        Table_View(settings::App_Configuration& app_config):
+        colorizer_(Hsv_Rgb_Converter::rgb(0x8f, 0xbc, 0x94)), quick_filter_(""), connected_(false), app_config_(app_config)
         {
             widget_ = 0;
         }
+
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget,
                         bool resize_only = false, WindowWithMessageBoxInterface* window = 0);
         View_Configuration get_view_configuration();
@@ -73,7 +76,7 @@ class Table_View: public QObject
     private:
 
         std::vector<settings::Tab_Configuration> config_;
-
+        Colorizer colorizer_;
         QString quick_filter_;
 
         void display_strings(std::vector<std::string>& json_strings);
