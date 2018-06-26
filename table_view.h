@@ -25,7 +25,7 @@ class Table_View: public QObject
         };
 
         Table_View(settings::App_Configuration& app_config):
-        colorizer_(Hsv_Rgb_Converter::rgb(0x8f, 0xbc, 0x94)), quick_filter_(""), connected_(false), app_config_(app_config)
+        colorizer_(Hsv_Rgb_Converter::rgb(0xd6, 0xf6, 0xdd)), quick_filter_(""), connected_(false), app_config_(app_config)
         {
             widget_ = 0;
         }
