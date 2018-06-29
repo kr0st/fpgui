@@ -37,5 +37,7 @@ Makefile*
 # QtCtreator CMake
 CMakeLists.txt.user*
 
-/dependencies
+/dependencies/build
+/dependencies/include
+/dependencies/lib
 /build
