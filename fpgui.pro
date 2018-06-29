@@ -64,7 +64,8 @@ SOURCES += \
     app_settings_advanced.cpp \
     db_settings_advanced.cpp \
     hsv_rgb_converter.cpp \
-    colorizer.cpp
+    colorizer.cpp \
+    highlighting_settings.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -91,7 +92,8 @@ HEADERS += \
     app_settings_advanced.h \
     db_settings_advanced.h \
     hsv_rgb_converter.h \
-    colorizer.h
+    colorizer.h \
+    highlighting_settings.h
 
 FORMS += \
         mainwindow.ui \
@@ -101,6 +103,7 @@ FORMS += \
     tabs_configuration.ui \
     add_new_tab.ui \
     app_settings_advanced.ui \
-    db_settings_advanced.ui
+    db_settings_advanced.ui \
+    highlighting_settings.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000

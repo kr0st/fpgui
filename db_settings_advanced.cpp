@@ -1,6 +1,8 @@
 #include "db_settings_advanced.h"
 #include "ui_db_settings_advanced.h"
 
+#include <QIntValidator>
+
 DB_Settings_Advanced::DB_Settings_Advanced(fpgui::settings::Db_Configuration &db_config, QWidget *parent):
 QDialog(parent),
 ui(new Ui::db_settings_advanced),

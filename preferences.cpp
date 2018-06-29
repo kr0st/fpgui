@@ -3,6 +3,7 @@
 
 #include <QMessageBox>
 #include <QProcess>
+#include <QIntValidator>
 
 #include <tabs_configuration.h>
 #include <app_settings_advanced.h>

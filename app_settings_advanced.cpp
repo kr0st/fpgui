@@ -1,6 +1,8 @@
 #include "app_settings_advanced.h"
 #include "ui_app_settings_advanced.h"
 
+#include <QIntValidator>
+
 App_Settings_Advanced::App_Settings_Advanced(fpgui::settings::App_Configuration &app_config, QWidget *parent):
 QDialog(parent),
 ui(new Ui::App_Settings_Advanced),
