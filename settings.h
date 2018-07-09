@@ -2,10 +2,35 @@
 #define SETTINGS_H
 
 #include <QSettings>
+#include <QColor>
 #include <vector>
 
 namespace fpgui {
 namespace settings {
+
+struct Highlighting_Configuration
+{
+    struct Config_Item
+    {
+        std::string field;
+        std::string value;
+        QColor color;
+    };
+
+    bool diff_enabled;
+    bool value_based_enabled;
+
+    QColor base_color;
+
+    std::vector<Config_Item> config;
+
+    Highlighting_Configuration():
+    diff_enabled(0),
+    value_based_enabled(0),
+    base_color(Qt::white)
+    {
+    }
+};
 
 struct App_Configuration
 {
@@ -31,6 +56,8 @@ struct App_Configuration
 
     int window_height;
     int window_width;
+
+    Highlighting_Configuration highlighting;
 };
 
 struct Tab_Configuration

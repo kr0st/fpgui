@@ -20,7 +20,13 @@ extern const char* view_clearing_ratio_setting;
 extern const char* app_window_width_setting;
 extern const char* app_window_height_setting;
 extern const char* view_autoscroll_setting;
-extern const char* view_sorting_setting;
+
+extern const char* highlighting_base_color_setting;
+extern const char* highlighting_diff_enabled_setting;
+extern const char* highlighting_value_based_enabled_setting;
+extern const char* highlighting_field_setting;
+extern const char* highlighting_value_setting;
+extern const char* highlighting_color_setting;
 
 extern const char* db_section_name;
 extern const char* db_polling_interval_setting;
@@ -33,6 +39,7 @@ extern const char* db_auth_db_setting;
 
 extern const char* tabs_section_name;
 extern const char* tabs_array_name;
+extern const char* highlighting_array_name;
 extern const char* tabs_sorting_setting;
 extern const char* tabs_display_setting;
 extern const char* tabs_size_setting;

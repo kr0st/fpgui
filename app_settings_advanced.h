@@ -22,6 +22,8 @@ public:
 private slots:
     void on_App_Settings_Advanced_finished(int result);
 
+    void on_button_highlighting_clicked();
+
 private:
 
     Ui::App_Settings_Advanced *ui;

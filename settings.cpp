@@ -73,6 +73,26 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
 
     settings.setValue(QString((section + fpgui::settings::app_window_height_setting).c_str()), app_config.window_height);
     settings.setValue(QString((section + fpgui::settings::app_window_width_setting).c_str()), app_config.window_width);
+
+    settings.beginWriteArray(QString(fpgui::settings::application_section_name) + "/" + fpgui::settings::highlighting_array_name);
+
+    try
+    {
+        for (size_t i = 0; i < app_config.highlighting.config.size(); ++i)
+        {
+            settings.setArrayIndex(i);
+            settings.setValue(QString(fpgui::settings::highlighting_field_setting), app_config.highlighting.config[i].field.c_str());
+            settings.setValue(QString(fpgui::settings::highlighting_value_setting), app_config.highlighting.config[i].value.c_str());
+            settings.setValue(QString(fpgui::settings::highlighting_color_setting), app_config.highlighting.config[i].color);
+        }
+    }
+    catch(...)
+    {
+        settings.endArray();
+        return;
+    }
+
+    settings.endArray();
 }
 
 std::vector<Tab_Configuration> read_tab_config(QSettings& settings)

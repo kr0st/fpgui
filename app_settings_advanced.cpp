@@ -2,6 +2,7 @@
 #include "ui_app_settings_advanced.h"
 
 #include <QIntValidator>
+#include <highlighting_settings.h>
 
 App_Settings_Advanced::App_Settings_Advanced(fpgui::settings::App_Configuration &app_config, QWidget *parent):
 QDialog(parent),
@@ -31,4 +32,10 @@ void App_Settings_Advanced::on_App_Settings_Advanced_finished(int result)
         app_config_.view_clearing_ratio = ui->edit_clearing_ratio->text().toInt();
         app_config_.view_refresh_time = ui->edit_view_refresh->text().toInt();
     }
+}
+
+void App_Settings_Advanced::on_button_highlighting_clicked()
+{
+    Highlighting_Settings dialog;
+    dialog.exec();
 }

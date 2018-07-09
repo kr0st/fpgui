@@ -32,6 +32,7 @@ const char* db_auth_db_setting = "db_auth_db_name";
 
 const char* tabs_section_name = "visible_tabs";
 const char* tabs_array_name = "tabs";
+const char* highlighting_array_name = "highlighting";
 const char* tabs_sorting_setting = "sort_by";
 const char* tabs_display_setting = "display";
 const char* tabs_size_setting = "size";
