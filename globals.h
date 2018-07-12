@@ -20,6 +20,7 @@ extern const char* view_clearing_ratio_setting;
 extern const char* app_window_width_setting;
 extern const char* app_window_height_setting;
 extern const char* view_autoscroll_setting;
+extern const char* view_sorting_setting;
 
 extern const char* highlighting_base_color_setting;
 extern const char* highlighting_diff_enabled_setting;

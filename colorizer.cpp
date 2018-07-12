@@ -1,13 +1,30 @@
 #include "colorizer.h"
 
+Colorizer::Colorizer():
+uninited_(true)
+{
+}
+
 Colorizer::Colorizer(Hsv_Rgb_Converter::rgb seed):
-first_use_(true)
+first_use_(true),
+uninited_(false)
 {
     latest_color_ = Hsv_Rgb_Converter::rgb2hsv(seed);
 }
 
 Hsv_Rgb_Converter::rgb Colorizer::colorize(const std::string& str)
 {
+    if (uninited_)
+    {
+        Hsv_Rgb_Converter::rgb defcol;
+
+        defcol.b = 1;
+        defcol.g = 1;
+        defcol.r = 1;
+
+        return defcol;
+    }
+
     auto iter = colormap_.find(str);
     if (iter != colormap_.end())
         return iter->second;
@@ -25,3 +42,11 @@ Hsv_Rgb_Converter::rgb Colorizer::colorize(const std::string& str)
 
     return rgb;
 }
+
+void Colorizer::set_seed(Hsv_Rgb_Converter::rgb seed)
+{
+    uninited_ = false;
+    first_use_ = true;
+    latest_color_ = Hsv_Rgb_Converter::rgb2hsv(seed);
+}
+

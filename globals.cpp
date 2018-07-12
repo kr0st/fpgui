@@ -37,6 +37,13 @@ const char* tabs_sorting_setting = "sort_by";
 const char* tabs_display_setting = "display";
 const char* tabs_size_setting = "size";
 
+const char* highlighting_base_color_setting = "highlighting_base_color";
+const char* highlighting_diff_enabled_setting = "highlighting_differential_enabled";
+const char* highlighting_value_based_enabled_setting = "highlighting_value_based_enabled";
+const char* highlighting_field_setting = "hl_field";
+const char* highlighting_value_setting = "hl_value";
+const char* highlighting_color_setting = "hl_color";
+
 const Tab_Names tab_names;
 Tab_Names::Tab_Names():
 name("name"),

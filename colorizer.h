@@ -10,8 +10,10 @@ class Colorizer
 {
     public:
 
+        Colorizer();
         Colorizer(Hsv_Rgb_Converter::rgb seed);
         Hsv_Rgb_Converter::rgb colorize(const std::string& str);
+        void set_seed(Hsv_Rgb_Converter::rgb seed);
 
 
     private:
@@ -19,6 +21,7 @@ class Colorizer
         std::map<std::string, Hsv_Rgb_Converter::rgb> colormap_;
         Hsv_Rgb_Converter::hsv latest_color_;
         bool first_use_;
+        bool uninited_;
 };
 
 #endif // COLORIZER_H

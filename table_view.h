@@ -25,9 +25,19 @@ class Table_View: public QObject
         };
 
         Table_View(settings::App_Configuration& app_config):
-        colorizer_(Hsv_Rgb_Converter::rgb(0xd6, 0xf6, 0xdd)), quick_filter_(""), connected_(false), app_config_(app_config)
+        quick_filter_(""), connected_(false), app_config_(app_config)
         {
             widget_ = 0;
+            if (app_config_.highlighting.diff_enabled)
+            {
+                Hsv_Rgb_Converter::rgb seed;
+
+                seed.b = 255.0 / app_config_.highlighting.base_color.toRgb().blue();
+                seed.g = 255.0 / app_config_.highlighting.base_color.toRgb().green();
+                seed.r = 255.0 / app_config_.highlighting.base_color.toRgb().red();
+
+                colorizer_.set_seed(seed);
+            }
         }
 
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget,

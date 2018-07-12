@@ -54,6 +54,33 @@ App_Configuration read_app_config(QSettings& settings)
     app_config.window_height = settings.value(QString((section + fpgui::settings::app_window_height_setting).c_str())).toInt();
     app_config.window_width = settings.value(QString((section + fpgui::settings::app_window_width_setting).c_str())).toInt();
 
+    app_config.highlighting.diff_enabled = settings.value(QString((section + fpgui::settings::highlighting_diff_enabled_setting).c_str())).toBool();
+    app_config.highlighting.value_based_enabled = settings.value(QString((section + fpgui::settings::highlighting_value_based_enabled_setting).c_str())).toBool();
+    app_config.highlighting.base_color = settings.value(QString((section + fpgui::settings::highlighting_base_color_setting).c_str())).toString();
+
+    int array_sz = settings.beginReadArray(QString(fpgui::settings::application_section_name) + "/" + fpgui::settings::highlighting_array_name);
+    try
+    {
+        for (int i = 0; i < array_sz; ++i)
+        {
+            settings.setArrayIndex(i);
+
+            Highlighting_Configuration::Config_Item item;
+
+            item.field = std::string(settings.value(QString(fpgui::settings::highlighting_field_setting)).toString().toStdString());
+            item.value = std::string(settings.value(QString(fpgui::settings::highlighting_value_setting)).toString().toStdString());
+            item.color = settings.value(QString(fpgui::settings::highlighting_color_setting)).toString();
+
+            app_config.highlighting.config.push_back(item);
+        }
+    }
+    catch(...)
+    {
+        settings.endArray();
+        return app_config;
+    }
+
+    settings.endArray();
     return app_config;
 }
 
@@ -73,6 +100,10 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
 
     settings.setValue(QString((section + fpgui::settings::app_window_height_setting).c_str()), app_config.window_height);
     settings.setValue(QString((section + fpgui::settings::app_window_width_setting).c_str()), app_config.window_width);
+
+    settings.setValue(QString((section + fpgui::settings::highlighting_diff_enabled_setting).c_str()), app_config.highlighting.diff_enabled);
+    settings.setValue(QString((section + fpgui::settings::highlighting_value_based_enabled_setting).c_str()), app_config.highlighting.value_based_enabled);
+    settings.setValue(QString((section + fpgui::settings::highlighting_base_color_setting).c_str()), app_config.highlighting.base_color);
 
     settings.beginWriteArray(QString(fpgui::settings::application_section_name) + "/" + fpgui::settings::highlighting_array_name);
 
@@ -257,6 +288,10 @@ void write_default_settigs(QSettings& settings)
     app_config.view_autoscroll = true;
     app_config.view_clearing_ratio = 2;
     app_config.view_sorting = true;
+
+    app_config.highlighting.diff_enabled = true;
+    app_config.highlighting.value_based_enabled = false;
+    app_config.highlighting.base_color = QColor(0xd6, 0xf6, 0xdd);
 
     write_app_config(app_config, settings);
     write_db_config(db_config, settings);
