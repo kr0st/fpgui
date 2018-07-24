@@ -429,44 +429,37 @@ std::string decrypt_string(const std::string& encrypted, unsigned char* key_64bi
     return result;
 }
 
+#include <sys/utsname.h>
+const char* getMachineName()
+{
+   static struct utsname u;
+
+   if ( uname( &u ) < 0 )
+      return "unknown";
+
+   return u.nodename;
+}
+
 bool generate_encryption_key(unsigned char* generated_key_64bit)
 {
     if (!generated_key_64bit)
         return false;
 
     memset(generated_key_64bit, 0, 8);
-    unsigned short padding = 0x029a;
 
-    unsigned long long addr = 0;
-    std::vector<unsigned long long> addrs;
+    const char* computername = getMachineName();
+    unsigned char hash = 0;
 
-    auto interfaces = QNetworkInterface::allInterfaces();
-    for(QNetworkInterface iface : interfaces)
-    {
-        QString str = iface.hardwareAddress();
+    for (size_t i = 0; i < strlen(computername); ++i)
+        hash += computername[i];
 
-        auto list = str.split(":");
-        str = "0x";
-        for (QString s : list)
-            str += s;
-
-        unsigned long long addr2 = str.toLongLong(0, 16);
-        addrs.push_back(addr2);
-    }
-
-    std::sort(addrs.begin(), addrs.end());
-    for (unsigned long long a : addrs)
-        addr = (addr ^ a);
-
-    memcpy(generated_key_64bit, &addr, 6);
-
-    generic_utils::qStdOut() << "MAC=" << hex << generated_key_64bit[0] << hex << generated_key_64bit[1] << hex
-                             << generated_key_64bit[2] << hex << generated_key_64bit[3] << hex << generated_key_64bit[4]
-                             << hex << generated_key_64bit[5] << endl;
+    generic_utils::qStdOut() << "computername=" << computername << endl;
 
     std::string username(get_username());
     if (username.length() == 0)
         return false;
+
+    memcpy(generated_key_64bit, computername, strlen(computername) > 8 ? 8 : strlen(computername));
 
     generic_utils::qStdOut() << "Username=" << username.c_str() << endl;
 
@@ -474,7 +467,6 @@ bool generate_encryption_key(unsigned char* generated_key_64bit)
     if (memcmp(zero, generated_key_64bit, 8) == 0)
         return false;
 
-    memcpy(&(generated_key_64bit[6]), &padding, sizeof(unsigned short));
     size_t len = 0;
     if (username.length() >= 8)
         len = 8;
@@ -482,7 +474,10 @@ bool generate_encryption_key(unsigned char* generated_key_64bit)
         len = username.length();
 
     for (size_t i = 0; i < len; ++i)
-        generated_key_64bit[i] = (generated_key_64bit[i] ^ username.c_str()[i]);
+        generated_key_64bit[i] = (generated_key_64bit[i] ^ username.c_str()[i] ^ hash);
+
+    unsigned long long* key = (unsigned long long*)generated_key_64bit;
+    generic_utils::qStdOut() << "generated_key_64bit=" << hex << key << endl;
 
     return true;
 }
