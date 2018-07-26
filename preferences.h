@@ -14,7 +14,7 @@ class Preferences : public QDialog
 
     public:
 
-        explicit Preferences(QWidget *parent = 0);
+        explicit Preferences(QWidget *parent = nullptr);
         ~Preferences();
 
 

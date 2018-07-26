@@ -36,6 +36,6 @@ void App_Settings_Advanced::on_App_Settings_Advanced_finished(int result)
 
 void App_Settings_Advanced::on_button_highlighting_clicked()
 {
-    Highlighting_Settings dialog;
+    Highlighting_Settings dialog(app_config_);
     dialog.exec();
 }

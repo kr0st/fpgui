@@ -14,7 +14,7 @@ class DB_Settings_Advanced : public QDialog
 
     public:
 
-        explicit DB_Settings_Advanced(fpgui::settings::Db_Configuration& db_config, QWidget *parent = 0);
+        explicit DB_Settings_Advanced(fpgui::settings::Db_Configuration& db_config, QWidget *parent = nullptr);
         ~DB_Settings_Advanced();
 
 

@@ -15,7 +15,7 @@ class App_Settings_Advanced : public QDialog
 
 public:
 
-    explicit App_Settings_Advanced(fpgui::settings::App_Configuration& app_config, QWidget *parent = 0);
+    explicit App_Settings_Advanced(fpgui::settings::App_Configuration& app_config, QWidget *parent = nullptr);
     ~App_Settings_Advanced();
 
 

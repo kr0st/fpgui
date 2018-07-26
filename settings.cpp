@@ -103,7 +103,7 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
 
     settings.setValue(QString((section + fpgui::settings::highlighting_diff_enabled_setting).c_str()), app_config.highlighting.diff_enabled);
     settings.setValue(QString((section + fpgui::settings::highlighting_value_based_enabled_setting).c_str()), app_config.highlighting.value_based_enabled);
-    settings.setValue(QString((section + fpgui::settings::highlighting_base_color_setting).c_str()), app_config.highlighting.base_color);
+    settings.setValue(QString((section + fpgui::settings::highlighting_base_color_setting).c_str()), app_config.highlighting.base_color.name());
 
     settings.beginWriteArray(QString(fpgui::settings::application_section_name) + "/" + fpgui::settings::highlighting_array_name);
 

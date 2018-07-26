@@ -108,6 +108,7 @@ or history browser views refreshing.</string>
   <tabstop>edit_clearing_ratio</tabstop>
   <tabstop>edit_batch_size</tabstop>
   <tabstop>edit_view_refresh</tabstop>
+  <tabstop>button_highlighting</tabstop>
  </tabstops>
  <resources/>
  <connections>

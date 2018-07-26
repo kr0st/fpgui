@@ -27,21 +27,21 @@ class Table_View: public QObject
         Table_View(settings::App_Configuration& app_config):
         quick_filter_(""), connected_(false), app_config_(app_config)
         {
-            widget_ = 0;
+            widget_ = nullptr;
             if (app_config_.highlighting.diff_enabled)
             {
                 Hsv_Rgb_Converter::rgb seed;
 
-                seed.b = 255.0 / app_config_.highlighting.base_color.toRgb().blue();
-                seed.g = 255.0 / app_config_.highlighting.base_color.toRgb().green();
-                seed.r = 255.0 / app_config_.highlighting.base_color.toRgb().red();
+                seed.b = app_config_.highlighting.base_color.toRgb().blue() / 255.0;
+                seed.g = app_config_.highlighting.base_color.toRgb().green() / 255.0;
+                seed.r = app_config_.highlighting.base_color.toRgb().red() / 255.0;
 
                 colorizer_.set_seed(seed);
             }
         }
 
         void setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget& widget,
-                        bool resize_only = false, WindowWithMessageBoxInterface* window = 0);
+                        bool resize_only = false, WindowWithMessageBoxInterface* window = nullptr);
         View_Configuration get_view_configuration();
 
         void close_view();

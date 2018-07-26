@@ -15,7 +15,7 @@ class Mongo_Data_Source: public Data_Source<T>
 {
     public:
 
-        Mongo_Data_Source(): client_(0), time_start_(0), time_end_(0x7fffffff) {}
+        Mongo_Data_Source(): client_(nullptr), time_start_(0), time_end_(0x7fffffff) {}
         virtual ~Mongo_Data_Source() { delete client_; }
 
         void request_data(T& data);

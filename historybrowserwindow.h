@@ -18,7 +18,7 @@ class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterfac
 
     public:
 
-        explicit HistoryBrowserWindow(QWidget *parent = 0);
+        explicit HistoryBrowserWindow(QWidget *parent = nullptr);
         ~HistoryBrowserWindow();
         void inject_table_view(fpgui::ui::History_Browser_View* history_browser_view) { history_browser_view_ = history_browser_view; }
         void on_page_counter_update(int current_page, int total_pages);
