@@ -1,6 +1,10 @@
 #include <QPalette>
 #include <QColorDialog>
 
+#include <QPushButton>
+#include <QLineEdit>
+#include <QCheckBox>
+
 #include "highlighting_settings.h"
 #include "ui_highlighting_settings.h"
 
@@ -42,4 +46,33 @@ void Highlighting_Settings::on_button_base_color_clicked()
 
     QString colorname = base_color_.name();
     ui->button_base_color->setStyleSheet("background-color: " + colorname + ";");
+}
+
+void Highlighting_Settings::on_button_add_clicked()
+{
+    QGridLayout* gridLayout((QGridLayout*)ui->group_valuebased->layout());
+
+    QRect box(ui->group_valuebased->geometry());
+    box.setHeight(box.height() + 35);
+
+    ui->group_valuebased->setGeometry(box);
+
+    int rows = gridLayout->rowCount();
+    int cols = gridLayout->columnCount();
+
+    if (rows == 3)
+        if (!gridLayout->itemAtPosition(rows - 1, 1))
+            rows--;
+
+    gridLayout->addWidget(new QLineEdit(tr("field name"), this), rows, 1);
+    gridLayout->addWidget(new QLineEdit(tr("field value"), this), rows, 2);
+    gridLayout->addWidget(new QPushButton(tr("text color"), this), rows, 3);
+    gridLayout->addWidget(new QCheckBox(tr("bold text"), this), rows, 4);
+
+    ui->gridLayout->update();
+}
+
+void Highlighting_Settings::on_button_remove_clicked()
+{
+
 }

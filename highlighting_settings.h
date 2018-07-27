@@ -25,6 +25,8 @@ class Highlighting_Settings : public QDialog
 
 
         void on_button_base_color_clicked();
+        void on_button_add_clicked();
+        void on_button_remove_clicked();
 
 private:
 
