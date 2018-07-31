@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QGridLayout>
 
 #include "highlighting_settings.h"
 #include "ui_highlighting_settings.h"
@@ -57,12 +58,13 @@ void Highlighting_Settings::on_button_add_clicked()
 
     ui->group_valuebased->setGeometry(box);
 
-    int rows = gridLayout->rowCount();
-    int cols = gridLayout->columnCount();
+    int rows = (gridLayout->count() - 2) / (gridLayout->columnCount() - 1);
+    int count = gridLayout->count();
 
-    if (rows == 3)
-        if (!gridLayout->itemAtPosition(rows - 1, 1))
-            rows--;
+    if (count == 6)
+        rows = 2;
+    else
+        rows += 2;
 
     gridLayout->addWidget(new QLineEdit(tr("field name"), this), rows, 1);
     gridLayout->addWidget(new QLineEdit(tr("field value"), this), rows, 2);
@@ -74,5 +76,34 @@ void Highlighting_Settings::on_button_add_clicked()
 
 void Highlighting_Settings::on_button_remove_clicked()
 {
+    QGridLayout* gridLayout((QGridLayout*)ui->group_valuebased->layout());
 
+    int rows = (gridLayout->count() - 2) / (gridLayout->columnCount() - 1);
+    int count = gridLayout->count();
+
+    if (count == 6)
+        return;
+    else
+        rows += 2;
+
+    if (count == 10)
+        rows = 3;
+
+    QRect box(ui->group_valuebased->geometry());
+    box.setHeight(box.height() - 35);
+
+    for (int i = 1; i <= 4; ++i)
+    {
+        QLayoutItem* item = gridLayout->itemAtPosition(rows - 1, i);
+
+        gridLayout->removeItem(item);
+        gridLayout->removeWidget(item->widget());
+
+        delete item->widget();
+        delete item;
+    }
+
+    ui->group_valuebased->setGeometry(box);
+    gridLayout->invalidate();
+    ui->group_valuebased->update();
 }
