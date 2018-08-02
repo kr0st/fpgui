@@ -3,12 +3,41 @@
 
 #include <QDialog>
 #include <QColor>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QCheckBox>
 
 #include <settings.h>
 
 namespace Ui {
 class Highlighting_Settings;
 }
+
+class Controls_Quadruple: QObject
+{
+    Q_OBJECT
+
+    public:
+
+        QLineEdit* name_edit;
+        QLineEdit* value_edit;
+        QPushButton* color_button;
+        QCheckBox* bold_check;
+
+        Controls_Quadruple():
+        name_edit(nullptr), value_edit(nullptr), color_button(nullptr), bold_check(nullptr), color(Qt::black) {}
+        virtual ~Controls_Quadruple(){}
+
+        void connect_signals();
+
+        QColor color;
+
+
+    public slots:
+
+        void on_color_button_clicked();
+        void on_bold_check_state_changed(int state);
+};
 
 class Highlighting_Settings : public QDialog
 {

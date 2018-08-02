@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>625</width>
+    <width>650</width>
     <height>410</height>
    </rect>
   </property>
@@ -15,6 +15,18 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>650</width>
+    <height>410</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>650</width>
+    <height>410</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Highlighting settings</string>
@@ -36,7 +48,7 @@
        <rect>
         <x>10</x>
         <y>80</y>
-        <width>581</width>
+        <width>589</width>
         <height>107</height>
        </rect>
       </property>
