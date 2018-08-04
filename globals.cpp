@@ -43,6 +43,7 @@ const char* highlighting_value_based_enabled_setting = "highlighting_value_based
 const char* highlighting_field_setting = "hl_field";
 const char* highlighting_value_setting = "hl_value";
 const char* highlighting_color_setting = "hl_color";
+const char* highlighting_bold_setting = "hl_bold";
 
 const Tab_Names tab_names;
 Tab_Names::Tab_Names():

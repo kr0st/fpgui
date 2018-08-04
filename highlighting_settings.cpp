@@ -60,7 +60,6 @@ app_config_(app_config)
     ui->button_base_color->setStyleSheet("background-color: " + colorname + ";");
 
     base_color_ = app_config_.highlighting.base_color;
-
     Controls_Quadruple* quad = new Controls_Quadruple();
 
     quad->bold_check = ui->check_bold;
@@ -70,6 +69,22 @@ app_config_(app_config)
     quad->connect_signals();
 
     g_control_quads.push_back(quad);
+
+    ui->check_highlight->setCheckState(app_config_.highlighting.value_based_enabled ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+
+    bool first = true;
+    for (auto item : app_config_.highlighting.config)
+    {
+        if (first)
+            first = false;
+        else
+            on_button_add_clicked();
+
+        g_control_quads.back()->color = item.color;
+        g_control_quads.back()->name_edit->setText(item.field.c_str());
+        g_control_quads.back()->value_edit->setText(item.value.c_str());
+        g_control_quads.back()->bold_check->setCheckState(item.bold ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+    }
 }
 
 Highlighting_Settings::~Highlighting_Settings()
@@ -88,6 +103,25 @@ void Highlighting_Settings::on_Highlighting_Settings_finished(int result)
     {
         app_config_.highlighting.diff_enabled = (ui->check_differential->checkState() == Qt::CheckState::Checked ? true : false);
         app_config_.highlighting.base_color = base_color_;
+
+        if (ui->check_highlight->checkState() == Qt::CheckState::Checked)
+        {
+            app_config_.highlighting.config.clear();
+            app_config_.highlighting.value_based_enabled = true;
+            for (Controls_Quadruple* quad : g_control_quads)
+            {
+                fpgui::settings::Highlighting_Configuration::Config_Item item;
+
+                item.bold = (quad->bold_check->checkState() == Qt::CheckState::Checked);
+                item.color = quad->color;
+                item.field = quad->name_edit->text().toStdString();
+                item.value = quad->value_edit->text().toStdString();
+
+                app_config_.highlighting.config.push_back(item);
+            }
+        }
+        else
+            app_config_.highlighting.value_based_enabled = false;
     }
 }
 

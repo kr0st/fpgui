@@ -28,6 +28,7 @@ extern const char* highlighting_value_based_enabled_setting;
 extern const char* highlighting_field_setting;
 extern const char* highlighting_value_setting;
 extern const char* highlighting_color_setting;
+extern const char* highlighting_bold_setting;
 
 extern const char* db_section_name;
 extern const char* db_polling_interval_setting;

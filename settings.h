@@ -15,6 +15,7 @@ struct Highlighting_Configuration
         std::string field;
         std::string value;
         QColor color;
+        bool bold;
     };
 
     bool diff_enabled;

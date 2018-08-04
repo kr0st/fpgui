@@ -70,6 +70,7 @@ App_Configuration read_app_config(QSettings& settings)
             item.field = std::string(settings.value(QString(fpgui::settings::highlighting_field_setting)).toString().toStdString());
             item.value = std::string(settings.value(QString(fpgui::settings::highlighting_value_setting)).toString().toStdString());
             item.color = settings.value(QString(fpgui::settings::highlighting_color_setting)).toString();
+            item.bold = settings.value(QString(fpgui::settings::highlighting_bold_setting)).toBool();
 
             app_config.highlighting.config.push_back(item);
         }
@@ -115,6 +116,7 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
             settings.setValue(QString(fpgui::settings::highlighting_field_setting), app_config.highlighting.config[i].field.c_str());
             settings.setValue(QString(fpgui::settings::highlighting_value_setting), app_config.highlighting.config[i].value.c_str());
             settings.setValue(QString(fpgui::settings::highlighting_color_setting), app_config.highlighting.config[i].color);
+            settings.setValue(QString(fpgui::settings::highlighting_bold_setting), app_config.highlighting.config[i].bold);
         }
     }
     catch(...)
