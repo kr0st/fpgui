@@ -17,6 +17,7 @@
 #include <QApplication>
 
 #include <vector>
+#include <map>
 
 
 namespace fpgui {
@@ -365,11 +366,27 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
 
             Hsv_Rgb_Converter::rgb highlight(1, 1, 1);
 
+            QColor text_color;
+            bool text_bold = false;
+
+            std::map<std::string, std::string> field_values;
+
             for (rapidjson::Value::Object::MemberIterator it = jsobj.MemberBegin(); it != jsobj.MemberEnd(); ++it)
             {
                 auto item(col_name_to_number.find(it->name.GetString()));
                 if (item == col_name_to_number.end())
                     continue;
+
+                if (app_config_.highlighting.value_based_enabled)
+                    for (auto config_item : app_config_.highlighting.config)
+                        if (config_item.field.compare(it->name.GetString()) == 0)
+                            if (config_item.value.compare(it->value.GetString()) == 0)
+                            {
+                                text_bold = config_item.bold;
+                                text_color = config_item.color;
+
+                                break;
+                            }
 
                 if (app_config_.highlighting.diff_enabled)
                 {
@@ -381,26 +398,39 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
                 widget_->setItem(widget_->rowCount() - 1, item->second, new QTableWidgetItem(it->value.GetString()));
             }
 
-            if (app_config_.highlighting.diff_enabled)
+            if (app_config_.highlighting.diff_enabled || app_config_.highlighting.value_based_enabled)
                 for (int i = 0; i < widget_->columnCount(); ++i)
                 {
                     QTableWidgetItem* item = widget_->item(widget_->rowCount() - 1, i);
                     if (item)
                     {
-                        int r = highlight.r * 255;
-                        if (r > 255) r = 255;
-                        if (r < 0) r = 0;
+                        if (app_config_.highlighting.diff_enabled)
+                        {
+                            int r = highlight.r * 255;
+                            if (r > 255) r = 255;
+                            if (r < 0) r = 0;
 
-                        int g = highlight.g * 255;
-                        if (g > 255) g = 255;
-                        if (g < 0) g = 0;
+                            int g = highlight.g * 255;
+                            if (g > 255) g = 255;
+                            if (g < 0) g = 0;
 
-                        int b = highlight.b * 255;
-                        if (b > 255) b = 255;
-                        if (b < 0) b = 0;
+                            int b = highlight.b * 255;
+                            if (b > 255) b = 255;
+                            if (b < 0) b = 0;
 
-                        QColor background(r, g, b);
-                        item->setData(Qt::BackgroundRole, background);
+                            QColor background(r, g, b);
+                            item->setData(Qt::BackgroundRole, background);
+                        }
+
+                        if (app_config_.highlighting.value_based_enabled && text_color.isValid())
+                        {
+                            item->setData(Qt::TextColorRole, text_color);
+
+                            QFont font(item->font());
+                            font.setBold(true);
+
+                            item->setData(Qt::FontRole, font);
+                        }
                     }
                 }
 
