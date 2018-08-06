@@ -426,10 +426,13 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
                         {
                             item->setData(Qt::TextColorRole, text_color);
 
-                            QFont font(item->font());
-                            font.setBold(true);
+                            if (text_bold)
+                            {
+                                QFont font(item->font());
+                                font.setBold(true);
 
-                            item->setData(Qt::FontRole, font);
+                                item->setData(Qt::FontRole, font);
+                            }
                         }
                     }
                 }
