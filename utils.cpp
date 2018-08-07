@@ -448,11 +448,15 @@ bool generate_encryption_key(unsigned char* generated_key_64bit)
     memset(generated_key_64bit, 0, 8);
 
     const char* computername = getMachineName();
-    unsigned char hash = 0;
+    unsigned char hash;
+    unsigned int long_hash = 0;
 
     for (size_t i = 0; i < strlen(computername); ++i)
-        hash += computername[i];
+        long_hash += (unsigned int)computername[i];
 
+    hash = long_hash % 255;
+
+    generic_utils::qStdOut() << "hash=" << hash << ", long_hash=" << long_hash << endl;
     generic_utils::qStdOut() << "computername=" << computername << endl;
 
     std::string username(get_username());
@@ -474,9 +478,9 @@ bool generate_encryption_key(unsigned char* generated_key_64bit)
         len = username.length();
 
     for (size_t i = 0; i < len; ++i)
-        generated_key_64bit[i] = (generated_key_64bit[i] ^ username.c_str()[i] ^ hash);
+        generated_key_64bit[i] = (generated_key_64bit[i] ^ (unsigned char)username.c_str()[i] ^ hash);
 
-    unsigned long long* key = (unsigned long long*)generated_key_64bit;
+    unsigned long long key = *(unsigned long long*)generated_key_64bit;
     generic_utils::qStdOut() << "generated_key_64bit=" << hex << key << endl;
 
     return true;

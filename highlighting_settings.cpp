@@ -84,6 +84,7 @@ app_config_(app_config)
         g_control_quads.back()->name_edit->setText(item.field.c_str());
         g_control_quads.back()->value_edit->setText(item.value.c_str());
         g_control_quads.back()->bold_check->setCheckState(item.bold ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+        g_control_quads.back()->on_bold_check_state_changed(item.bold ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     }
 }
 
@@ -179,8 +180,26 @@ void Highlighting_Settings::on_button_remove_clicked()
     int rows = (gridLayout->count() - 2) / (gridLayout->columnCount() - 1);
     int count = gridLayout->count();
 
+    auto sz = g_control_quads.size();
+
+    auto control_remover = [&sz]()
+    {
+        delete g_control_quads[sz - 1];
+        g_control_quads[sz - 1] = nullptr;
+        g_control_quads.resize(sz - 1);
+    };
+
     if (count == 6)
+    {
+        if (sz > 0) control_remover();
+
+        ui->check_bold->setCheckState(Qt::Unchecked);
+        ui->button_text_color->setStyleSheet("color: black; font-weight: normal;");
+        ui->edit_field->setText(tr("field name"));
+        ui->edit_value->setText(tr("field value"));
+
         return;
+    }
     else
         rows += 2;
 
@@ -201,10 +220,7 @@ void Highlighting_Settings::on_button_remove_clicked()
         delete item;
     }
 
-    auto sz = g_control_quads.size();
-    delete g_control_quads[sz - 1];
-    g_control_quads[sz - 1] = nullptr;
-    g_control_quads.resize(sz - 1);
+    control_remover();
 
     ui->group_valuebased->setGeometry(box);
     gridLayout->invalidate();

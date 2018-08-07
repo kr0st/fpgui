@@ -115,7 +115,7 @@ void write_app_config(const App_Configuration& app_config, QSettings& settings)
             settings.setArrayIndex(i);
             settings.setValue(QString(fpgui::settings::highlighting_field_setting), app_config.highlighting.config[i].field.c_str());
             settings.setValue(QString(fpgui::settings::highlighting_value_setting), app_config.highlighting.config[i].value.c_str());
-            settings.setValue(QString(fpgui::settings::highlighting_color_setting), app_config.highlighting.config[i].color);
+            settings.setValue(QString(fpgui::settings::highlighting_color_setting), app_config.highlighting.config[i].color.name());
             settings.setValue(QString(fpgui::settings::highlighting_bold_setting), app_config.highlighting.config[i].bold);
         }
     }
