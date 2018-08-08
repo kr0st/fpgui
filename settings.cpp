@@ -292,8 +292,32 @@ void write_default_settigs(QSettings& settings)
     app_config.view_sorting = true;
 
     app_config.highlighting.diff_enabled = true;
-    app_config.highlighting.value_based_enabled = false;
+    app_config.highlighting.value_based_enabled = true;
     app_config.highlighting.base_color = QColor(0xd6, 0xf6, 0xdd);
+
+    Highlighting_Configuration::Config_Item hl_item;
+    hl_item.bold = true;
+    hl_item.field = "priority";
+    hl_item.value = "critical";
+    hl_item.color = QColor(0xfc, 0x01, 0x07);
+    app_config.highlighting.config.push_back(hl_item);
+
+    hl_item.value = "emergency";
+    app_config.highlighting.config.push_back(hl_item);
+
+    hl_item.value = "alert";
+    app_config.highlighting.config.push_back(hl_item);
+
+    hl_item.value = "error";
+    app_config.highlighting.config.push_back(hl_item);
+
+    hl_item.color = QColor(0xe1, 0xa8, 0x08);
+    hl_item.value = "warning";
+    app_config.highlighting.config.push_back(hl_item);
+
+    hl_item.value = "notice";
+    hl_item.bold = false;
+    app_config.highlighting.config.push_back(hl_item);
 
     write_app_config(app_config, settings);
     write_db_config(db_config, settings);
