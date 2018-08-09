@@ -130,7 +130,7 @@ void Message_Details_Dialog::on_save_button_clicked()
     QFileDialog dialog(this, tr("Select Folder to Save Files into"), QDir::homePath());
     dialog.setFileMode(QFileDialog::Directory);
     dialog.setOption(QFileDialog::ShowDirsOnly);
-    dialog.setLabelText(QFileDialog::Accept, "Save");
+    dialog.setLabelText(QFileDialog::Accept, tr("Save"));
 
     if ((dialog.exec() == QDialog::Rejected) || (dialog.selectedFiles().empty()))
         return;
@@ -152,9 +152,9 @@ void Message_Details_Dialog::on_save_button_clicked()
     try
     {
         if (QFile::exists(file_path))
-            if (generic_utils::ui::message_box("File '" + file_name + "' exists, overwrite?", QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+            if (generic_utils::ui::message_box(tr("File '") + file_name + tr("' exists, overwrite?"), QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
             {
-                ui->label_info->setText("File '" + file_name + "' was not saved.");
+                ui->label_info->setText(tr("File '") + file_name + tr("' was not saved."));
                 return;
             };
 
@@ -169,7 +169,7 @@ void Message_Details_Dialog::on_save_button_clicked()
         file.write(to);
         file.close();
 
-        ui->label_info->setText("File '" + file_name + "' successfully saved.");
+        ui->label_info->setText(tr("File '") + file_name + tr("' successfully saved."));
     }
     catch (std::exception& e)
     {

@@ -17,6 +17,7 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <QRegularExpression>
+#include <QCoreApplication>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
@@ -110,7 +111,7 @@ std::vector<std::string> strip_json(const std::string& fields_to_leave, const st
 
         if (js_from.IsNull())
         {
-            qCritical() << "JSON document is invalid!";
+            qCritical() << QCoreApplication::tr("JSON document is invalid!");
             continue;
         }
 
@@ -172,7 +173,7 @@ bool validate_json(const std::string& mandatory_fields, const std::string &json_
 
     if (js_from.IsNull())
     {
-        qCritical() << "JSON document validation failed!";
+        qCritical() << QCoreApplication::tr("JSON document validation failed!");
         return false;
     }
 
