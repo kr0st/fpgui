@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    table_view_ = 0;
+    table_view_ = nullptr;
     ui->setupUi(this);
 
     this->installEventFilter(&key_emitter_);
@@ -114,7 +114,7 @@ void MainWindow::on_actionCopy_triggered()
 
     if (rows.size() > 0)
     {
-        sz = (int)rows.size();
+        sz = static_cast<int>(rows.size());
         QString result("");
 
         for (int i = 0; i < sz; ++i)

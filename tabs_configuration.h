@@ -15,7 +15,7 @@ class Tabs_Configuration : public QDialog
 
     public:
 
-        explicit Tabs_Configuration(QWidget *parent = 0);
+        explicit Tabs_Configuration(QWidget *parent = nullptr);
         ~Tabs_Configuration();
         std::vector<fpgui::settings::Tab_Configuration> get_configuration();
 

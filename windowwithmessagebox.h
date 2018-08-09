@@ -8,6 +8,7 @@ class WindowWithMessageBoxInterface
     public:
 
         virtual void show_hide(){}
+        virtual ~WindowWithMessageBoxInterface(){}
 
 
     public slots:

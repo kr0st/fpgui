@@ -62,7 +62,7 @@ void History_Browser_Controller::request_data(std::queue<std::string>& data)
 {
     if (data_source_.get() && (prev_page_ != current_page_))
     {
-        total_pages_ = data_source_->request_paged_data(current_page_, per_page_, data);
+        total_pages_ = data_source_->request_paged_data(static_cast<unsigned>(current_page_), static_cast<unsigned>(per_page_), data);
         prev_page_ = current_page_;
     }
     else

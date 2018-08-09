@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
     public:
 
         Ui::MainWindow* ui;
-        explicit MainWindow(QWidget *parent = 0);
+        explicit MainWindow(QWidget *parent = nullptr);
         ~MainWindow();
 
         void inject_table_view(fpgui::ui::Table_View* table_view) { table_view_ = table_view; }

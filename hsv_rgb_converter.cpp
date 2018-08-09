@@ -16,7 +16,7 @@ Hsv_Rgb_Converter::rgb Hsv_Rgb_Converter::hsv2rgb(hsv in)
     hh = in.h;
     if(hh >= 360.0) hh = 0.0;
     hh /= 60.0;
-    i = (long)hh;
+    i = static_cast<long>(hh);
     ff = hh - i;
     p = in.v * (1.0 - in.s);
     q = in.v * (1.0 - (in.s * ff));
@@ -84,7 +84,7 @@ Hsv_Rgb_Converter::hsv Hsv_Rgb_Converter::rgb2hsv(rgb in)
         // if max is 0, then r = g = b = 0
         // s = 0, h is undefined
         out.s = 0.0;
-        out.h = NAN;                            // its now undefined
+        out.h = static_cast<double>(NAN);                            // its now undefined
         return out;
     }
     if( in.r >= max )                           // > is bogus, just keeps compilor happy

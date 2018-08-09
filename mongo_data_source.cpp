@@ -69,7 +69,7 @@ static void connect(mongocxx::client** client, std::string& db_name, std::string
 
 std::string generate_oid(long long base_time = 0)
 {
-    long long t = base_time <= 0 ? std::time(0) : base_time;
+    long long t = base_time <= 0 ? std::time(nullptr) : base_time;
     char s[100] = {0};
     sprintf(s, "%8llx0000000000000000", t);
     return (s);
@@ -91,12 +91,12 @@ template <> void Mongo_Data_Source<std::queue<std::string>>::connect(QSettings& 
 template <> void Mongo_Data_Source<std::queue<std::string>>::disconnect()
 {
     delete client_;
-    client_ = 0;
+    client_ = nullptr;
 }
 
 struct Request_Data_Return_Tuple
 {
-    mongocxx::cursor* cursor = 0;
+    mongocxx::cursor* cursor = nullptr;
     long long set_size = 0;
 };
 
@@ -151,11 +151,11 @@ template <> int Mongo_Data_Source<std::queue<std::string>>::request_paged_data(u
         return -1;
 
     Request_Data_Return_Tuple data_set(data_source::request_data(client_, db_name_, db_collection_name_, first_id_, last_id_,
-                                                                 page_number * per_page_count));
+                                                                 static_cast<int>(page_number) * static_cast<int>(per_page_count)));
     if (data_set.set_size <= 0)
-        return data_set.set_size;
+        return static_cast<int>(data_set.set_size);
 
-    if ((unsigned long long)page_number * per_page_count >= (unsigned long long)data_set.set_size)
+    if (static_cast<unsigned long long>(page_number) * per_page_count >= static_cast<unsigned long long>(data_set.set_size))
         return 0;
 
     std::unique_ptr<mongocxx::cursor> cur(data_set.cursor);
@@ -170,7 +170,7 @@ template <> int Mongo_Data_Source<std::queue<std::string>>::request_paged_data(u
     long long total_pages = data_set.set_size / per_page_count;
     total_pages += ((data_set.set_size % per_page_count == 0) ? 0 : 1);
 
-    return (int)total_pages;
+    return static_cast<int>(total_pages);
 }
 
 template <> void Mongo_Data_Source<std::queue<std::string>>::configure(std::map<QVariant, QVariant>& options)

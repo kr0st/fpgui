@@ -140,7 +140,7 @@ void Highlighting_Settings::on_button_base_color_clicked()
 
 void Highlighting_Settings::on_button_add_clicked()
 {
-    QGridLayout* gridLayout((QGridLayout*)ui->group_valuebased->layout());
+    QGridLayout* gridLayout(static_cast<QGridLayout*>(ui->group_valuebased->layout()));
 
     QRect box(ui->group_valuebased->geometry());
     box.setHeight(box.height() + 35);
@@ -175,7 +175,7 @@ void Highlighting_Settings::on_button_add_clicked()
 
 void Highlighting_Settings::on_button_remove_clicked()
 {
-    QGridLayout* gridLayout((QGridLayout*)ui->group_valuebased->layout());
+    QGridLayout* gridLayout(static_cast<QGridLayout*>(ui->group_valuebased->layout()));
 
     int rows = (gridLayout->count() - 2) / (gridLayout->columnCount() - 1);
     int count = gridLayout->count();

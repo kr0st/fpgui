@@ -14,7 +14,7 @@ class Add_New_Tab : public QDialog
 
     public:
 
-        explicit Add_New_Tab(QWidget *parent = 0);
+        explicit Add_New_Tab(QWidget *parent = nullptr);
         ~Add_New_Tab();
         fpgui::settings::Tab_Configuration get_new_tab();
 

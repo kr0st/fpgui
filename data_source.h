@@ -56,19 +56,19 @@ template <typename T=std::vector<std::string>> void generate_json_strings(T& gen
 
     for (size_t i = 0; i < how_many; ++i)
     {
-        int text_size = text_size_bytes_min;
+        int text_size = static_cast<int>(text_size_bytes_min);
 
         if (text_size_bytes_max - text_size_bytes_min > 0)
-            text_size += qrand() % (text_size_bytes_max - text_size_bytes_min);
+            text_size += qrand() % static_cast<int>(text_size_bytes_max - text_size_bytes_min);
 
         std::string text;
-        text.resize(text_size);
+        text.resize(static_cast<size_t>(text_size));
 
         for (int j = 0; j < text_size; ++j)
-            text[j] = random_bytes[j];
+            text[static_cast<size_t>(j)] = random_bytes[static_cast<size_t>(j)];
 
         std::string rnd_msg = "{\"timestamp\":\"" + random_timestamp() + "\", \"sequence\":" + std::to_string(qrand() % 666) +
-                              ", \"hostname\":\"" + hosts[qrand() % hosts.size()] + "\", \"text\":\"" + text +  "\" }";
+                              ", \"hostname\":\"" + hosts[static_cast<size_t>(qrand()) % hosts.size()] + "\", \"text\":\"" + text +  "\" }";
         push_string(generated, rnd_msg);
     }
 }

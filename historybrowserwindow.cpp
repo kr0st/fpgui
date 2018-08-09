@@ -167,7 +167,7 @@ void HistoryBrowserWindow::on_actionCopy_triggered()
 
     if (rows.size() > 0)
     {
-        sz = (int)rows.size();
+        sz = static_cast<int>(rows.size());
         QString result("");
 
         for (int i = 0; i < sz; ++i)
