@@ -20,7 +20,7 @@ static int convert_timestamp(lua_State *L)
     std::string ts(lua_tostring(L, 1));
     lua_pop(L, 1);
     timestamp = generic_utils::date_time::iso_timestamp_to_ms(ts);
-    lua_pushinteger(L, timestamp);
+    lua_pushinteger(L, static_cast<long>(timestamp));
     return 1;
 }
 
@@ -50,11 +50,11 @@ class Lua_Impl
             generic_utils::escape_quotes(log_msg1_escaped);
             generic_utils::escape_quotes(log_msg2_escaped);
 
-            const char* format = "log_msg1=\"%s\"\nfplog_message1 = json.parse(log_msg1)\nlog_msg2=\"%s\"\nfplog_message2 = json.parse(log_msg2)\n";
+            const char* const format = "log_msg1=\"%s\"\nfplog_message1 = json.parse(log_msg1)\nlog_msg2=\"%s\"\nfplog_message2 = json.parse(log_msg2)\n";
             int lua_len = static_cast<int>(log_msg1_escaped.length() + log_msg2_escaped.length() + 256);
 
-            char* lua_script = new char[lua_len];
-            memset(lua_script, 0, lua_len);
+            char* lua_script = new char[static_cast<unsigned long>(lua_len)];
+            memset(lua_script, 0, static_cast<unsigned long>(lua_len));
             std::unique_ptr<char[]> lua_script_ptr(lua_script);
 
 #ifndef _LINUX
@@ -77,7 +77,7 @@ class Lua_Impl
 
             lua_getglobal(lua_state_, "compare_result");
             if (lua_isnumber(lua_state_, -1))
-                compare_result_ = lua_tonumber(lua_state_, -1);
+                compare_result_ = static_cast<int>(lua_tonumber(lua_state_, -1));
             lua_pop(lua_state_, 1);
 
             return compare_result_;
@@ -90,11 +90,11 @@ class Lua_Impl
 
             std::lock_guard<std::recursive_mutex> lock(mutex_);
 
-            const char* format = "%s=%f\n";
+            const char* const format = "%s=%f\n";
             int lua_len = static_cast<int>(strlen(name) + 256);
 
-            char* lua_script = new char[lua_len];
-            memset(lua_script, 0, lua_len);
+            char* lua_script = new char[static_cast<unsigned>(lua_len)];
+            memset(lua_script, 0, static_cast<unsigned>(lua_len));
             std::unique_ptr<char[]> lua_script_ptr(lua_script);
 
 #ifndef _LINUX
@@ -116,11 +116,12 @@ class Lua_Impl
 
     private:
 
-        bool inited_;
-        lua_State *lua_state_;
-
         int compare_result_;
+        bool inited_;
+
+        lua_State *lua_state_;
         std::recursive_mutex mutex_;
+
 
         std::string get_lua_error()
         {
@@ -152,25 +153,25 @@ class Lua_Impl
                 printf("lua_err on init = %s\n", lua_error.c_str());
             }
 
-            inited_ = (lua_state_ != 0);
+            inited_ = (lua_state_ != nullptr);
         }
 
         void deinit()
         {
-            if (lua_state_ == 0)
+            if (lua_state_ == nullptr)
                 return;
 
             std::lock_guard<std::recursive_mutex> lock(mutex_);
 
             if(lua_state_) lua_close(lua_state_);
-            lua_state_ = 0;
+            lua_state_ = nullptr;
         }
 
         std::string lua_script_;
 };
 
 static std::recursive_mutex g_lua_mutex;
-static Lua_Impl* g_lua = 0;
+static Lua_Impl* g_lua = nullptr;
 
 void load_from_file(const std::string& filename)
 {
@@ -189,7 +190,7 @@ void load_from_file(const std::string& filename)
 int compare_json_strings(const std::string& json_str1, const std::string& json_str2)
 {
     std::lock_guard<std::recursive_mutex> lock(g_lua_mutex);
-    if (g_lua == 0)
+    if (g_lua == nullptr)
         return 0;
 
     return g_lua->compare(json_str1, json_str2);
@@ -206,7 +207,7 @@ void free_resources()
 {
     std::lock_guard<std::recursive_mutex> lock(g_lua_mutex);
     delete g_lua;
-    g_lua = 0;
+    g_lua = nullptr;
 }
 
 }
