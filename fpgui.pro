@@ -15,6 +15,7 @@ TARGET = fpgui
 TEMPLATE = app
 
 INCLUDEPATH += "$$_PRO_FILE_PWD_/dependencies/include/"
+INCLUDEPATH += "$$_PRO_FILE_PWD_/headers/"
 INCLUDEPATH += "/usr/local/include/"
 INCLUDEPATH += "/usr/local/include/mongocxx/v_noabi/"
 INCLUDEPATH += "/usr/local/include/bsoncxx/v_noabi/"
@@ -42,68 +43,68 @@ DEFINES += QT_DEPRECATED_WARNINGS \
 
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp \
-    settings.cpp \
-    var_injector.cpp \
-    scripting.cpp \
-    utils.cpp \
-    globals.cpp \
-    simplecrypt.cpp \
-    table_view.cpp \
-    table_controller.cpp \
-    mongo_data_source.cpp \
-    historybrowserwindow.cpp \
-    history_browser_view.cpp \
-    history_browser_controller.cpp \
-    key_press_emitter.cpp \
-    message_details_dialog.cpp \
-    preferences.cpp \
-    tabs_configuration.cpp \
-    add_new_tab.cpp \
-    app_settings_advanced.cpp \
-    db_settings_advanced.cpp \
-    hsv_rgb_converter.cpp \
-    colorizer.cpp \
-    highlighting_settings.cpp
+    sources/main.cpp \
+    sources/mainwindow.cpp \
+    sources/settings.cpp \
+    sources/var_injector.cpp \
+    sources/scripting.cpp \
+    sources/utils.cpp \
+    sources/globals.cpp \
+    sources/simplecrypt.cpp \
+    sources/table_view.cpp \
+    sources/table_controller.cpp \
+    sources/mongo_data_source.cpp \
+    sources/historybrowserwindow.cpp \
+    sources/history_browser_view.cpp \
+    sources/history_browser_controller.cpp \
+    sources/key_press_emitter.cpp \
+    sources/message_details_dialog.cpp \
+    sources/preferences.cpp \
+    sources/tabs_configuration.cpp \
+    sources/add_new_tab.cpp \
+    sources/app_settings_advanced.cpp \
+    sources/db_settings_advanced.cpp \
+    sources/hsv_rgb_converter.cpp \
+    sources/colorizer.cpp \
+    sources/highlighting_settings.cpp
 
 HEADERS += \
-    mainwindow.h \
-    scripting.h \
-    settings.h \
-    var_injector.h \
-    utils.h \
-    globals.h \
-    simplecrypt.h \
-    table_view.h \
-    table_controller.h \
-    data_source.h \
-    mongo_data_source.h \
-    fpgui_exceptions.h \
-    historybrowserwindow.h \
-    windowwithmessagebox.h \
-    history_browser_view.h \
-    history_browser_controller.h \
-    key_press_emitter.h \
-    message_details_dialog.h \
-    preferences.h \
-    tabs_configuration.h \
-    add_new_tab.h \
-    app_settings_advanced.h \
-    db_settings_advanced.h \
-    hsv_rgb_converter.h \
-    colorizer.h \
-    highlighting_settings.h
+    headers/mainwindow.h \
+    headers/scripting.h \
+    headers/settings.h \
+    headers/var_injector.h \
+    headers/utils.h \
+    headers/globals.h \
+    headers/simplecrypt.h \
+    headers/table_view.h \
+    headers/table_controller.h \
+    headers/data_source.h \
+    headers/mongo_data_source.h \
+    headers/fpgui_exceptions.h \
+    headers/historybrowserwindow.h \
+    headers/windowwithmessagebox.h \
+    headers/history_browser_view.h \
+    headers/history_browser_controller.h \
+    headers/key_press_emitter.h \
+    headers/message_details_dialog.h \
+    headers/preferences.h \
+    headers/tabs_configuration.h \
+    headers/add_new_tab.h \
+    headers/app_settings_advanced.h \
+    headers/db_settings_advanced.h \
+    headers/hsv_rgb_converter.h \
+    headers/colorizer.h \
+    headers/highlighting_settings.h
 
 FORMS += \
-        mainwindow.ui \
-    historybrowserwindow.ui \
-    message_details_dialog.ui \
-    preferences.ui \
-    tabs_configuration.ui \
-    add_new_tab.ui \
-    app_settings_advanced.ui \
-    db_settings_advanced.ui \
-    highlighting_settings.ui
+    forms/mainwindow.ui \
+    forms/historybrowserwindow.ui \
+    forms/message_details_dialog.ui \
+    forms/preferences.ui \
+    forms/tabs_configuration.ui \
+    forms/add_new_tab.ui \
+    forms/app_settings_advanced.ui \
+    forms/db_settings_advanced.ui \
+    forms/highlighting_settings.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000

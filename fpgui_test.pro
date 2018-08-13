@@ -19,20 +19,20 @@ LIBS += -L/usr/local/lib/
 LIBS += -lmongocxx -lbsoncxx -lgtest -lluajit
 
 SOURCES += \
-    fpgui_test.cpp \
-    globals.cpp \
-    settings.cpp \
-    mac_util.cpp \
-    simplecrypt.cpp \
-    utils.cpp \
-    scripting.cpp \
-    var_injector.cpp \
-    table_view.cpp \
-    table_controller.cpp \
-    mainwindow.cpp \
-    data_source.cpp \
-    business_logic_test_data.cpp \
-    mongo_data_source.cpp
+    sources/fpgui_test.cpp \
+    sources/globals.cpp \
+    sources/settings.cpp \
+    sources/mac_util.cpp \
+    sources/simplecrypt.cpp \
+    sources/utils.cpp \
+    sources/scripting.cpp \
+    sources/var_injector.cpp \
+    sources/table_view.cpp \
+    sources/table_controller.cpp \
+    sources/mainwindow.cpp \
+    sources/data_source.cpp \
+    sources/business_logic_test_data.cpp \
+    sources/mongo_data_source.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -54,20 +54,21 @@ DEFINES += QT_DEPRECATED_WARNINGS \
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    globals.h \
-    settings.h \
-    mac_util.h \
-    simplecrypt.h \
-    utils.h \
-    scripting.h \
-    var_injector.h \
-    table_controller.h \
-    mainwindow.h \
-    table_view.h \
-    data_source.h \
-    business_logic_test_data.h \
-    mongo_data_source.h
+    headers/globals.h \
+    headers/settings.h \
+    headers/mac_util.h \
+    headers/simplecrypt.h \
+    headers/utils.h \
+    headers/scripting.h \
+    headers/var_injector.h \
+    headers/table_controller.h \
+    headers/mainwindow.h \
+    headers/table_view.h \
+    headers/data_source.h \
+    headers/business_logic_test_data.h \
+    headers/mongo_data_source.h
 
-FORMS += mainwindow.ui
+FORMS += forms/mainwindow.ui
 
 QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
+
