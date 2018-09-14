@@ -1,5 +1,7 @@
 #include "colorizer.h"
 
+namespace generic_utils { namespace ui {
+
 Colorizer::Colorizer():
 uninited_(true)
 {
@@ -49,4 +51,6 @@ void Colorizer::set_seed(Hsv_Rgb_Converter::rgb seed)
     first_use_ = true;
     latest_color_ = Hsv_Rgb_Converter::rgb2hsv(seed);
 }
+
+}};
 

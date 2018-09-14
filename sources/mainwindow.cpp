@@ -10,6 +10,8 @@
 
 #include <set>
 
+namespace fpgui { namespace ui {
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -140,3 +142,5 @@ void MainWindow::on_actionPreferences_triggered()
     Preferences settings;
     settings.exec();
 }
+
+}};

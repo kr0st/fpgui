@@ -30,7 +30,7 @@ class Table_View: public QObject
             widget_ = nullptr;
             if (app_config_.highlighting.diff_enabled)
             {
-                Hsv_Rgb_Converter::rgb seed;
+                generic_utils::ui::Hsv_Rgb_Converter::rgb seed;
 
                 seed.b = app_config_.highlighting.base_color.toRgb().blue() / 255.0;
                 seed.g = app_config_.highlighting.base_color.toRgb().green() / 255.0;
@@ -86,7 +86,7 @@ class Table_View: public QObject
     private:
 
         std::vector<settings::Tab_Configuration> config_;
-        Colorizer colorizer_;
+        generic_utils::ui::Colorizer colorizer_;
         QString quick_filter_;
 
         void display_strings(std::vector<std::string>& json_strings);

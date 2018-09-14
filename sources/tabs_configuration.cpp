@@ -6,6 +6,8 @@
 #include <utils.h>
 #include <add_new_tab.h>
 
+namespace fpgui { namespace ui {
+
 Tabs_Configuration::Tabs_Configuration(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Tabs_Configuration)
@@ -147,3 +149,5 @@ void Tabs_Configuration::on_button_remove_clicked()
             }
     }
 }
+
+}};

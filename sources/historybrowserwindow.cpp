@@ -7,6 +7,8 @@
 
 #include <set>
 
+namespace fpgui { namespace ui {
+
 HistoryBrowserWindow::HistoryBrowserWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::HistoryBrowserWindow)
@@ -187,3 +189,5 @@ void HistoryBrowserWindow::on_actionCopy_triggered()
         clipboard->setText(result);
     }
 }
+
+}};

@@ -9,6 +9,8 @@ namespace Ui {
 class Tabs_Configuration;
 }
 
+namespace fpgui { namespace ui {
+
 class Tabs_Configuration : public QDialog
 {
     Q_OBJECT
@@ -37,5 +39,7 @@ private:
         void populate_table_widget();
         std::map<int, fpgui::settings::Tab_Configuration> remap_tabs();
 };
+
+}};
 
 #endif // TABS_CONFIGURATION_H

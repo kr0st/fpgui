@@ -8,6 +8,8 @@ namespace Ui {
 class Message_Details_Dialog;
 }
 
+namespace fpgui { namespace ui {
+
 class Message_Details_Dialog : public QDialog
 {
     Q_OBJECT
@@ -28,5 +30,7 @@ private:
         Ui::Message_Details_Dialog *ui;
         std::string file_base64_;
 };
+
+}};
 
 #endif // MESSAGE_DETAILS_DIALOG_H

@@ -6,6 +6,8 @@
 #include <string>
 #include <map>
 
+namespace generic_utils { namespace ui {
+
 class Colorizer
 {
     public:
@@ -23,5 +25,7 @@ class Colorizer
         bool first_use_;
         bool uninited_;
 };
+
+}};
 
 #endif // COLORIZER_H

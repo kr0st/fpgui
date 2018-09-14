@@ -11,6 +11,8 @@ namespace Ui {
 class HistoryBrowserWindow;
 }
 
+namespace fpgui { namespace ui {
+
 class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterface
 {
     Q_OBJECT
@@ -67,5 +69,7 @@ private:
 
         void resizeEvent(QResizeEvent* event);
 };
+
+}};
 
 #endif // HISTORYBROWSERWINDOW_H

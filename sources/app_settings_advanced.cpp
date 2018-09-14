@@ -4,6 +4,8 @@
 #include <QIntValidator>
 #include <highlighting_settings.h>
 
+namespace fpgui { namespace ui {
+
 App_Settings_Advanced::App_Settings_Advanced(fpgui::settings::App_Configuration &app_config, QWidget *parent):
 QDialog(parent),
 ui(new Ui::App_Settings_Advanced),
@@ -39,3 +41,5 @@ void App_Settings_Advanced::on_button_highlighting_clicked()
     Highlighting_Settings dialog(app_config_);
     dialog.exec();
 }
+
+}};

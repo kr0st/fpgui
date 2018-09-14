@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
     auto app_config(fpgui::settings::read_app_config(settings));
 
-    MainWindow w;
+    fpgui::ui::MainWindow w;
     fpgui::ui::Table_View table(app_config);
     fpgui::ui::Table_Controller table_controller(table);
 
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     w.inject_table_view(&table);
 
     //trying out the history browser window
-    HistoryBrowserWindow w2;
+    fpgui::ui::HistoryBrowserWindow w2;
     fpgui::ui::History_Browser_View history_browser_view(app_config);
 
     w.inject_history_browser_view(&history_browser_view);

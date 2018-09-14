@@ -1,5 +1,7 @@
 #include "key_press_emitter.h"
 
+namespace fpgui { namespace ui {
+
 Key_Press_Emitter::Key_Press_Emitter()
 {
 }
@@ -14,3 +16,5 @@ bool Key_Press_Emitter::eventFilter(QObject *obj, QEvent *event)
 
     return QObject::eventFilter(obj, event);
 }
+
+}};

@@ -11,6 +11,8 @@
 #include <settings.h>
 #include <utils.h>
 
+namespace fpgui { namespace ui {
+
 Preferences::Preferences(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Preferences)
@@ -80,3 +82,5 @@ void Preferences::on_button_advanced_db_clicked()
     DB_Settings_Advanced dialog(db_config_);
     dialog.exec();
 }
+
+}};

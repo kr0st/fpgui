@@ -3,6 +3,8 @@
 
 #include <QIntValidator>
 
+namespace fpgui { namespace ui {
+
 DB_Settings_Advanced::DB_Settings_Advanced(fpgui::settings::Db_Configuration &db_config, QWidget *parent):
 QDialog(parent),
 ui(new Ui::db_settings_advanced),
@@ -34,3 +36,5 @@ void DB_Settings_Advanced::on_db_settings_advanced_finished(int result)
         db_config_.password = ui->edit_db_user_pass->text().toStdString();
     }
 }
+
+}};

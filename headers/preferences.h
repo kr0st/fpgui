@@ -8,6 +8,8 @@ namespace Ui {
 class Preferences;
 }
 
+namespace fpgui { namespace ui {
+
 class Preferences : public QDialog
 {
     Q_OBJECT
@@ -35,5 +37,7 @@ private:
         fpgui::settings::App_Configuration app_config_;
         fpgui::settings::Db_Configuration db_config_;
 };
+
+}};
 
 #endif // PREFERENCES_H

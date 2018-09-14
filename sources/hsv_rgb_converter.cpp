@@ -1,6 +1,8 @@
 #include "hsv_rgb_converter.h"
 #include <math.h>
 
+namespace generic_utils { namespace ui {
+
 Hsv_Rgb_Converter::rgb Hsv_Rgb_Converter::hsv2rgb(hsv in)
 {
     double      hh, p, q, t, ff;
@@ -102,3 +104,5 @@ Hsv_Rgb_Converter::hsv Hsv_Rgb_Converter::rgb2hsv(rgb in)
 
     return out;
 }
+
+}};

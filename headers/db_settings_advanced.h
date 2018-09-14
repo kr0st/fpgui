@@ -8,6 +8,8 @@ namespace Ui {
 class db_settings_advanced;
 }
 
+namespace fpgui { namespace ui {
+
 class DB_Settings_Advanced : public QDialog
 {
     Q_OBJECT
@@ -28,5 +30,7 @@ class DB_Settings_Advanced : public QDialog
             Ui::db_settings_advanced *ui;
             fpgui::settings::Db_Configuration& db_config_;
 };
+
+}};
 
 #endif // DB_SETTINGS_ADVANCED_H

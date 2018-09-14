@@ -34,6 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QCryptographicHash>
 #include <QDataStream>
 
+namespace generic_utils { namespace crypto {
+
 SimpleCrypt::SimpleCrypt():
     m_key(0),
     m_compressionMode(CompressionAuto),
@@ -252,3 +254,5 @@ QByteArray SimpleCrypt::decryptToByteArray(QByteArray cypher)
     m_lastError = ErrorNoError;
     return ba;
 }
+
+}};

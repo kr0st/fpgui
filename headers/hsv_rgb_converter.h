@@ -1,6 +1,7 @@
 #ifndef HSV_RGB_CONVERTER_H
 #define HSV_RGB_CONVERTER_H
 
+namespace generic_utils { namespace ui {
 
 class Hsv_Rgb_Converter
 {
@@ -36,5 +37,7 @@ class Hsv_Rgb_Converter
         static hsv rgb2hsv(rgb in);
         static rgb hsv2rgb(hsv in);
 };
+
+}};
 
 #endif // HSV_RGB_CONVERTER_H

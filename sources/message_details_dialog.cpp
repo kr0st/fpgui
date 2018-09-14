@@ -15,6 +15,7 @@
 
 #include <utils.h>
 
+namespace fpgui { namespace ui {
 
 Message_Details_Dialog::Message_Details_Dialog(QWidget *parent, QString& message):
 QDialog(parent),
@@ -177,3 +178,6 @@ void Message_Details_Dialog::on_save_button_clicked()
         return;
     }
 }
+
+}};
+

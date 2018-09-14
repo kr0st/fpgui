@@ -7,6 +7,7 @@
 #include "highlighting_settings.h"
 #include "ui_highlighting_settings.h"
 
+namespace fpgui { namespace ui {
 
 void Controls_Quadruple::connect_signals()
 {
@@ -226,3 +227,5 @@ void Highlighting_Settings::on_button_remove_clicked()
     gridLayout->invalidate();
     ui->group_valuebased->update();
 }
+
+}};

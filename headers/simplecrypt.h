@@ -55,6 +55,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   SimpleCrypt is prepared for the case that the encryption and decryption
   algorithm is changed in a later version, by prepending a version identifier to the cypertext.
   */
+
+namespace generic_utils { namespace crypto {
+
 class SimpleCrypt
 {
 public:
@@ -221,6 +224,9 @@ private:
     IntegrityProtectionMode m_protectionMode;
     Error m_lastError;
 };
-Q_DECLARE_OPERATORS_FOR_FLAGS(SimpleCrypt::CryptoFlags)
+
+}};
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(generic_utils::crypto::SimpleCrypt::CryptoFlags)
 
 #endif // SimpleCrypt_H

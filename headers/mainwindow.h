@@ -11,6 +11,8 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace fpgui { namespace ui {
+
 class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
 {
     Q_OBJECT
@@ -65,5 +67,7 @@ private:
 
         void resizeEvent(QResizeEvent* event);
 };
+
+}};
 
 #endif // MAINWINDOW_H

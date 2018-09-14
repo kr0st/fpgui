@@ -364,7 +364,7 @@ void Table_View::display_strings(std::vector<std::string> &json_strings)
         {
             rapidjson::Value::Object jsobj(js_from.GetObject());
 
-            Hsv_Rgb_Converter::rgb highlight(1, 1, 1);
+            generic_utils::ui::Hsv_Rgb_Converter::rgb highlight(1, 1, 1);
 
             QColor text_color;
             bool text_bold = false;

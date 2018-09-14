@@ -13,6 +13,8 @@ namespace Ui {
 class Highlighting_Settings;
 }
 
+namespace fpgui { namespace ui {
+
 class Controls_Quadruple: QObject
 {
     Q_OBJECT
@@ -63,5 +65,7 @@ private:
             fpgui::settings::App_Configuration& app_config_;
             QColor base_color_;
 };
+
+}};
 
 #endif // HIGHLIGHTING_SETTINGS_H
