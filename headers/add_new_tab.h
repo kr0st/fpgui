@@ -8,6 +8,8 @@ namespace Ui {
 class Add_New_Tab;
 }
 
+namespace fpgui { namespace ui {
+
 class Add_New_Tab : public QDialog
 {
     Q_OBJECT
@@ -29,5 +31,7 @@ class Add_New_Tab : public QDialog
         Ui::Add_New_Tab *ui;
         fpgui::settings::Tab_Configuration new_tab_;
 };
+
+}};
 
 #endif // ADD_NEW_TAB_H

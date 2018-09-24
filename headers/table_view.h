@@ -7,10 +7,10 @@
 #include <QTableWidget>
 #include <mutex>
 
-class WindowWithMessageBoxInterface;
-
 namespace fpgui {
 namespace ui {
+
+class WindowWithMessageBoxInterface;
 
 class Table_View: public QObject
 {

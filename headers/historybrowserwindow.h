@@ -13,10 +13,10 @@ class HistoryBrowserWindow;
 
 namespace fpgui { namespace ui {
 
-class HistoryBrowserWindow : public QWidget, public WindowWithMessageBoxInterface
+class HistoryBrowserWindow : public QWidget, public fpgui::ui::WindowWithMessageBoxInterface
 {
     Q_OBJECT
-    Q_INTERFACES(WindowWithMessageBoxInterface)
+    Q_INTERFACES(fpgui::ui::WindowWithMessageBoxInterface)
 
     public:
 

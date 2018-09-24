@@ -13,10 +13,10 @@ class MainWindow;
 
 namespace fpgui { namespace ui {
 
-class MainWindow : public QMainWindow, public WindowWithMessageBoxInterface
+class MainWindow : public QMainWindow, public fpgui::ui::WindowWithMessageBoxInterface
 {
     Q_OBJECT
-    Q_INTERFACES(WindowWithMessageBoxInterface)
+    Q_INTERFACES(fpgui::ui::WindowWithMessageBoxInterface)
 
     public:
 

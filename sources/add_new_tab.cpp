@@ -1,6 +1,8 @@
 #include "add_new_tab.h"
 #include "ui_add_new_tab.h"
 
+namespace fpgui { namespace ui {
+
 Add_New_Tab::Add_New_Tab(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Add_New_Tab)
@@ -28,3 +30,5 @@ void Add_New_Tab::on_Add_New_Tab_finished(int result)
         new_tab_.size = 0;
     }
 }
+
+}};
