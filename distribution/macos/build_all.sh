@@ -22,7 +22,6 @@ cd ./distribution
 cd ./macos
 cd ./build
 
-PATH=$PATH:~/Qt/5.9.1/clang_64/bin
+PATH=$PATH:~/Qt/5.10.1/clang_64/bin
 qmake ../../../fpgui.pro -r CONFIG+=release
 make
-
