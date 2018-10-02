@@ -69,7 +69,7 @@ cd ..
 tar xzf mongo_cpp_driver.tar.gz
 cd ./mongo-cxx-driver-r3.1.3/build
 
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_PREFIX_PATH=/usr/local ..
+sudo cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_PREFIX_PATH=/usr/local ..
 
 if [ $? -ne 0 ]; then
 echo "****************************************** ERROR ******************************************"
