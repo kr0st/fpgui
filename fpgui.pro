@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 QT += network
 
 CONFIG += c++14
@@ -17,12 +17,13 @@ TEMPLATE = app
 INCLUDEPATH += "$$_PRO_FILE_PWD_/dependencies/include/"
 INCLUDEPATH += "$$_PRO_FILE_PWD_/headers/"
 INCLUDEPATH += "/usr/local/include/"
-INCLUDEPATH += "/usr/local/include/mongocxx/v_noabi/"
-INCLUDEPATH += "/usr/local/include/bsoncxx/v_noabi/"
+INCLUDEPATH += "$$(HOME)/temp/include/mongocxx/v_noabi/"
+INCLUDEPATH += "$$(HOME)/temp/include/bsoncxx/v_noabi/"
 
 LIBS += -L"$$_PRO_FILE_PWD_/dependencies/lib/x64/"
 LIBS += -L/usr/local/lib/
-LIBS += -lmongocxx -lbsoncxx -lgtest -lluajit
+LIBS += -L"$$(HOME)/temp/lib/"
+LIBS += -lmongocxx -lbsoncxx -lgtest -lluajit -ldl
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -107,4 +108,4 @@ FORMS += \
     forms/db_settings_advanced.ui \
     forms/highlighting_settings.ui
 
-QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000
+macos: QMAKE_LFLAGS += -pagezero_size 10000 -image_base 100000000 -Wl,-stack_size,0x20000000

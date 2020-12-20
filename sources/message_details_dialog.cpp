@@ -14,6 +14,7 @@
 #include <QMessageBox>
 
 #include <utils.h>
+#include <memory>
 
 namespace fpgui { namespace ui {
 
