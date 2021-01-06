@@ -69,7 +69,7 @@ cd ..
 tar xzf mongo_cpp_driver.tar.gz
 cd ./mongo-cxx-driver-r3.1.3/build
 
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/Users/xcodeserver/temp -DCMAKE_PREFIX_PATH=/Users/xcodeserver/temp ..
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/Users/Shared/temp -DCMAKE_PREFIX_PATH=/Users/Shared/temp ..
 
 if [ $? -ne 0 ]; then
 echo "****************************************** ERROR ******************************************"
@@ -101,4 +101,7 @@ cd ..
 cd ..
 
 rm -rf ./build
+
+#Workaround: Qt Creator project file adds include and lib path to homedir/temp
+cp -R /Users/Shared/temp ~/temp
 
