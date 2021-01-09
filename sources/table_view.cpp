@@ -133,34 +133,73 @@ static bool suppress_resize_signals = false;
 
 void Table_View::show()
 {
-    if (window_)
+    QTimer* timer = new QTimer();
+    timer->moveToThread(qApp->thread());
+    timer->setSingleShot(true);
+
+    QObject::connect(timer, &QTimer::timeout, [&]()
     {
-        QWidget* wnd = dynamic_cast<QWidget*>(window_);
-        if (wnd->isHidden())
-            wnd->show();
-    }
+        //Here we executing the action on the main/GUI thread
+        //in order to get rid of errors on macOS, where updating GUI
+        //from non-main thread is prohibited.
+        if (window_)
+        {
+            QWidget* wnd = dynamic_cast<QWidget*>(window_);
+            if (wnd->isHidden())
+                wnd->show();
+        }
+        timer->deleteLater();
+    });
+
+    QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection, Q_ARG(int, 0));
 }
 
 void Table_View::hide()
 {
-    if (window_)
+    QTimer* timer = new QTimer();
+    timer->moveToThread(qApp->thread());
+    timer->setSingleShot(true);
+
+    QObject::connect(timer, &QTimer::timeout, [&]()
     {
-        QWidget* wnd = dynamic_cast<QWidget*>(window_);
-        if (!wnd->isHidden())
-            wnd->hide();
-    }
+        //Here we executing the action on the main/GUI thread
+        //in order to get rid of errors on macOS, where updating GUI
+        //from non-main thread is prohibited.
+        if (window_)
+        {
+            QWidget* wnd = dynamic_cast<QWidget*>(window_);
+            if (!wnd->isHidden())
+                wnd->hide();
+        }
+        timer->deleteLater();
+    });
+
+    QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection, Q_ARG(int, 0));
 }
 
 void Table_View::show_hide()
 {
-    if (window_)
+    QTimer* timer = new QTimer();
+    timer->moveToThread(qApp->thread());
+    timer->setSingleShot(true);
+
+    QObject::connect(timer, &QTimer::timeout, [&]()
     {
-        QWidget* wnd = dynamic_cast<QWidget*>(window_);
-        if (wnd->isHidden())
-            wnd->show();
-        else
-            wnd->hide();
-    }
+        //Here we executing the action on the main/GUI thread
+        //in order to get rid of errors on macOS, where updating GUI
+        //from non-main thread is prohibited.
+        if (window_)
+        {
+            QWidget* wnd = dynamic_cast<QWidget*>(window_);
+            if (wnd->isHidden())
+                wnd->show();
+            else
+                wnd->hide();
+        }
+        timer->deleteLater();
+    });
+
+    QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection, Q_ARG(int, 0));
 }
 
 void Table_View::setup_view(const std::vector<settings::Tab_Configuration> &config, QTableWidget &widget, bool resize_only, WindowWithMessageBoxInterface *window)

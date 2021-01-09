@@ -1,6 +1,7 @@
 #include <time.h>
 #include <iostream>
 
+#ifndef Q_MOC_RUN
 #include <mongocxx/client.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
@@ -8,6 +9,7 @@
 #include <bsoncxx/types.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
+#endif
 
 #include <QCoreApplication>
 

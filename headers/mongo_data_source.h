@@ -4,8 +4,12 @@
 #include <data_source.h>
 #include <settings.h>
 #include <QSettings>
+
+#ifndef Q_MOC_RUN
 #include <mongocxx/client.hpp>
 #include <mongocxx/exception/exception.hpp>
+#endif
+
 #include <fpgui_exceptions.h>
 
 namespace fpgui { namespace data_source {
