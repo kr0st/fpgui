@@ -102,7 +102,6 @@ int main(int argc, char *argv[])
 
     history_browser_view.setup_view(fpgui::settings::read_tab_config(settings), *widget2, false, &w2);
     w2.inject_table_view(&history_browser_view);
-    w2.show();
 
     auto source2(std::make_shared<fpgui::data_source::Mongo_Data_Source<std::queue<std::string>>>());
     history_browser_controller.set_data_source(source2);
@@ -122,9 +121,6 @@ int main(int argc, char *argv[])
 
     Closer closer2(&a, &history_browser_view);
     Closer closer(&a, &table);
-
-    QTimer timer;
-    timer.singleShot(1, &w2, SLOT(hide()));
 
     int res = a.exec();
     fpgui::lua::free_resources();
